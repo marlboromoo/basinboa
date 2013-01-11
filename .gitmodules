@@ -1,0 +1,3 @@
+[submodule "miniboa"]
+	path = miniboa
+	url = https://github.com/marlboromoo/miniboa.git
