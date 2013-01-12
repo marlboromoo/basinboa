@@ -8,8 +8,8 @@ IDLE_TIMEOUT = 300
 CLIENT_LIST = []
 SERVER_RUN = True
 
-def init_client(client):
-    """docstring for init_client"""
+def inject_client(client):
+    """docstring for inject_client"""
     client.soul = Soul(client)
     client.login = None
     client.username = None
@@ -17,23 +17,43 @@ def init_client(client):
     client.password = None
     client.password_process = None
 
+def auth_client(client):
+    """auth the client."""
+    if client.username and client.password:
+        #. check process
+        client.soul.set_name(client.username)
+        broadcast('%s enter the world.\n' % client.soul.get_name() )
+        return True
+
 def login(client):
-    """docstring for login"""
-    if not client.username_process:
-        client.send("Username:")
-        client.username_process = True
-    if client.username_process:
-        client.username = client.get_command()
-    if client.username and not client.password_process:
-        client.password_mode_on()
-        client.send("Password:")
-        client.password_process = True
-    if client.username and client.password_process:
-        client.password = client.get_command()
-        client.password_mode_off()
-        client.login = True
-    #if client.username and client.password:
-    #    client.send("%s, %s" % (client.username, client.password))
+    """login the clietn."""
+    #. get username
+    if not client.username:
+        if not client.username_process:
+            client.send("Username:")
+            client.username_process = True
+            return
+        if client.username_process and client.cmd_ready:
+            client.username = client.get_command()
+            return
+    #. get password
+    if not client.password:
+        if client.username and not client.password_process:
+            client.password_mode_on()
+            client.send("Password:")
+            client.password_process = True
+            return
+        if client.username and client.password_process and client.cmd_ready:
+            client.password = client.get_command()
+            client.password_mode_off()
+            return
+    #. auth 
+    if client.username and client.password:
+        client.login = True if auth_client(client) else False
+        if client.login:
+            client.send("\nWelcome !!! %s !!! \n"  % (client.soul.get_name()))
+        else:
+            client.password, client.password_process = None, None
     
 def on_connect(client):
     """
@@ -41,12 +61,10 @@ def on_connect(client):
     Handles new connections.
     """
     print "++ Opened connection to %s" % client.addrport()
-    broadcast('%s joins the conversation.\n' % client.addrport() )
+    broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
     CLIENT_LIST.append(client)
-    client.send("Welcome to the Chat Server, %s.\n" % client.addrport() )
-    init_client(client)
-
-
+    client.send("Welcome to the strachmud, please login.\n")
+    inject_client(client)
 
 def on_disconnect(client):
     """
@@ -55,7 +73,7 @@ def on_disconnect(client):
     """
     print "-- Lost connection to %s" % client.addrport()
     CLIENT_LIST.remove(client)
-    broadcast('%s leaves the conversation.\n' % client.addrport() )
+    broadcast('%s leaves the world.\n' % client.addrport() )
 
 
 def kick_idle():
@@ -87,7 +105,8 @@ def broadcast(msg):
     Send msg to every client.
     """
     for client in CLIENT_LIST:
-        client.send(msg)
+        if client.login:
+            client.send(msg)
 
 
 def chat(client):
@@ -100,7 +119,7 @@ def chat(client):
 
     for guest in CLIENT_LIST:
         if guest != client:
-            guest.send('%s says, %s\n' % (client.addrport(), msg))
+            guest.send('%s says, %s\n' % (client.soul.get_name(), msg))
         else:
             guest.send('You say, %s\n' % msg)
 
