@@ -3,10 +3,10 @@
 system libs
 """
 from player import Soul
+from command import chat
 
 IDLE_TIMEOUT = 300
 CLIENT_LIST = []
-SERVER_RUN = True
 
 def inject_client(client):
     """docstring for inject_client"""
@@ -97,7 +97,7 @@ def process_clients():
             login(client)
         if client.active and client.cmd_ready:
             ## If the client sends input echo it to the chat room
-            chat(client)
+            chat(client, CLIENT_LIST)
 
 
 def broadcast(msg):
@@ -108,25 +108,3 @@ def broadcast(msg):
         if client.login:
             client.send(msg)
 
-
-def chat(client):
-    """
-    Echo whatever client types to everyone.
-    """
-    global SERVER_RUN
-    msg = client.get_command()
-    print '%s says, "%s"' % (client.addrport(), msg)
-
-    for guest in CLIENT_LIST:
-        if guest != client:
-            guest.send('%s says, %s\n' % (client.soul.get_name(), msg))
-        else:
-            guest.send('You say, %s\n' % msg)
-
-    cmd = msg.lower()
-    ## bye = disconnect
-    if cmd == 'bye':
-        client.active = False
-    ## shutdown == stop the server
-    elif cmd == 'shutdown':
-        SERVER_RUN = False
