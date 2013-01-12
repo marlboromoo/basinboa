@@ -9,20 +9,18 @@ from miniboa import TelnetServer
 from mudlibs import system
 
 SERVER_RUN = True
+ASCII_ART = '''
+ ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
+(_-</ _| '_/ _` |  _/ _| ' \| '  \ || / _` |
+/__/\__|_| \__,_|\__\__|_||_|_|_|_\_,_\__,_|
 
+'''
 
 #------------------------------------------------------------------------------
 #       Main
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
-    ## Simple chat server to demonstrate connection handling via the
-    ## async and telnet modules.
-
-    ## Create a telnet server with a port, address,
-    ## a function to call with new connections
-    ## and one to call with lost connections.
 
     telnet_server = TelnetServer(
         port=7777,
@@ -31,7 +29,7 @@ if __name__ == '__main__':
         on_disconnect=system.on_disconnect,
         timeout = .05
         )
-
+    print(ASCII_ART)
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)
 
