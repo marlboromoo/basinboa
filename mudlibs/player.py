@@ -5,18 +5,30 @@ player profile
 
 class Soul(object):
     """docstring for Soul"""
-    def __init__(self, arg):
+    def __init__(self, username):
         super(Soul, self).__init__()
-        self.NAME = arg
         self.logn = None
-        self.login_name = None
-        self.login_password = None
+        self.username = username
+        self.password = None
+        #. status
+        self.nickname = None
+        self.location = (0, 0)
+        self.skills = None
+        self.spells = None
+        self.race = None
+        self.role = None
+        self.job = None
+        self.prompt = None
+        #. combat status
+        self.hp = 100
+        self.mp = 100
+        self.status = None
 
     def set_name(self, name):
         """docstring for set_name"""
-        self.NAME = name
+        self.username = name
 
     def get_name(self):
         """docstring for get_name"""
-        return self.NAME
+        return self.username
         

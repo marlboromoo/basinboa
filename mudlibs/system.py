@@ -10,10 +10,10 @@ class System(object):
 
     SERVER_RUN = True
     IDLE_TIMEOUT = 300
-    CLIENTS = []
 
     def __init__(self):
         super(System, self).__init__()
+        self.clients = []
         
     def inject_client(self, client):
         """docstring for inject_client"""
@@ -27,8 +27,8 @@ class System(object):
     def auth_client(self, client):
         """auth the client."""
         if client.username and client.password:
-            #. check process
-            client.soul.set_name(client.username)
+            #. check process ..
+            client.soul = Soul(client.username)
             self.broadcast('%s enter the world.\n' % client.soul.get_name() )
             return True
     
@@ -69,7 +69,7 @@ class System(object):
         """
         print "++ Opened connection to %s" % client.addrport()
         self.broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
-        self.CLIENTS.append(client)
+        self.clients.append(client)
         client.send("Welcome to the strachmud, please login.\n")
         self.inject_client(client)
     
@@ -79,7 +79,7 @@ class System(object):
         Handles lost connections.
         """
         print "-- Lost connection to %s" % client.addrport()
-        self.CLIENTS.remove(client)
+        self.clients.remove(client)
         self.broadcast('%s leaves the world.\n' % client.addrport() )
     
     
@@ -88,7 +88,7 @@ class System(object):
         Looks for idle clients and disconnects them by setting active to False.
         """
         ## Who hasn't been typing?
-        for client in self.CLIENTS:
+        for client in self.clients:
             if client.idle() > self.IDLE_TIMEOUT:
                 print('-- Kicking idle lobby client from %s' % client.addrport())
                 client.active = False
@@ -99,7 +99,7 @@ class System(object):
         Check each client, if client.cmd_ready == True then there is a line of
         input available via client.get_command().
         """
-        for client in self.CLIENTS:
+        for client in self.clients:
             if not client.login:
                 self.login(client)
             if client.active and client.cmd_ready:
@@ -117,13 +117,13 @@ class System(object):
             self.shutdown()
         #. other commands
         else:
-            command(client, self.CLIENTS, inputs)
+            command(client, self.clients, inputs)
     
     def broadcast(self, msg):
         """
         Send msg to every client.
         """
-        for client in self.CLIENTS:
+        for client in self.clients:
             if client.login:
                 client.send(msg)
 
