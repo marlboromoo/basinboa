@@ -103,21 +103,21 @@ class System(object):
             if not client.login:
                 self.login(client)
             if client.active and client.cmd_ready:
-                ## If the client sends input echo it to the chat room
                 self.process_command(client)
 
     def process_command(self, client):
         """
         Process the client input.
         """
-        msg = client.get_command()
-        command.chat(client, self.CLIENTS, msg)
+        inputs = client.get_command()
     
-        cmd = msg.lower()
-        if cmd == 'bye' or cmd == 'exit' or cmd == 'quit':
-            self.disconnect(client)
-        elif cmd == 'shutdown':
+        cmd = inputs.lower()
+        #. check if system command
+        if cmd == 'shutdown':
             self.shutdown()
+        #. other commands
+        else:
+            command(client, self.CLIENTS, inputs)
     
     def broadcast(self, msg):
         """
