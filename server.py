@@ -6,9 +6,8 @@ Startup script for scratchmud.
 import sys
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
-from mudlibs import system
+from mudlibs.system import System
 
-SERVER_RUN = True
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
 (_-</ _| '_/ _` |  _/ _| ' \| '  \ || / _` |
@@ -21,7 +20,7 @@ ASCII_ART = '''
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
+    system = System()
     telnet_server = TelnetServer(
         port=7777,
         address='',
@@ -34,7 +33,7 @@ if __name__ == '__main__':
         % telnet_server.port)
 
     ## Server Loop
-    while SERVER_RUN:
+    while system.SERVER_RUN:
         telnet_server.poll()               ## Send, Recv, and look for new connections
         system.kick_idle()                 ## Check for idle clients
         system.process_clients()           ## Check for client input
