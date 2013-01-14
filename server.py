@@ -6,7 +6,7 @@ Startup script for scratchmud.
 import sys
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
-from mudlibs.system import System
+from scratchmud.system import System
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
