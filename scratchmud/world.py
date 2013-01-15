@@ -6,9 +6,15 @@ import os
 
 class Room(object):
     """docstring for Room"""
-    def __init__(self):
+    def __init__(self, id_, xy, exits, paths):
         super(Room, self).__init__()
-        
+        self.xy = xy
+        self.id_ = id_
+        self.exits = exits
+        self.paths = paths
+        self.texts = None
+    def __repr__(self):
+        return "Room%s%s - %s,  " % (str(self.id_), str(self.xy), str('/'.join(self.exits)))
 
 class Map(object):
     """docstring for Map"""
@@ -22,6 +28,7 @@ class Map(object):
 
     def __init__(self):
         super(Map, self).__init__()
+        self.maps = []
 
     def list(self):
         """docstring for list"""
@@ -46,7 +53,7 @@ class Map(object):
     def make_grid(self, map_data, with_symbol=False):
         """docstring for make_grid"""
         grid = []
-        id_ = 1
+        id_ = 0
         #. grid
         for line in map_data:
             row = []
@@ -61,8 +68,6 @@ class Map(object):
             #. check row is leggle
             if len(row) > 0:
                 grid.append(row)
-        for line in grid:
-            print line
         return grid
 
     def make_coordinate(self, grid):
@@ -73,13 +78,12 @@ class Map(object):
             xys = []
             x = 0
             for i in row:
-                if i not in self.SYMBOL_PATH:
-                    xys.append((x, y))
-                    x += 1
-            if len(xys) > 0:
-                coordinate.append(xys)
-                y += 1
-        return coordinate
+                xys.append((x, y))
+                grid[y][x]['xy'] = (x,y)
+                x += 1
+            coordinate.append(xys)
+            y += 1
+        return grid, coordinate
 
     def find_room_in_row(self, row, room_id):
         """docstring for find_room_in_row"""
@@ -90,8 +94,8 @@ class Map(object):
                     return i
             i += 1
 
-    def make_exit(self, grid, symbol_grid):
-        """docstring for make_exit"""
+    def make_exits(self, grid, symbol_grid):
+        """docstring for make_exits"""
         #exit = [[], [], []]
         y = 0
         for row in grid:
@@ -99,35 +103,35 @@ class Map(object):
             for room in row:
                 index = self.find_room_in_row(symbol_grid[y], room['id'])
                 #print index
-                symbol_grid[y][index]['exit'] = []
+                symbol_grid[y][index]['exits'] = []
                 # process x ..
                 if index == 0:
                     #. leftmost room
                     if symbol_grid[y][index+1] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('e')
+                        symbol_grid[y][index]['exits'].append('e')
                 elif index == len(symbol_grid[y]) - 1:
                     #. rightmost room
                     if symbol_grid[y][index-1] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('w')
+                        symbol_grid[y][index]['exits'].append('w')
                 else:
                     if symbol_grid[y][index-1] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('w')
+                        symbol_grid[y][index]['exits'].append('w')
                     if symbol_grid[y][index+1] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('e')
+                        symbol_grid[y][index]['exits'].append('e')
                 #. process y ..
                 if y == 0:
                     #. highest room
                     if symbol_grid[y+1][index] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('s')
+                        symbol_grid[y][index]['exits'].append('s')
                 elif y == len(symbol_grid) - 1:
                     #. lowest room
                     if symbol_grid[y-1][index] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('n')
+                        symbol_grid[y][index]['exits'].append('n')
                 else:
                     if symbol_grid[y+1][index] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('s')
+                        symbol_grid[y][index]['exits'].append('s')
                     if symbol_grid[y-1][index] in self.SYMBOL_PATH:
-                        symbol_grid[y][index]['exit'].append('n')
+                        symbol_grid[y][index]['exits'].append('n')
                 x += 1
             y += 2 #. line 1,3,5,7 ... is self.SYMBOL_PATH
         return symbol_grid
@@ -135,32 +139,40 @@ class Map(object):
     def purge_symbol_from_grid(self, symbol_grid):
         """docstring for purge_symbol_from_grid"""
         grid = []
-        y = 0
         for row in symbol_grid:
-            grid.append([])
+            row_ = []
             for block in row:
                 if block not in self.SYMBOL_PATH:
-                    grid[y].append(block)
-            y += 1
+                    row_.append(block)
+            if len(row_) > 0:
+                grid.append(row_)
         return grid
 
     def make_path(self, grid, symbol_grid, coordinate):
         """docstring for make_path"""
-        for xys in coordinate:
-            pass
+        pass
 
-    def check_map(self):
-        """docstring for check_map"""
+    def check_grid(self):
+        """docstring for check_grid"""
+        # TODO: write code...
         pass
 
     def make_map(self, map_data):
         """docstring for make_map"""
+        #, create gird with coordinate and exits
         grid = self.make_grid(map_data)
         symbol_grid = self.make_grid(map_data, with_symbol=True)
-        exit_grid = self.make_exit(grid, symbol_grid)
-        grid = self.purge_symbol_from_grid(exit_grid)
-        coordinate = self.make_coordinate(grid)
-        print grid, coordinate
+        symbol_grid = self.make_exits(grid, symbol_grid)
+        grid = self.purge_symbol_from_grid(symbol_grid)
+        grid, coordinate = self.make_coordinate(grid)
+        #print grid
+        #. create objects Room() from grid
+        rooms = []
+        for row in grid:
+            for room in row:
+                room['paths'] = None
+                rooms.append(Room(room['id'], room['xy'], room['exits'], room['paths']))
+        print rooms
 
 if __name__ == '__main__':
     map = Map()
