@@ -3,6 +3,7 @@
 world
 """
 import os
+import yaml
 
 class Room(object):
     """docstring for Room"""
@@ -13,13 +14,29 @@ class Room(object):
         self.exits = exits
         self.paths = paths
         self.texts = None
+
     def __repr__(self):
-        return "Room%s%s - %s,  " % (str(self.id_), str(self.xy), str('/'.join(self.exits)))
+        return "Room%s%s - %s,  " % (
+            str(self.id_), str(self.xy), str('/'.join(self.exits)))
 
 class Map(object):
     """docstring for Map"""
+    def __init__(self, name, rooms, mobs=[]):
+        super(Map, self).__init__()
+        self.name = name
+        self.rooms = rooms
+        self.mobs = mobs
+
+    def __repr__(self):
+        return "Map(%s) - %s rooms/%s mobs" % (
+            str(self.name), str(len(self.rooms)), str(len(self.mobs)))
+        
+
+class Maps(object):
+    """docstring for Maps"""
     MAP_DIR = '../data/map'
-    MAP_FILE_EXTENSION = 'map'
+    MAP_DATA_EXTENSION = 'map'
+    MAP_CONFIG_EXTENSION= 'yml'
     SYMBOL_ROOM = '*'
     SYMBOL_WE = '-'
     SYMBOL_NS = '|'
@@ -32,28 +49,44 @@ class Map(object):
     WEST = 'w'
 
     def __init__(self):
-        super(Map, self).__init__()
+        super(Maps, self).__init__()
         self.maps = []
 
     def list(self):
-        """return list of map"""
+        """return list of *.map"""
         maps = os.listdir(self.MAP_DIR)
         leggle_maps = []
         for map_ in maps:
-            if map_.split('.')[1] == self.MAP_FILE_EXTENSION:
-                leggle_maps.append(map_)
+            if map_.split('.')[1] == self.MAP_DATA_EXTENSION:
+                leggle_maps.append(map_.split('.')[0])
         return leggle_maps
 
-    def load(self):
-        """load map files"""
-        maps = self.list()
-        for map_ in maps:
-            map_ = os.path.join(self.MAP_DIR, map_)
-            print map_
-            with open(map_, 'r') as m:
-                map_data = m.readlines()
-                self.make_map(map_data)
+    def load(self, map_name):
+        """load map by name"""
+        config_path = os.path.join(self.MAP_DIR, "%s.%s" % (map_name, self.MAP_CONFIG_EXTENSION))
+        data_path = os.path.join(self.MAP_DIR, "%s.%s" % (map_name, self.MAP_DATA_EXTENSION))
+        print config_path, data_path
+        if all([os.path.exists(config_path), os.path.exists(data_path)]):
+            #. load data
+            with open(data_path, 'r') as f:
+                map_data = f.readlines()
+                rooms = self.make_rooms(map_data)
                 print ''.join(map_data)
+            #. load config
+            with open(config_path, 'r') as f:
+                map_config = yaml.load(f, Loader=yaml.Loader)
+            #. create Map() object
+            self.maps.append(
+                Map(name=map_config['name'], 
+                    rooms=rooms,
+                   ))
+
+    def load_all(self):
+        """docstring for load_all"""
+        maps = self.list()
+        print maps
+        for map_ in maps:
+            self.load(map_)
 
     def make_symbol_grid(self, map_data, replace_room_with_id=False):
         """docstring for make_symbol_grid"""
@@ -334,7 +367,7 @@ class Map(object):
                 return False
         return True
 
-    def make_map(self, map_data):
+    def make_rooms(self, map_data):
         """create map from map file"""
         #, create gird with coordinates and exits
         if self.grid_okay(self.make_symbol_grid(map_data)):
@@ -360,10 +393,13 @@ class Map(object):
                     for block in [block for block in row if block]:
                         rooms.append(Room(block['id'], block['xy'], block['exits'], block['paths']))
                 print rooms
+                return rooms
+        return None
 
 if __name__ == '__main__':
-    map = Map()
-    map.load()
+    maps = Maps()
+    maps.load_all()
+    print maps.maps
         
         
 

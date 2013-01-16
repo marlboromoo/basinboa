@@ -12,6 +12,17 @@
 ## About
 a mub base on miniboa.
 
+## Requirments
+ - Python
+ - PyYAML
+
+## Install
+```
+#. ubuntu 12.04
+sudo aptitude install python-pip libyaml-dev
+sudo pip install pyyaml
+```
+
 ## Author
 Timothy.Lee a.k.a MarlboroMoo.
 
