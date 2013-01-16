@@ -12,3 +12,11 @@
 ## About
 a mub base on miniboa.
 
+## Author
+Timothy.Lee a.k.a MarlboroMoo.
+
+## License
+Released under the [MIT License] [1].
+
+  [1]: http://opensource.org/licenses/MIT   "MIT License"
+
