@@ -99,8 +99,8 @@ class Map(object):
             if len(row) != 0:
                 grid.append(row)
         #. debug
-        for row in grid:
-            print row
+        #for row in grid:
+        #    print row
         return grid
 
     def make_id_grid(self, map_data):
@@ -126,8 +126,8 @@ class Map(object):
                     grid.append(row)
             y += 1
         #. debug
-        for row in grid:
-            print row
+        #for row in grid:
+        #    print row
         return grid
 
     def make_coordinates(self, grid):
@@ -163,37 +163,40 @@ class Map(object):
         for row in grid:
             x = 0
             for block in [block for block in row if block]:
-               index = self.find_room_in_row(symbol_grid[y], block['id'])
-               symbol_grid[y][index]['exits'] = []
-               # process x ..
-               if index == 0:
-                   #. leftmost block
-                   if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.EAST)
-               elif index == len(symbol_grid[y]) - 1:
-                   #. rightmost block
-                   if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.WEST)
-               else:
-                   if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.WEST)
-                   if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.EAST)
-               #. process y ..
-               if y == 0:
-                   #. highest block
-                   if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.SOUTH)
-               elif y == len(symbol_grid) - 1:
-                   #. lowest block
-                   if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.NORTH)
-               else:
-                   if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.SOUTH)
-                   if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
-                       symbol_grid[y][index]['exits'].append(self.NORTH)
-               x += 1
+                index = self.find_room_in_row(symbol_grid[y], block['id'])
+                symbol_grid[y][index]['exits'] = []
+                try:
+                    # process x ..
+                    if index == 0:
+                        #. leftmost block
+                        if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.EAST)
+                    elif index == len(symbol_grid[y]) - 1:
+                        #. rightmost block
+                        if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.WEST)
+                    else:
+                        if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.WEST)
+                        if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.EAST)
+                    #. process y ..
+                    if y == 0:
+                        #. highest block
+                        if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.SOUTH)
+                    elif y == len(symbol_grid) - 1:
+                        #. lowest block
+                        if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.NORTH)
+                    else:
+                        if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.SOUTH)
+                        if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
+                            symbol_grid[y][index]['exits'].append(self.NORTH)
+                except Exception:
+                    pass
+                x += 1
             y += 2 #. line 1,3,5,7 ... is self.SYMBOL_PATHS
         return symbol_grid
 
@@ -211,7 +214,7 @@ class Map(object):
                         row_.append(block)
                     #. room must be 0 2 4 6 .. in x
                     if block == self.SYMBOL_VOID and x % 2 == 0:
-                        print x
+                        #print x
                         row_.append(None)
                     x += 1
                 if len(row_) > 0:
@@ -274,18 +277,20 @@ class Map(object):
             y += 2
         return True
 
-    def symbol_must_be_room(self, symbol, xy, allow_void=False):
+    def symbol_must_be_room(self, symbol, xy, allow_void=False, notice=True):
         """docstring for symbol_must_be_room"""
         x, y = xy
         if symbol != self.SYMBOL_ROOM and not allow_void:
-            print "Invalid grid, block(%s, %s) '%s' must be '%s'." % (
-                x, y, symbol, self.SYMBOL_ROOM
-            )
+            if notice:
+                print "Invalid grid, block(%s, %s) '%s' must be '%s'." % (
+                    x, y, symbol, self.SYMBOL_ROOM
+                )
             return False
         if symbol != self.SYMBOL_ROOM and symbol != self.SYMBOL_VOID and allow_void:
-            print "Invalid grid, block(%s, %s) '%s' must be '%s' or '%s'." % (
-                x, y, symbol, self.SYMBOL_ROOM, self.SYMBOL_VOID
-            )
+            if notice:
+                print "Invalid grid, block(%s, %s) '%s' must be '%s' or '%s'." % (
+                    x, y, symbol, self.SYMBOL_ROOM, self.SYMBOL_VOID
+                )
             return False
         return True
 
@@ -309,19 +314,38 @@ class Map(object):
             #. 1, 3, 5, 7 ... must be path in x
             return self.symbol_must_be_path(symbol, xy)
 
+    def symbol_row_rule_x(self, row, y):
+        """docstring for symbol_row_rule_x"""
+        row = [symbol for symbol in row if symbol != self.SYMBOL_VOID]
+        #print 'row:', row
+        if not self.symbol_must_be_room(row[0], (0,y), notice=False) or \
+           not self.symbol_must_be_room(row[len(row)-1], (len(row)-1,y), notice=False):
+            print "Invalid grid, first/last symbol of row%s must be '%s'" % (
+                y, self.SYMBOL_ROOM
+            )
+            return False
+        return True
+
     def grid_okay(self, symbol_grid):
         """docstring for grid_okay"""
         y=0
         for row in symbol_grid:
             x = 0
+            #. check row
+            if y % 2 ==0:
+                if not self.symbol_row_rule_x(row, y):
+                    return False
+            #. check symbol
             for block in row:
                 #. 0, 2, 4, 6 ... must be room or path in y
                 if y % 2 == 0:
                     # first and last block must be room in x
-                    if x == 0 or x == len(row) - 1:
-                        pass
-                        #if not self.symbol_must_be_room(block, (x,y)):
-                        #    return False
+                    #if x == 0:
+                    #    if not self.symbol_must_be_room(block, (x,y), allow_void=True):
+                    #        return False
+                    #if x == len(row) - 1:
+                    #    if not self.symbol_must_be_room(block, (x,y)):
+                    #        return False
                     if not self.symbol_rule_x(block, (x,y)):
                         return False
                 # 1, 3, 5, 7 ... must be path in y
@@ -338,7 +362,7 @@ class Map(object):
         for xy in paths:
             if xy not in coordinates:
                 # need log here..
-                print "invalid path %s" % (str(xy))
+                print "invalid path %s, please check your map data." % (str(xy))
                 return False
         return True
 
@@ -347,14 +371,13 @@ class Map(object):
         #, create gird with coordinates and exits
         if self.grid_okay(self.make_symbol_grid(map_data)):
             symbol_grid = self.make_symbol_grid(map_data, replace_room_with_id=True)
-            #grid = self.make_grid(map_data)
             id_grid = self.make_id_grid(map_data)
             symbol_grid = self.make_exits(id_grid, symbol_grid)
-            print symbol_grid
+            #print symbol_grid
             grid = self.purge_symbol_from_grid(symbol_grid)
-            print grid
+            #print grid
             grid, coordinates = self.make_coordinates(grid)
-            print grid
+            #print grid
             print coordinates
             #. create paths
             grid, paths = self.make_paths(grid)
