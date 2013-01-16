@@ -12,7 +12,8 @@ class Soul(object):
         self.password = None
         #. status
         self.nickname = None
-        self.location = (0, 0)
+        self.xy = (1, 0)
+        self.map_ = 'void'
         self.skills = None
         self.spells = None
         self.race = None

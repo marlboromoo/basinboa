@@ -24,17 +24,25 @@ class Map(object):
     def __init__(self, name, rooms, mobs=[]):
         super(Map, self).__init__()
         self.name = name
-        self.rooms = rooms
         self.mobs = mobs
+        self.init_rooms(rooms)
 
     def __repr__(self):
         return "Map(%s) - %s rooms/%s mobs" % (
             str(self.name), str(len(self.rooms)), str(len(self.mobs)))
-        
+
+    def init_rooms(self, rooms):
+        """docstring for init_rooms"""
+        self.rooms = {}
+        for room in rooms:
+            self.rooms[room.xy] = room
+
+    def get_room(self, xy):
+        """docstring for get_room"""
+        return self.rooms[xy] if self.rooms.has_key(xy) else None
 
 class Maps(object):
     """docstring for Maps"""
-    MAP_DIR = '../data/map'
     MAP_DATA_EXTENSION = 'map'
     MAP_CONFIG_EXTENSION= 'yml'
     SYMBOL_ROOM = '*'
@@ -48,13 +56,14 @@ class Maps(object):
     EAST = 'e'
     WEST = 'w'
 
-    def __init__(self):
+    def __init__(self, map_dir):
         super(Maps, self).__init__()
-        self.maps = []
+        self.map_dir = map_dir
+        self.maps = {}
 
     def list(self):
         """return list of *.map"""
-        maps = os.listdir(self.MAP_DIR)
+        maps = os.listdir(self.map_dir)
         leggle_maps = []
         for map_ in maps:
             if map_.split('.')[1] == self.MAP_DATA_EXTENSION:
@@ -63,8 +72,8 @@ class Maps(object):
 
     def load(self, map_name):
         """load map by name"""
-        config_path = os.path.join(self.MAP_DIR, "%s.%s" % (map_name, self.MAP_CONFIG_EXTENSION))
-        data_path = os.path.join(self.MAP_DIR, "%s.%s" % (map_name, self.MAP_DATA_EXTENSION))
+        config_path = os.path.join(self.map_dir, "%s.%s" % (map_name, self.MAP_CONFIG_EXTENSION))
+        data_path = os.path.join(self.map_dir, "%s.%s" % (map_name, self.MAP_DATA_EXTENSION))
         print config_path, data_path
         if all([os.path.exists(config_path), os.path.exists(data_path)]):
             #. load data
@@ -75,11 +84,12 @@ class Maps(object):
             #. load config
             with open(config_path, 'r') as f:
                 map_config = yaml.load(f, Loader=yaml.Loader)
+            #. init room data
+            texts = [room['texts'] for room in map_config['rooms']]
+            self.inject_rooms_texts(rooms, texts)
             #. create Map() object
-            self.maps.append(
-                Map(name=map_config['name'], 
-                    rooms=rooms,
-                   ))
+            self.maps[map_config['name']] = Map(
+                name=map_config['name'], rooms=rooms)
 
     def load_all(self):
         """docstring for load_all"""
@@ -396,10 +406,25 @@ class Maps(object):
                 return rooms
         return None
 
+    def inject_rooms_texts(self, rooms, texts):
+        """docstring for inject_rooms_texts"""
+        i = 0
+        for room in rooms:
+            room.texts = texts[0]
+            #print room.texts
+            i += 1
+
+    def get_map(self, map_name):
+        """docstring for get_map"""
+        return self.maps[map_name] if self.maps.has_key(map_name) else None
+
 if __name__ == '__main__':
-    maps = Maps()
+    maps = Maps('../data/map')
     maps.load_all()
     print maps.maps
+    void = maps.get_map('void')
+    print void.get_room((0,0))
+    print void.get_room((1,0))
         
         
 

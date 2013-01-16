@@ -11,9 +11,10 @@ class System(object):
     SERVER_RUN = True
     IDLE_TIMEOUT = 300
 
-    def __init__(self):
+    def __init__(self, maps):
         super(System, self).__init__()
         self.clients = []
+        self.maps = maps
         
     def inject_client(self, client):
         """docstring for inject_client"""
@@ -117,7 +118,8 @@ class System(object):
             self.shutdown()
         #. other commands
         else:
-            command(client, self.clients, inputs)
+            if len(cmd) > 0:
+                command(client, self.clients, inputs, self.maps)
     
     def broadcast(self, msg):
         """
