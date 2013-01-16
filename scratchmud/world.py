@@ -5,6 +5,22 @@ world
 import os
 import yaml
 
+def north_xy(x, y):
+    """docstring for north_xy"""
+    return (x, y-1)
+
+def south_xy(x, y):
+    """docstring for south_xy"""
+    return (x, y+1)
+
+def west_xy(x, y):
+    """docstring for west_xy"""
+    return (x-1, y)
+
+def east_xy(x, y):
+    """docstring for east_xy"""
+    return (x+1, y)
+
 class Room(object):
     """docstring for Room"""
     def __init__(self, id_, xy, exits, paths):

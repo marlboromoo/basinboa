@@ -2,11 +2,12 @@
 """
 commands !
 """
+from world import north_xy, south_xy, west_xy, east_xy
 
 class Command(object):
     """docstring for Command"""
 
-    CMDS = [ 'chat', 'quit', 'look' ]
+    CMDS = [ 'chat', 'quit', 'look', 'north', 'south', 'west', 'east']
 
     def __init__(self, client, clients, inputs, maps):
         super(Command, self).__init__()
@@ -15,7 +16,6 @@ class Command(object):
         self.inputs = inputs
         self.maps = maps
         self.process_inputs(inputs)
-        self.maps = maps
 
     def cmd_exist(self, cmd):
         """docstring for check_cmd"""
@@ -47,11 +47,82 @@ class Command(object):
             else:
                 guest.send('You say: %s\n' % msg)
 
-    def look(self, args):
-        """docstring for look"""
+    def locate_user_room(self):
+        """docstring for locate_user_room"""
         map_ = self.client.soul.map_
         xy = self.client.soul.xy
-        self.client.send('%s\n' % (self.maps.get_map(map_).get_room(xy).texts))
+        return self.maps.get_map(map_).get_room(xy)
+
+    def look(self, args):
+        """docstring for look"""
+        room = self.locate_user_room()
+        self.client.send('%s\n' % (room.texts))
+        self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
+
+    def north(self, args):
+        """docstring for north"""
+        room = self.locate_user_room()
+        soul = self.client.soul
+        x, y = soul.xy
+        if 'n' in room.exits:
+            dst_xy = north_xy(x, y)
+            if dst_xy in room.paths:
+                soul.xy = dst_xy
+                self.client.send('You go to north !\n')
+        else:
+            self.client.send('Huh?\n')
+
+    def go(self, symbol, function, message):
+        """docstring for go"""
+        room = self.locate_user_room()
+        soul = self.client.soul
+        x, y = soul.xy
+        if symbol in room.exits:
+            dst_xy = function(x, y)
+            if dst_xy in room.paths:
+                soul.xy = dst_xy
+                self.client.send('You go to %s !\n' % (message))
+        else:
+            self.client.send('Huh?\n')
+
+    def west(self, args):
+        """docstring for west"""
+        room = self.locate_user_room()
+        soul = self.client.soul
+        x, y = soul.xy
+        if 'w' in room.exits:
+            dst_xy = west_xy(x, y)
+            if dst_xy in room.paths:
+                soul.xy = dst_xy
+                self.client.send('You go to west !\n')
+        else:
+            self.client.send('Huh?\n')
+
+    def east(self, args):
+        """docstring for east"""
+        room = self.locate_user_room()
+        soul = self.client.soul
+        x, y = soul.xy
+        if 'e' in room.exits:
+            dst_xy = east_xy(x, y)
+            if dst_xy in room.paths:
+                soul.xy = dst_xy
+                self.client.send('You go to east !\n')
+        else:
+            self.client.send('Huh?\n')
+
+    def south(self, args):
+        """docstring for south"""
+        room = self.locate_user_room()
+        soul = self.client.soul
+        x, y = soul.xy
+        if 's' in room.exits:
+            dst_xy = south_xy(x, y)
+            if dst_xy in room.paths:
+                soul.xy = dst_xy
+                self.client.send('You go to south !\n')
+        else:
+            self.client.send('Huh?\n')
 
     def quit(self, args):
         """docstring for quit"""
