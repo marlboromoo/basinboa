@@ -55,31 +55,6 @@ class Map(object):
                 self.make_map(map_data)
                 print ''.join(map_data)
 
-    def make_grid(self, map_data, with_id=True, with_symbol=False):
-        """create grid from map file"""
-        grid = []
-        id_ = 0
-        #. grid
-        for line in map_data:
-            row = []
-            for symbol in line:
-                block = {}
-                if symbol == self.SYMBOL_ROOM:
-                    block['id'] = id_
-                    id_ += 1
-                    row.append(block) if with_id else row.append(symbol)
-                #if symbol == self.SYMBOL_VOID:
-                #    row.append(None)
-                if symbol in self.SYMBOLS and symbol != self.SYMBOL_ROOM and with_symbol:
-                    row.append(symbol)
-            #. check row is leggle
-            if len(row) > 0:
-                grid.append(row)
-        #. debug
-        for row in grid:
-            print row
-        return grid
-
     def make_symbol_grid(self, map_data, replace_room_with_id=False):
         """docstring for make_symbol_grid"""
         grid = []
@@ -339,13 +314,6 @@ class Map(object):
             for block in row:
                 #. 0, 2, 4, 6 ... must be room or path in y
                 if y % 2 == 0:
-                    # first and last block must be room in x
-                    #if x == 0:
-                    #    if not self.symbol_must_be_room(block, (x,y), allow_void=True):
-                    #        return False
-                    #if x == len(row) - 1:
-                    #    if not self.symbol_must_be_room(block, (x,y)):
-                    #        return False
                     if not self.symbol_rule_x(block, (x,y)):
                         return False
                 # 1, 3, 5, 7 ... must be path in y
