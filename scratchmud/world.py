@@ -99,10 +99,6 @@ class WorldCreater(object):
     SYMBOL_VOID = ' '
     SYMBOL_PATHS = [SYMBOL_WE, SYMBOL_NS]
     SYMBOLS = [SYMBOL_WE, SYMBOL_NS, SYMBOL_VOID, SYMBOL_ROOM]
-    NORTH = 'n'
-    SOUTH = 's'
-    EAST = 'e'
-    WEST = 'w'
 
     def __init__(self, map_dir):
         super(WorldCreater, self).__init__()
@@ -242,30 +238,30 @@ class WorldCreater(object):
                     if index == 0:
                         #. leftmost block
                         if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.EAST)
+                            symbol_grid[y][index]['exits'].append(EAST)
                     elif index == len(symbol_grid[y]) - 1:
                         #. rightmost block
                         if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.WEST)
+                            symbol_grid[y][index]['exits'].append(WEST)
                     else:
                         if symbol_grid[y][index-1] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.WEST)
+                            symbol_grid[y][index]['exits'].append(WEST)
                         if symbol_grid[y][index+1] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.EAST)
+                            symbol_grid[y][index]['exits'].append(EAST)
                     #. process y ..
                     if y == 0:
                         #. highest block
                         if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.SOUTH)
+                            symbol_grid[y][index]['exits'].append(SOUTH)
                     elif y == len(symbol_grid) - 1:
                         #. lowest block
                         if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.NORTH)
+                            symbol_grid[y][index]['exits'].append(NORTH)
                     else:
                         if symbol_grid[y+1][index] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.SOUTH)
+                            symbol_grid[y][index]['exits'].append(SOUTH)
                         if symbol_grid[y-1][index] in self.SYMBOL_PATHS:
-                            symbol_grid[y][index]['exits'].append(self.NORTH)
+                            symbol_grid[y][index]['exits'].append(NORTH)
                 except Exception:
                     pass
                 x += 1
@@ -294,22 +290,6 @@ class WorldCreater(object):
             y += 1
         return grid
 
-    def north_xy(self, x, y):
-        """docstring for north_xy"""
-        return (x, y-1)
-
-    def south_xy(self, x, y):
-        """docstring for south_xy"""
-        return (x, y+1)
-
-    def west_xy(self, x, y):
-        """docstring for west_xy"""
-        return (x-1, y)
-
-    def east_xy(self, x, y):
-        """docstring for east_xy"""
-        return (x+1, y)
-
     def make_paths(self, grid):
         """create paths in grid"""
         paths = []
@@ -318,18 +298,18 @@ class WorldCreater(object):
                 block['paths'] = []
                 x, y = block['xy']
                 for exit in block['exits']:
-                    if exit == self.EAST:
-                        block['paths'].append(self.east_xy(x,y))
-                        paths.append(self.east_xy(x,y))
-                    if exit == self.WEST:
-                        block['paths'].append(self.west_xy(x,y))
-                        paths.append(self.west_xy(x,y))
-                    if exit == self.NORTH:
-                        block['paths'].append(self.north_xy(x,y))
-                        paths.append(self.north_xy(x,y))
-                    if exit == self.SOUTH:
-                        block['paths'].append(self.south_xy(x,y))
-                        paths.append(self.south_xy(x,y))
+                    if exit == EAST:
+                        block['paths'].append(east_xy(x,y))
+                        paths.append(east_xy(x,y))
+                    if exit == WEST:
+                        block['paths'].append(west_xy(x,y))
+                        paths.append(west_xy(x,y))
+                    if exit == NORTH:
+                        block['paths'].append(north_xy(x,y))
+                        paths.append(north_xy(x,y))
+                    if exit == SOUTH:
+                        block['paths'].append(south_xy(x,y))
+                        paths.append(south_xy(x,y))
         return grid, paths
 
     def _grid_okay(self, grid):
