@@ -444,7 +444,7 @@ class WorldCreater(object):
         """docstring for inject_rooms_texts"""
         i = 0
         for room in rooms:
-            room.texts = texts[0]
+            room.texts = texts[i]
             #print room.texts
             i += 1
 
