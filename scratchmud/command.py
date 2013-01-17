@@ -17,12 +17,12 @@ class Command(object):
         's' : 'south',
     }
 
-    def __init__(self, client, clients, inputs, maps):
+    def __init__(self, client, clients, inputs, world):
         super(Command, self).__init__()
         self.client = client
         self.clientS = clients
         self.inputs = inputs
-        self.maps_ = maps
+        self.world = world
         self.process_inputs(inputs)
 
     def alias_2_cmd(self, cmd):
@@ -76,11 +76,11 @@ class Command(object):
         """docstring for locate_user_room"""
         map_ = self.client.soul.map_
         xy = self.client.soul.xy
-        return self.maps_.get_map(map_).get_room(xy)
+        return self.world.get_map(map_).get_room(xy)
 
     def locate_user_map(self):
         """docstring for locate_user_map"""
-        return self.maps_.get_map(self.client.soul.map_)
+        return self.world.get_map(self.client.soul.map_)
 
     def look(self, args):
         """docstring for look"""
@@ -114,7 +114,7 @@ class Command(object):
             x, y = int(x), int(y)
         except Exception:
             return self.invalid_args()
-        map_ = self.maps_.get_map(map_)
+        map_ = self.world.get_map(map_)
         if map_:
             if map_.get_room((x,y)):
                 self.client.soul.xy = (x,y)
@@ -134,7 +134,7 @@ class Command(object):
 
     def maps(self, args):
         """docstring for maps"""
-        maps = self.maps_.get_maps()
+        maps = self.world.get_maps()
         for map_ in maps:
             self.client.send("%s\n" % repr(map_))
 

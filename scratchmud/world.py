@@ -70,8 +70,27 @@ class Map(object):
         """docstring for get_name"""
         return self.name
 
-class Maps(object):
-    """docstring for Maps"""
+class World(object):
+    """docstring for World"""
+    def __init__(self):
+        super(World, self).__init__()
+        self.maps = {}
+
+    def add_map(self, map_):
+        """docstring for add_map"""
+        self.maps[map_.get_name()] = map_
+
+    def get_map(self, map_name):
+        """docstring for get_map"""
+        return self.maps[map_name] if self.maps.has_key(map_name) else None
+
+    def get_maps(self):
+        """docstring for get_maps"""
+        return self.maps.values()
+        
+
+class WorldCreater(object):
+    """docstring for WorldCreater"""
     MAP_DATA_EXTENSION = 'map'
     MAP_CONFIG_EXTENSION= 'yml'
     SYMBOL_ROOM = '*'
@@ -86,9 +105,9 @@ class Maps(object):
     WEST = 'w'
 
     def __init__(self, map_dir):
-        super(Maps, self).__init__()
+        super(WorldCreater, self).__init__()
         self.map_dir = map_dir
-        self.maps = {}
+        self.world = World()
 
     def list(self):
         """return list of *.map"""
@@ -103,13 +122,13 @@ class Maps(object):
         """load map by name"""
         config_path = os.path.join(self.map_dir, "%s.%s" % (map_name, self.MAP_CONFIG_EXTENSION))
         data_path = os.path.join(self.map_dir, "%s.%s" % (map_name, self.MAP_DATA_EXTENSION))
-        print config_path, data_path
+        #print config_path, data_path
         if all([os.path.exists(config_path), os.path.exists(data_path)]):
             #. load data
             with open(data_path, 'r') as f:
                 map_data = f.readlines()
                 rooms = self.make_rooms(map_data)
-                print ''.join(map_data)
+                #print ''.join(map_data)
             #. load config
             with open(config_path, 'r') as f:
                 map_config = yaml.load(f, Loader=yaml.Loader)
@@ -118,17 +137,20 @@ class Maps(object):
                 texts = [room['texts'] for room in map_config['rooms']]
                 self.inject_rooms_texts(rooms, texts)
                 #. create Map() object
-                self.maps[map_config['name']] = Map(
-                    name=map_config['name'], rooms=rooms)
+                self.world.add_map(Map(name=map_config['name'], rooms=rooms))
             else:
                 print "Map %s process error! " % (map_name)
 
     def load_all(self):
         """docstring for load_all"""
         maps = self.list()
-        print maps
+        #print maps
         for map_ in maps:
             self.load(map_)
+
+    def get(self):
+        """docstring for get"""
+        return self.world
 
     def make_symbol_grid(self, map_data, replace_room_with_id=False):
         """docstring for make_symbol_grid"""
@@ -421,7 +443,7 @@ class Maps(object):
             #print grid
             grid, coordinates = self.make_coordinates(grid)
             #print grid
-            print coordinates
+            #print coordinates
             #. create paths
             grid, paths = self.make_paths(grid)
             #print coordinates
@@ -434,7 +456,7 @@ class Maps(object):
                 for row in grid:
                     for block in [block for block in row if block]:
                         rooms.append(Room(block['id'], block['xy'], block['exits'], block['paths']))
-                print rooms
+                #print rooms
                 return rooms
         return None
 
@@ -446,19 +468,12 @@ class Maps(object):
             #print room.texts
             i += 1
 
-    def get_map(self, map_name):
-        """docstring for get_map"""
-        return self.maps[map_name] if self.maps.has_key(map_name) else None
-
-    def get_maps(self):
-        """docstring for get_maps"""
-        return self.maps.values()
-
 if __name__ == '__main__':
-    maps = Maps('../data/map')
-    maps.load_all()
-    print maps.maps
-    void = maps.get_map('void')
+    wc = WorldCreater('../data/map')
+    wc.load_all()
+    world = wc.get()
+    print world.get_maps()
+    void = world.get_map('void')
     print void.get_room((0,0))
     print void.get_room((1,0))
         

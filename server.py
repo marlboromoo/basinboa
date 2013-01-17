@@ -7,7 +7,7 @@ import sys
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from scratchmud.system import System
-from scratchmud.world import Maps
+from scratchmud.world import WorldCreater
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -18,15 +18,16 @@ ASCII_ART = '''
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
-maps = Maps('data/map')
-maps.load_all()
+wc = WorldCreater('data/map')
+wc.load_all()
+world = wc.get()
 
 #------------------------------------------------------------------------------
 #       Main
 #------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    system = System(maps=maps)
+    system = System(world=world)
     telnet_server = TelnetServer(
         port=7777,
         address='',
@@ -35,7 +36,7 @@ if __name__ == '__main__':
         timeout = .05
         )
     print(ASCII_ART)
-    print maps.maps
+    print world.get_maps()
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)
 
