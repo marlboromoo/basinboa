@@ -5,6 +5,11 @@ world
 import os
 import yaml
 
+NORTH = 'n'
+SOUTH = 's'
+EAST = 'e'
+WEST = 'w'
+
 def north_xy(x, y):
     """docstring for north_xy"""
     return (x, y-1)
