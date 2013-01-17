@@ -8,6 +8,13 @@ class Command(object):
     """docstring for Command"""
 
     CMDS = [ 'chat', 'quit', 'look', 'north', 'south', 'west', 'east']
+    CMDS_ALIAS = {
+        'l' : 'look',
+        'n' : 'north',
+        'w' : 'west',
+        'e' : 'east',
+        's' : 'south',
+    }
 
     def __init__(self, client, clients, inputs, maps):
         super(Command, self).__init__()
@@ -17,9 +24,22 @@ class Command(object):
         self.maps = maps
         self.process_inputs(inputs)
 
+    def alias_2_cmd(self, cmd):
+        """docstring for alias_2_cmd"""
+        return self.CMDS_ALIAS[cmd] if self.CMDS_ALIAS.has_key(cmd) else None
+
     def cmd_exist(self, cmd):
         """docstring for check_cmd"""
         return True if cmd in self.CMDS else False
+
+    def fire_cmd(self, cmd, args):
+        """docstring for fire_cmd"""
+        if self.cmd_exist(cmd):
+            #. call the method by cmd name
+            getattr(self, cmd)(args)
+        else:
+            cmd = self.alias_2_cmd(cmd)
+            self.client.send('Huh?\n')
         
     def process_inputs(self, inputs):
         """docstring for self.process_inputs"""
@@ -28,11 +48,11 @@ class Command(object):
         cmd = inputs[0].lower()
         inputs.remove(cmd)
         args = inputs
-        if self.cmd_exist(cmd):
-            #. call the method by cmd name
-            getattr(self, cmd)(args)
+        if not self.cmd_exist(cmd):
+            cmd = self.alias_2_cmd(cmd)
+            self.fire_cmd(cmd, args)
         else:
-            self.client.send('Huh?\n')
+            self.fire_cmd(cmd, args)
 
     def chat(self, args):
         """
