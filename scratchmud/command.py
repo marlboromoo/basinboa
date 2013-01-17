@@ -7,7 +7,8 @@ from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 class Command(object):
     """docstring for Command"""
 
-    CMDS = [ 'chat', 'quit', 'look', 'north', 'south', 'west', 'east']
+    CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps',
+            'goto', 'north', 'south', 'west', 'east']
     CMDS_ALIAS = {
         'l' : 'look',
         'n' : 'north',
@@ -21,7 +22,7 @@ class Command(object):
         self.client = client
         self.clientS = clients
         self.inputs = inputs
-        self.maps = maps
+        self.maps_ = maps
         self.process_inputs(inputs)
 
     def alias_2_cmd(self, cmd):
@@ -54,6 +55,10 @@ class Command(object):
         else:
             self.fire_cmd(cmd, args)
 
+    def invalid_args(self):
+        """docstring for invalid_args"""
+        self.client.send("Invalid args !")
+
     def chat(self, args):
         """
         Echo whatever client types to everyone.
@@ -71,12 +76,16 @@ class Command(object):
         """docstring for locate_user_room"""
         map_ = self.client.soul.map_
         xy = self.client.soul.xy
-        return self.maps.get_map(map_).get_room(xy)
+        return self.maps_.get_map(map_).get_room(xy)
+
+    def locate_user_map(self):
+        """docstring for locate_user_map"""
+        return self.maps_.get_map(self.client.soul.map_)
 
     def look(self, args):
         """docstring for look"""
         room = self.locate_user_room()
-        self.client.send('%s\n' % (room.texts))
+        self.client.send('%s\n' % (room.texts.encode( "big5" )))
         self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
 
     def go(self, symbol, function, message):
@@ -92,25 +101,62 @@ class Command(object):
         else:
             self.client.send('Huh?\n')
 
+    def goto(self, args):
+        """docstring for goto"""
+        if len(args) == 3:
+            x, y, map_ = args
+        elif len(args) == 2:
+            x, y = args
+            map_ = self.client.soul.map_
+        else:
+            return self.invalid_args()
+        try:
+            x, y = int(x), int(y)
+        except Exception:
+            return self.invalid_args()
+        map_ = self.maps_.get_map(map_)
+        if map_:
+            if map_.get_room((x,y)):
+                self.client.soul.xy = (x,y)
+                self.client.soul.map_ = map_.get_name()
+                return self.look(None)
+            else:
+                self.client.send("You can't!")
+
+    def rooms(self, args):
+        """docstring for rooms"""
+        rooms = self.locate_user_map().get_rooms()
+        for room in rooms:
+            #. TODO use repr() instesd .
+            #msg = "Room%s%s - %s,  " % (
+            #    str(room.id_), str(room.xy), str('/'.join(room.exits)))
+            self.client.send("%s\n" % repr(room))
+
+    def maps(self, args):
+        """docstring for maps"""
+        maps = self.maps_.get_maps()
+        for map_ in maps:
+            self.client.send("%s\n" % repr(map_))
+
     def west(self, args):
         """docstring for west"""
         self.go(WEST, west_xy, 'west')
-        return self.look(args)
+        return self.look(None)
 
     def east(self, args):
         """docstring for east"""
         self.go(EAST, east_xy, 'east')
-        return self.look(args)
+        return self.look(None)
 
     def north(self, args):
         """docstring for north"""
         self.go(NORTH, north_xy, 'north')
-        return self.look(args)
+        return self.look(None)
 
     def south(self, args):
         """docstring for south"""
         self.go(SOUTH, south_xy, 'south')
-        return self.look(args)
+        return self.look(None)
 
     def quit(self, args):
         """docstring for quit"""

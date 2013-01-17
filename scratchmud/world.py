@@ -58,9 +58,17 @@ class Map(object):
         for room in rooms:
             self.rooms[room.xy] = room
 
+    def get_rooms(self):
+        """docstring for get_rooms"""
+        return self.rooms.values()
+
     def get_room(self, xy):
         """docstring for get_room"""
         return self.rooms[xy] if self.rooms.has_key(xy) else None
+
+    def get_name(self):
+        """docstring for get_name"""
+        return self.name
 
 class Maps(object):
     """docstring for Maps"""
@@ -105,12 +113,15 @@ class Maps(object):
             #. load config
             with open(config_path, 'r') as f:
                 map_config = yaml.load(f, Loader=yaml.Loader)
-            #. init room data
-            texts = [room['texts'] for room in map_config['rooms']]
-            self.inject_rooms_texts(rooms, texts)
-            #. create Map() object
-            self.maps[map_config['name']] = Map(
-                name=map_config['name'], rooms=rooms)
+            if rooms:
+                #. init room data
+                texts = [room['texts'] for room in map_config['rooms']]
+                self.inject_rooms_texts(rooms, texts)
+                #. create Map() object
+                self.maps[map_config['name']] = Map(
+                    name=map_config['name'], rooms=rooms)
+            else:
+                print "Map %s process error! " % (map_name)
 
     def load_all(self):
         """docstring for load_all"""
@@ -438,6 +449,10 @@ class Maps(object):
     def get_map(self, map_name):
         """docstring for get_map"""
         return self.maps[map_name] if self.maps.has_key(map_name) else None
+
+    def get_maps(self):
+        """docstring for get_maps"""
+        return self.maps.values()
 
 if __name__ == '__main__':
     maps = Maps('../data/map')
