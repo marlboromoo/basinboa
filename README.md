@@ -19,7 +19,7 @@ a mub base on miniboa.
 ## Install
 ```
 #. ubuntu 12.04
-sudo aptitude install python-pip libyaml-dev
+sudo aptitude install python-dev python-pip libyaml-dev -y
 sudo pip install pyyaml
 ```
 
