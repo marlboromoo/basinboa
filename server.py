@@ -7,7 +7,7 @@ import sys
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from scratchmud.system import System
-from scratchmud.world import WorldCreater
+from scratchmud.world import WorldLoader
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -18,7 +18,7 @@ ASCII_ART = '''
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
-wc = WorldCreater('data/map')
+wc = WorldLoader('data/map')
 wc.load_all()
 world = wc.get()
 

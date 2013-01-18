@@ -138,8 +138,8 @@ class World(object):
         return self.get_map(client.soul.map_name)
         
 
-class WorldCreater(object):
-    """docstring for WorldCreater"""
+class WorldLoader(object):
+    """docstring for WorldLoader"""
     MAP_DATA_EXTENSION = 'map'
     MAP_CONFIG_EXTENSION= 'yml'
     SYMBOL_ROOM = '*'
@@ -150,7 +150,7 @@ class WorldCreater(object):
     SYMBOLS = [SYMBOL_WE, SYMBOL_NS, SYMBOL_VOID, SYMBOL_ROOM]
 
     def __init__(self, map_dir):
-        super(WorldCreater, self).__init__()
+        super(WorldLoader, self).__init__()
         self.map_dir = map_dir
         self.world = World()
 
@@ -498,7 +498,7 @@ class WorldCreater(object):
             i += 1
 
 if __name__ == '__main__':
-    wc = WorldCreater('../data/map')
+    wc = WorldLoader('../data/map')
     wc.load_all()
     world = wc.get()
     print world.get_maps()
