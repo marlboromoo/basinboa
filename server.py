@@ -8,7 +8,7 @@ import sys
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from scratchmud import status
-from scratchmud.system import on_connect, on_disconnect, kick_idle, process_clients
+from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
 
@@ -46,8 +46,9 @@ if __name__ == '__main__':
 
     ## Server Loop
     while status.SERVER_RUN:
-        telnet_server.poll()               ## Send, Recv, and look for new connections
-        kick_idle()                 ## Check for idle clients
-        process_clients()           ## Check for client input
+        telnet_server.poll()
+        kick_idle()
+        kick_quit()
+        process_clients()
 
     print(">> Server shutdown.")

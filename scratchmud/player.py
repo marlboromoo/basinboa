@@ -127,11 +127,16 @@ class PlayerLoader(object):
             pass
             #print "Error! no such player !"
 
-    def save(self, player):
+    def save_from_object(self, player):
         """docstring for save"""
         path = os.path.join(self.data_dir, "%s.yaml" % player.username)
         with open(path, 'w') as f:
             f.write(yaml.dump(player.dump()))
+
+    def save(self, username):
+        """docstring for save"""
+        if self.players.has_key(username):
+            self.save_from_object(self.players[username])
 
     def get(self, username):
         """docstring for get"""
@@ -142,7 +147,7 @@ if __name__ == '__main__':
     username = 'admin'
     #player = Player(username)
     pf = PlayerLoader('../data/player')
-    #pf.save(player)
+    #pf.save(username)
     pf.load(username)
     player = pf.get(username)
     print player

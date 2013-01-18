@@ -101,9 +101,12 @@ def on_disconnect(client):
     Handles lost connections.
     """
     print "-- Lost connection to %s" % client.addrport()
+    #. save user data
+    if status.PLAYERS.has_key(client):
+        status.PLAYER_LOADER.save(status.PLAYERS[client].get_name())
     try:
-        status.UNLOGIN_CLIENTS.pop(client)
         status.CLIENTS.remove(client)
+        status.UNLOGIN_CLIENTS.pop(client)
         status.PLAYERS.pop(client)
     except Exception:
         pass
@@ -119,7 +122,13 @@ def kick_idle():
         if client.idle() > status.IDLE_TIMEOUT:
             print('-- Kicking idle lobby client from %s' % client.addrport())
             client.active = False
+            status.CLIENTS.remove(client)
 
+def kick_quit():
+    """docstring for kick_quit"""
+    for client in status.QUIT_CLIENTS:
+        print ('** Client %s quit success with username: %s.' % (client.addrport(), status.CLIENTS[client].get_name()) )
+        client.active = False
 
 def process_clients():
     """
@@ -128,6 +137,7 @@ def process_clients():
     """
     for client in status.CLIENTS:
         if not status.PLAYERS.has_key(client):
+            #. disconnect after sending message to client
             if status.UNLOGIN_CLIENTS[client]['retry'] >= 3:
                 disconnect(client)
             else:

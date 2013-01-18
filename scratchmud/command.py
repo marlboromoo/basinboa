@@ -158,6 +158,7 @@ class Command(object):
 
     def quit(self, args):
         """docstring for quit"""
-        self.client.active = False
+        self.client.send('\nSee you next time ! \n')
+        status.QUIT_CLIENTS.append(self.client)
 
 
