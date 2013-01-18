@@ -2,19 +2,17 @@
 """
 system libs
 """
+import status
 from player import Profile
 from command import Command as command
 
 class System(object):
     """docstring for System"""
 
-    SERVER_RUN = True
     IDLE_TIMEOUT = 300
 
-    def __init__(self, world):
+    def __init__(self):
         super(System, self).__init__()
-        self.clients = []
-        self.world = world
         
     def inject_client(self, client):
         """docstring for inject_client"""
@@ -60,7 +58,7 @@ class System(object):
             client.login = True if self.auth_client(client) else False
             if client.login:
                 client.send("\nWelcome !!! %s !!! \n"  % (client.profile.get_name()))
-                self.world.locate_client_map(client).add_client(client)
+                status.WORLD.locate_client_map(client).add_client(client)
             else:
                 client.password, client.password_process = None, None
         
@@ -71,7 +69,7 @@ class System(object):
         """
         print "++ Opened connection to %s" % client.addrport()
         self.broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
-        self.clients.append(client)
+        status.CLIENTS.append(client)
         client.send("Welcome to the strachmud, please login.\n")
         self.inject_client(client)
     
@@ -81,7 +79,7 @@ class System(object):
         Handles lost connections.
         """
         print "-- Lost connection to %s" % client.addrport()
-        self.clients.remove(client)
+        status.CLIENTS.remove(client)
         self.broadcast('%s leaves the world.\n' % client.addrport() )
     
     
@@ -90,7 +88,7 @@ class System(object):
         Looks for idle clients and disconnects them by setting active to False.
         """
         ## Who hasn't been typing?
-        for client in self.clients:
+        for client in status.CLIENTS:
             if client.idle() > self.IDLE_TIMEOUT:
                 print('-- Kicking idle lobby client from %s' % client.addrport())
                 client.active = False
@@ -101,7 +99,7 @@ class System(object):
         Check each client, if client.cmd_ready == True then there is a line of
         input available via client.get_command().
         """
-        for client in self.clients:
+        for client in status.CLIENTS:
             if not client.login:
                 self.login(client)
             if client.active and client.cmd_ready:
@@ -120,13 +118,13 @@ class System(object):
         #. other commands
         else:
             if len(cmd) > 0:
-                command(client, self.clients, inputs, self.world)
+                command(client, inputs)
     
     def broadcast(self, msg):
         """
         Send msg to every client.
         """
-        for client in self.clients:
+        for client in status.CLIENTS:
             if client.login:
                 client.send(msg)
 
@@ -136,5 +134,5 @@ class System(object):
 
     def shutdown(self):
         """Shutdown the server."""
-        self.SERVER_RUN = False
+        status.SERVER_RUN = False
     

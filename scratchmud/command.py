@@ -2,6 +2,8 @@
 """
 commands !
 """
+
+import status
 from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 
 class Command(object):
@@ -17,12 +19,10 @@ class Command(object):
         's' : 'south',
     }
 
-    def __init__(self, client, clients, inputs, world):
+    def __init__(self, client, inputs):
         super(Command, self).__init__()
         self.client = client
-        self.clientS = clients
         self.inputs = inputs
-        self.world = world
         self.process_inputs(inputs)
 
     def alias_2_cmd(self, cmd):
@@ -66,7 +66,7 @@ class Command(object):
         msg = ' '.join(args)
         print '%s says, "%s"' % (self.client.profile.get_name(), msg)
     
-        for guest in self.clientS:
+        for guest in status.CLIENTS:
             if guest != self.client:
                 guest.send('%s says: %s\n' % (self.client.profile.get_name(), msg))
             else:
@@ -74,13 +74,13 @@ class Command(object):
 
     def look(self, args):
         """docstring for look"""
-        room = self.world.locate_client_room(self.client)
+        room = status.WORLD.locate_client_room(self.client)
         self.client.send('%s\n' % (room.texts.encode( "big5" )))
         self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
 
     def go(self, symbol, function, message):
         """docstring for go"""
-        room = self.world.locate_client_room(self.client)
+        room = status.WORLD.locate_client_room(self.client)
         profile = self.client.profile
         x, y = profile.xy
         if symbol in room.exits:
@@ -90,7 +90,7 @@ class Command(object):
                 #. remove client form source room
                 room.remove_client(self.client)
                 #. add client in target room
-                self.world.locate_client_room(self.client).add_client(self.client)
+                status.WORLD.locate_client_room(self.client).add_client(self.client)
                 self.client.send('You go to %s !\n' % (message))
         else:
             self.client.send('Huh?\n')
@@ -108,11 +108,11 @@ class Command(object):
             x, y = int(x), int(y)
         except Exception:
             return self.invalid_args()
-        map_ = self.world.get_map(map_)
+        map_ = status.WORLD.get_map(map_)
         room =  map_.get_room((x,y))
         if map_:
             if room:
-                src_map = self.world.locate_client_map(self.client)
+                src_map = status.WORLD.locate_client_map(self.client)
                 src_map.remove_client(self.client)
                 self.client.profile.set_location((x,y), map_.get_name())
                 map_.add_client(self.client)
@@ -122,7 +122,7 @@ class Command(object):
 
     def rooms(self, args):
         """docstring for rooms"""
-        rooms = self.world.locate_client_map(self.client).get_rooms()
+        rooms = status.WORLD.locate_client_map(self.client).get_rooms()
         for room in rooms:
             #. TODO use repr() instesd .
             #msg = "Room%s%s - %s,  " % (
@@ -131,7 +131,7 @@ class Command(object):
 
     def maps(self, args):
         """docstring for maps"""
-        maps = self.world.get_maps()
+        maps = status.WORLD.get_maps()
         for map_ in maps:
             self.client.send("%s\n" % repr(map_))
 
