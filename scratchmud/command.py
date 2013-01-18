@@ -5,6 +5,7 @@ commands !
 
 import status
 from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+from encode import texts_encoder
 
 class Command(object):
     """docstring for Command"""
@@ -75,7 +76,7 @@ class Command(object):
     def look(self, args):
         """docstring for look"""
         room = status.WORLD.locate_client_room(self.client)
-        self.client.send('%s\n' % (room.texts.encode( "big5" )))
+        self.client.send('%s\n' % (texts_encoder(room.texts)))
         self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
 
     def go(self, symbol, function, message):
