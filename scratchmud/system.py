@@ -16,18 +16,31 @@ def login_queue(client):
         'retry' : 0,
     }
 
+def player_was_login(player):
+    """docstring for player_in_game"""
+    if player.username in [player.username for player in status.PLAYERS.values()]:
+        return True
+    return False
+
 def auth_client(client):
     """auth the client."""
     if client in status.UNLOGIN_CLIENTS:
         login_status = status.UNLOGIN_CLIENTS[client]
         status.PLAYER_LOADER.load(login_status['username'])
         player = status.PLAYER_LOADER.get(login_status['username'])
+        #. check password correct
         if player and player.get_password() == login_status['password']:
-            status.PLAYERS[client] = player
-            status.UNLOGIN_CLIENTS.pop(client)
-            broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
-            print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']) )
-            return True
+            #. check was login ?
+            print player_was_login(player)
+            if not player_was_login(player):
+                status.PLAYERS[client] = player
+                status.UNLOGIN_CLIENTS.pop(client)
+                broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
+                print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']) )
+                return True
+            else:
+                client.send('\nThis user was login !\n')
+                status.QUIT_CLIENTS.append(client)
         else:
             print ('!! Client %s login fail with username: %s.' % (client.addrport(), login_status['username']) )
             return False
@@ -127,7 +140,6 @@ def kick_idle():
 def kick_quit():
     """docstring for kick_quit"""
     for client in status.QUIT_CLIENTS:
-        print ('** Client %s quit success with username: %s.' % (client.addrport(), status.CLIENTS[client].get_name()) )
         client.active = False
 
 def process_clients():
