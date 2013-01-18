@@ -9,7 +9,7 @@ reference: http://code.google.com/p/bogboa/source/browse/trunk/mudlib/gvar.py
 #------------------------------------------------------------------------------
 
 SERVER_RUN = True
-IDLE_TIMEOUT = 10#300
+IDLE_TIMEOUT = 300
 CLIENTS = []
 QUIT_CLIENTS = []
 UNLOGIN_CLIENTS = {}
