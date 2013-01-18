@@ -10,6 +10,7 @@ from miniboa import TelnetServer
 from scratchmud import status
 from scratchmud.system import on_connect, on_disconnect, kick_idle, process_clients
 from scratchmud.world import WorldLoader
+from scratchmud.player import PlayerLoader
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -23,6 +24,8 @@ ASCII_ART = '''
 wc = WorldLoader('data/map')
 wc.load_all()
 status.WORLD = wc.get()
+status.PLAYER_LOADER = PlayerLoader('data/player')
+
 
 #------------------------------------------------------------------------------
 #       Main

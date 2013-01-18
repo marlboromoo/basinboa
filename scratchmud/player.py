@@ -10,7 +10,7 @@ ROLE_USER = 'user'
 
 class Player(object):
     """docstring for Player"""
-    def __init__(self, username):
+    def __init__(self, username=None):
         super(Player, self).__init__()
         self.login = None
         self.username = username
@@ -42,6 +42,14 @@ class Player(object):
         """docstring for get_name"""
         return self.username
 
+    def set_password(self, password):
+        """docstring for set_password"""
+        set.password = password
+
+    def get_password(self):
+        """docstring for get_password"""
+        return self.password
+
     def set_location(self, xy, map_name=None):
         """docstring for set_location"""
         map_name = map_name if map_name else self.map_name
@@ -56,8 +64,8 @@ class Player(object):
         """docstring for get_role"""
         return self.role
 
-    def package_attributes(self):
-        """docstring for package_attributes"""
+    def dump(self):
+        """docstring for dump"""
         return {
             'login' : self.login,
             'username' : self.username,
@@ -78,8 +86,8 @@ class Player(object):
             'status' : self.status,
         }
 
-    def unpackage_attributes(self, data):
-        """docstring for unpackage_attributes"""
+    def load(self, data):
+        """docstring for load"""
         self.login = data['login']
         self.username = data['username']
         self.password = data['password']
@@ -108,20 +116,22 @@ class PlayerLoader(object):
     def load(self, username):
         """docstring for load"""
         path = os.path.join(self.data_dir, "%s.yaml" % username)
-        print path
+        #print path
         try:
             with open(path, 'r') as f:
                 data = yaml.load(f, Loader=yaml.Loader)
                 player = Player(data['username'])
+                player.load(data)
                 self.players[username] = player
         except Exception:
-            print "Error! no such player !"
+            pass
+            #print "Error! no such player !"
 
     def save(self, player):
         """docstring for save"""
         path = os.path.join(self.data_dir, "%s.yaml" % player.username)
         with open(path, 'w') as f:
-            f.write(yaml.dump(player.package_attributes()))
+            f.write(yaml.dump(player.dump()))
 
     def get(self, username):
         """docstring for get"""
@@ -130,14 +140,15 @@ class PlayerLoader(object):
 
 if __name__ == '__main__':
     username = 'admin'
-    player = Player(username)
+    #player = Player(username)
     pf = PlayerLoader('../data/player')
-    pf.save(player)
+    #pf.save(player)
     pf.load(username)
     player = pf.get(username)
     print player
     player.set_role(ROLE_ADMIN)
     print player
+    print player.get_password()
 
         
 
