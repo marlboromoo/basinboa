@@ -82,13 +82,11 @@ class Command(object):
         """docstring for go"""
         room = status.WORLD.locate_client_room(self.client)
         player = status.PLAYERS[self.client]
-        print player
         x, y = player.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
                 player.set_location(dst_xy)
-                print player.xy
                 #. remove client form source room
                 room.remove_client(self.client)
                 #. add client in target room
