@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-global status of scratchmud
+Global status of scratchmud.
+reference: http://code.google.com/p/bogboa/source/browse/trunk/mudlib/gvar.py
 """
 
 #------------------------------------------------------------------------------
@@ -16,7 +17,7 @@ CLIENTS = []
 #------------------------------------------------------------------------------
 
 WORLD = None
-PLAYER = None
+PLAYERS = {}
 
 
 

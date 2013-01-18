@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-player profile
+player player
 """
 import yaml
 import os
@@ -8,11 +8,11 @@ import os
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
 
-class Profile(object):
-    """docstring for Profile"""
+class Player(object):
+    """docstring for Player"""
     def __init__(self, username):
-        super(Profile, self).__init__()
-        self.logn = None
+        super(Player, self).__init__()
+        self.login = None
         self.username = username
         self.password = None
         #. status
@@ -59,7 +59,7 @@ class Profile(object):
     def package_attributes(self):
         """docstring for package_attributes"""
         return {
-            'login' : self.logn,
+            'login' : self.login,
             'username' : self.username,
             'password' : self.password,
             #. status
@@ -80,7 +80,7 @@ class Profile(object):
 
     def unpackage_attributes(self, data):
         """docstring for unpackage_attributes"""
-        self.logn = data['login']
+        self.login = data['login']
         self.username = data['username']
         self.password = data['password']
         #. status
@@ -98,46 +98,46 @@ class Profile(object):
         self.mp = data['mp']
         self.status = data['status']
 
-class ProfileLoader(object):
-    """docstring for ProfileLoader"""
-    def __init__(self, profile_dir):
-        super(ProfileLoader, self).__init__()
-        self.profile_dir = profile_dir
-        self.profiles = {}
+class PlayerLoader(object):
+    """docstring for PlayerLoader"""
+    def __init__(self, data_dir):
+        super(PlayerLoader, self).__init__()
+        self.data_dir = data_dir
+        self.players = {}
 
     def load(self, username):
         """docstring for load"""
-        path = os.path.join(self.profile_dir, "%s.yaml" % username)
+        path = os.path.join(self.data_dir, "%s.yaml" % username)
         print path
         try:
             with open(path, 'r') as f:
                 data = yaml.load(f, Loader=yaml.Loader)
-                profile = Profile(data['username'])
-                self.profiles[username] = profile
+                player = Player(data['username'])
+                self.players[username] = player
         except Exception:
-            print "Error! no such profile !"
+            print "Error! no such player !"
 
-    def save(self, profile):
+    def save(self, player):
         """docstring for save"""
-        path = os.path.join(self.profile_dir, "%s.yaml" % profile.username)
+        path = os.path.join(self.data_dir, "%s.yaml" % player.username)
         with open(path, 'w') as f:
-            f.write(yaml.dump(profile.package_attributes()))
+            f.write(yaml.dump(player.package_attributes()))
 
     def get(self, username):
         """docstring for get"""
-        return self.profiles[username] if self.profiles.has_key(username) else None
+        return self.players[username] if self.players.has_key(username) else None
 
 
 if __name__ == '__main__':
     username = 'admin'
-    profile = Profile(username)
-    pf = ProfileLoader('../data/player')
-    pf.save(profile)
+    player = Player(username)
+    pf = PlayerLoader('../data/player')
+    pf.save(player)
     pf.load(username)
-    profile = pf.get(username)
-    print profile
-    profile.set_role(ROLE_ADMIN)
-    print profile
+    player = pf.get(username)
+    print player
+    player.set_role(ROLE_ADMIN)
+    print player
 
         
 

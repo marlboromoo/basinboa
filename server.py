@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Startup script for scratchmud.
+Start the server of scratchmud.
+reference: http://code.google.com/p/bogboa/source/browse/trunk/server_start.py
 """
 
 import sys

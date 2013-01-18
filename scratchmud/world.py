@@ -2,6 +2,7 @@
 """
 world
 """
+import status
 import os
 import yaml
 
@@ -45,12 +46,12 @@ class Room(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[client.profile.username] = client
+        self.clients[status.PLAYERS[client].username] = client
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(client.profile.username):
-            self.clients.pop(client.profile.username)
+        if self.clients.has_key(status.PLAYERS[client].username):
+            self.clients.pop(status.PLAYERS[client].username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -95,13 +96,13 @@ class Map(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[client.profile.username] = client
-        self.get_room(client.profile.xy).add_client(client)
+        self.clients[status.PLAYERS[client].username] = client
+        self.get_room(status.PLAYERS[client].xy).add_client(client)
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(client.profile.username):
-            self.clients.pop(client.profile.username)
+        if self.clients.has_key(status.PLAYERS[client].username):
+            self.clients.pop(status.PLAYERS[client].username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -131,11 +132,11 @@ class World(object):
 
     def locate_client_room(self, client):
         """docstring for locate_user_room"""
-        return self.get_map(client.profile.map_name).get_room(client.profile.xy)
+        return self.get_map(status.PLAYERS[client].map_name).get_room(status.PLAYERS[client].xy)
 
     def locate_client_map(self, client):
         """docstring for locate_user_map"""
-        return self.get_map(client.profile.map_name)
+        return self.get_map(status.PLAYERS[client].map_name)
         
 
 class WorldLoader(object):

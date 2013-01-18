@@ -3,7 +3,7 @@
 system libs
 """
 import status
-from player import Profile
+from player import Player
 from command import Command as command
 
 class System(object):
@@ -16,7 +16,6 @@ class System(object):
         
     def inject_client(self, client):
         """docstring for inject_client"""
-        client.profile = Profile(client)
         client.login = None
         client.username = None
         client.username_process = None
@@ -26,9 +25,9 @@ class System(object):
     def auth_client(self, client):
         """auth the client."""
         if client.username and client.password:
-            #. check process ..
-            client.profile = Profile(client.username)
-            self.broadcast('%s enter the world.\n' % client.profile.get_name() )
+            #. TODO check process ..
+            status.PLAYERS[client] = Player(client.username)
+            self.broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
             return True
     
     def login(self, client):
@@ -57,7 +56,7 @@ class System(object):
         if client.username and client.password:
             client.login = True if self.auth_client(client) else False
             if client.login:
-                client.send("\nWelcome !!! %s !!! \n"  % (client.profile.get_name()))
+                client.send("\nWelcome !!! %s !!! \n"  % (status.PLAYERS[client].get_name()))
                 status.WORLD.locate_client_map(client).add_client(client)
             else:
                 client.password, client.password_process = None, None
