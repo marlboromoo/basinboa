@@ -45,12 +45,12 @@ class Room(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[client.soul.username] = client
+        self.clients[client.profile.username] = client
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(client.soul.username):
-            self.clients.pop(client.soul.username)
+        if self.clients.has_key(client.profile.username):
+            self.clients.pop(client.profile.username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -95,13 +95,13 @@ class Map(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[client.soul.username] = client
-        self.get_room(client.soul.xy).add_client(client)
+        self.clients[client.profile.username] = client
+        self.get_room(client.profile.xy).add_client(client)
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(client.soul.username):
-            self.clients.pop(client.soul.username)
+        if self.clients.has_key(client.profile.username):
+            self.clients.pop(client.profile.username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -131,11 +131,11 @@ class World(object):
 
     def locate_client_room(self, client):
         """docstring for locate_user_room"""
-        return self.get_map(client.soul.map_name).get_room(client.soul.xy)
+        return self.get_map(client.profile.map_name).get_room(client.profile.xy)
 
     def locate_client_map(self, client):
         """docstring for locate_user_map"""
-        return self.get_map(client.soul.map_name)
+        return self.get_map(client.profile.map_name)
         
 
 class WorldLoader(object):

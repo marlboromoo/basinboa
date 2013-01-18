@@ -3,10 +3,10 @@
 player profile
 """
 
-class Soul(object):
-    """docstring for Soul"""
+class Profile(object):
+    """docstring for Profile"""
     def __init__(self, username):
-        super(Soul, self).__init__()
+        super(Profile, self).__init__()
         self.logn = None
         self.username = username
         self.password = None

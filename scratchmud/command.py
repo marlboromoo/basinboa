@@ -64,11 +64,11 @@ class Command(object):
         Echo whatever client types to everyone.
         """
         msg = ' '.join(args)
-        print '%s says, "%s"' % (self.client.soul.get_name(), msg)
+        print '%s says, "%s"' % (self.client.profile.get_name(), msg)
     
         for guest in self.clientS:
             if guest != self.client:
-                guest.send('%s says: %s\n' % (self.client.soul.get_name(), msg))
+                guest.send('%s says: %s\n' % (self.client.profile.get_name(), msg))
             else:
                 guest.send('You say: %s\n' % msg)
 
@@ -81,12 +81,12 @@ class Command(object):
     def go(self, symbol, function, message):
         """docstring for go"""
         room = self.world.locate_client_room(self.client)
-        soul = self.client.soul
-        x, y = soul.xy
+        profile = self.client.profile
+        x, y = profile.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
-                soul.set_location(dst_xy)
+                profile.set_location(dst_xy)
                 #. remove client form source room
                 room.remove_client(self.client)
                 #. add client in target room
@@ -101,7 +101,7 @@ class Command(object):
             x, y, map_ = args
         elif len(args) == 2:
             x, y = args
-            map_ = self.client.soul.map_name
+            map_ = self.client.profile.map_name
         else:
             return self.invalid_args()
         try:
@@ -114,7 +114,7 @@ class Command(object):
             if room:
                 src_map = self.world.locate_client_map(self.client)
                 src_map.remove_client(self.client)
-                self.client.soul.set_location((x,y), map_.get_name())
+                self.client.profile.set_location((x,y), map_.get_name())
                 map_.add_client(self.client)
                 return self.look(None)
             else:
