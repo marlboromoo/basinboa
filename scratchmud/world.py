@@ -35,22 +35,45 @@ class Room(object):
         self.exits = exits
         self.paths = paths
         self.texts = None
+        self.mobs = {}
+        self.clients = {}
 
     def __repr__(self):
-        return "Room%s%s - %s,  " % (
-            str(self.id_), str(self.xy), str('/'.join(self.exits)))
+        return "Room%s%s - %s, %s mobs/%s clients" % (
+            str(self.id_), str(self.xy), str('/'.join(self.exits)), 
+                                             str(len(self.mobs)), str(len(self.clients)))
+
+    def add_client(self, client):
+        """docstring for add_client"""
+        self.clients[client.soul.username] = client
+
+    def remove_client(self, client):
+        """docstring for add_client"""
+        if self.clients.has_key(client.soul.username):
+            self.clients.pop(client.soul.username)
+
+    def get_client(self, name):
+        """docstring for get_client"""
+        return self.clients[name] if self.clients.has_key(name) else None
+
+    def get_clients(self):
+        """docstring for get_clients"""
+        return self.clients.values()
+
+
 
 class Map(object):
     """docstring for Map"""
     def __init__(self, name, rooms, mobs=[]):
         super(Map, self).__init__()
         self.name = name
-        self.mobs = mobs
+        self.mobs = {}
         self.init_rooms(rooms)
+        self.clients = {}
 
     def __repr__(self):
-        return "Map(%s) - %s rooms/%s mobs" % (
-            str(self.name), str(len(self.rooms)), str(len(self.mobs)))
+        return "Map(%s) - %s rooms/%s mobs/%s clients" % (
+            str(self.name), str(len(self.rooms)), str(len(self.mobs)), str(len(self.clients)))
 
     def init_rooms(self, rooms):
         """docstring for init_rooms"""
@@ -70,6 +93,24 @@ class Map(object):
         """docstring for get_name"""
         return self.name
 
+    def add_client(self, client):
+        """docstring for add_client"""
+        self.clients[client.soul.username] = client
+        self.get_room(client.soul.xy).add_client(client)
+
+    def remove_client(self, client):
+        """docstring for add_client"""
+        if self.clients.has_key(client.soul.username):
+            self.clients.pop(client.soul.username)
+
+    def get_client(self, name):
+        """docstring for get_client"""
+        return self.clients[name] if self.clients.has_key(name) else None
+
+    def get_clients(self):
+        """docstring for get_clients"""
+        return self.clients.values()
+
 class World(object):
     """docstring for World"""
     def __init__(self):
@@ -87,6 +128,14 @@ class World(object):
     def get_maps(self):
         """docstring for get_maps"""
         return self.maps.values()
+
+    def locate_client_room(self, client):
+        """docstring for locate_user_room"""
+        return self.get_map(client.soul.map_name).get_room(client.soul.xy)
+
+    def locate_client_map(self, client):
+        """docstring for locate_user_map"""
+        return self.get_map(client.soul.map_name)
         
 
 class WorldCreater(object):

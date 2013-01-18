@@ -72,31 +72,25 @@ class Command(object):
             else:
                 guest.send('You say: %s\n' % msg)
 
-    def locate_user_room(self):
-        """docstring for locate_user_room"""
-        map_ = self.client.soul.map_
-        xy = self.client.soul.xy
-        return self.world.get_map(map_).get_room(xy)
-
-    def locate_user_map(self):
-        """docstring for locate_user_map"""
-        return self.world.get_map(self.client.soul.map_)
-
     def look(self, args):
         """docstring for look"""
-        room = self.locate_user_room()
+        room = self.world.locate_client_room(self.client)
         self.client.send('%s\n' % (room.texts.encode( "big5" )))
         self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
 
     def go(self, symbol, function, message):
         """docstring for go"""
-        room = self.locate_user_room()
+        room = self.world.locate_client_room(self.client)
         soul = self.client.soul
         x, y = soul.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
-                soul.xy = dst_xy
+                soul.set_location(dst_xy)
+                #. remove client form source room
+                room.remove_client(self.client)
+                #. add client in target room
+                self.world.locate_client_room(self.client).add_client(self.client)
                 self.client.send('You go to %s !\n' % (message))
         else:
             self.client.send('Huh?\n')
@@ -107,7 +101,7 @@ class Command(object):
             x, y, map_ = args
         elif len(args) == 2:
             x, y = args
-            map_ = self.client.soul.map_
+            map_ = self.client.soul.map_name
         else:
             return self.invalid_args()
         try:
@@ -115,17 +109,20 @@ class Command(object):
         except Exception:
             return self.invalid_args()
         map_ = self.world.get_map(map_)
+        room =  map_.get_room((x,y))
         if map_:
-            if map_.get_room((x,y)):
-                self.client.soul.xy = (x,y)
-                self.client.soul.map_ = map_.get_name()
+            if room:
+                src_map = self.world.locate_client_map(self.client)
+                src_map.remove_client(self.client)
+                self.client.soul.set_location((x,y), map_.get_name())
+                map_.add_client(self.client)
                 return self.look(None)
             else:
                 self.client.send("You can't!")
 
     def rooms(self, args):
         """docstring for rooms"""
-        rooms = self.locate_user_map().get_rooms()
+        rooms = self.world.locate_client_map(self.client).get_rooms()
         for room in rooms:
             #. TODO use repr() instesd .
             #msg = "Room%s%s - %s,  " % (

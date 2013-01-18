@@ -55,11 +55,12 @@ class System(object):
                 client.password = client.get_command()
                 client.password_mode_off()
                 return
-        #. auth 
+        #. auth, TODO: load player profile
         if client.username and client.password:
             client.login = True if self.auth_client(client) else False
             if client.login:
                 client.send("\nWelcome !!! %s !!! \n"  % (client.soul.get_name()))
+                self.world.locate_client_map(client).add_client(client)
             else:
                 client.password, client.password_process = None, None
         

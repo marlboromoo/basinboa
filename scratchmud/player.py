@@ -13,7 +13,7 @@ class Soul(object):
         #. status
         self.nickname = None
         self.xy = (1, 0)
-        self.map_ = 'void'
+        self.map_name = 'void'
         self.skills = None
         self.spells = None
         self.race = None
@@ -32,4 +32,11 @@ class Soul(object):
     def get_name(self):
         """docstring for get_name"""
         return self.username
+
+    def set_location(self, xy, map_name=None):
+        """docstring for set_location"""
+        map_name = map_name if map_name else self.map_name
+        self.xy = xy
+        self.map_name = map_name
+
         
