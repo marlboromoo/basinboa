@@ -76,7 +76,6 @@ def login(client):
         #. disconnect client if retry too many
         if login_status['retry'] >= 3: 
             client.send("\nRetry too many times, bye!\n")
-            disconnect(client)
             return 
         #. final login
         if login_status['login']:
@@ -102,9 +101,12 @@ def on_disconnect(client):
     Handles lost connections.
     """
     print "-- Lost connection to %s" % client.addrport()
-    status.CLIENTS.remove(client)
-    if status.PLAYERS.has_key(client):
+    try:
+        status.UNLOGIN_CLIENTS.pop(client)
+        status.CLIENTS.remove(client)
         status.PLAYERS.pop(client)
+    except Exception:
+        pass
     broadcast('%s leaves the world.\n' % client.addrport() )
 
 
@@ -126,7 +128,10 @@ def process_clients():
     """
     for client in status.CLIENTS:
         if not status.PLAYERS.has_key(client):
-            login(client)
+            if status.UNLOGIN_CLIENTS[client]['retry'] >= 3:
+                disconnect(client)
+            else:
+                login(client)
         if client in status.PLAYERS and client.active and client.cmd_ready:
             process_command(client)
 
