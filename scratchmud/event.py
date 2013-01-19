@@ -10,15 +10,14 @@ class Tick(object):
     def __init__(self, second):
         super(Tick, self).__init__()
         self.second = second
-        self.start_time = int(time.time())
         self.previous_time = None
         self.time = None
 
     def can_fire(self):
         """can we fire ?"""
         if not self.previous_time:
-            self.previous_time = int(time.time())
-        self.time = int(time.time())
+            self.previous_time = time.time()
+        self.time = time.time()
         if self.time - self.previous_time >= self.second:
             self.time, self.previous_time = None, None
             return True

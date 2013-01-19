@@ -11,6 +11,7 @@ from scratchmud import status
 from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
+from scratchmud.event import Tick, echo
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -25,6 +26,10 @@ wc = WorldLoader('data/map')
 wc.load_all()
 status.WORLD = wc.get()
 status.PLAYER_LOADER = PlayerLoader('data/player')
+tick_10 = Tick(10)
+tick_1 = Tick(1)
+tick_2 = Tick(2)
+tick_dot_1 = Tick(.1)
 
 
 #------------------------------------------------------------------------------
@@ -47,8 +52,9 @@ if __name__ == '__main__':
     ## Server Loop
     while status.SERVER_RUN:
         telnet_server.poll()
-        kick_idle()
-        kick_quit()
-        process_clients()
+        tick_2.fire(kick_idle)
+        tick_1.fire(kick_quit)
+        tick_dot_1.fire(process_clients)
+        tick_10.fire(echo, 'hellow tick 10!')
 
     print(">> Server shutdown.")
