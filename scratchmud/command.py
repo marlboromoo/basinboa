@@ -24,6 +24,7 @@ class Command(object):
     def __init__(self, client, inputs):
         super(Command, self).__init__()
         self.client = client
+        self.player = status.PLAYERS[client]
         self.inputs = inputs
         self.process_inputs(inputs)
 
@@ -66,11 +67,11 @@ class Command(object):
         Echo whatever client types to everyone.
         """
         msg = ' '.join(args)
-        print '%s says, "%s"' % (status.PLAYERS[self.client].get_name(), msg)
+        print '%s says, "%s"' % (self.player.get_name(), msg)
     
         for guest in status.CLIENTS:
             if guest != self.client:
-                guest.send('%s says: %s\n' % (status.PLAYERS[self.client].get_name(), msg))
+                guest.send('%s says: %s\n' % (self.player.get_name(), msg))
             else:
                 guest.send('You say: %s\n' % msg)
 
@@ -87,22 +88,21 @@ class Command(object):
     def go(self, symbol, function, message):
         """docstring for go"""
         room = status.WORLD.locate_client_room(self.client)
-        player = status.PLAYERS[self.client]
-        x, y = player.xy
+        x, y = self.player.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
                 #. message to all the players in room
-                client_message_to_room(self.client, '%s go to %s!\n' % (player.get_name(), message))
+                client_message_to_room(self.client, '%s go to %s!\n' % (self.player.get_name(), message))
                 #. move player to room
-                player.set_location(dst_xy)
+                self.player.set_location(dst_xy)
                 #. remove player form source room
                 room.remove_client(self.client)
                 #. add client in target room
                 status.WORLD.locate_client_room(self.client).add_client(self.client)
                 #. send message to all the players in target room
                 self.client.send('You go to %s !\n' % (message))
-                client_message_to_room(self.client, '%s come to here!\n' % (player.get_name()))
+                client_message_to_room(self.client, '%s come to here!\n' % (self.player.get_name()))
         else:
             self.client.send('Huh?\n')
 
@@ -112,7 +112,7 @@ class Command(object):
             x, y, map_ = args
         elif len(args) == 2:
             x, y = args
-            map_ = status.PLAYERS[self.client].map_name
+            map_ = self.player.map_name
         else:
             return self.invalid_args()
         try:
@@ -126,15 +126,15 @@ class Command(object):
                 src_map = status.WORLD.locate_client_map(self.client)
                 src_room = status.WORLD.locate_client_room(self.client)
                 #. send message notice all players in the room
-                client_message_to_room(self.client, "%s leave here.\n" % (status.PLAYERS[self.client].get_name()) )
+                client_message_to_room(self.client, "%s leave here.\n" % (self.player.get_name()) )
                 #. remove player in old place
                 src_map.remove_client(self.client)
                 src_room.remove_client(self.client)
                 #. move player to destation
-                status.PLAYERS[self.client].set_location((x,y), map_.get_name())
+                self.player.set_location((x,y), map_.get_name())
                 map_.add_client(self.client)
                 #. send message 
-                client_message_to_room(self.client, '%s come to here!\n' % (status.PLAYERS[self.client].get_name()))
+                client_message_to_room(self.client, '%s come to here!\n' % (self.player.get_name()))
                 return self.look(None)
             else:
                 self.client.send("You can't!")

@@ -31,7 +31,7 @@ def auth_client(client):
         #. check password correct
         if player and player.get_password() == login_status['password']:
             #. check was login ?
-            print player_was_login(player)
+            #print player_was_login(player)
             if not player_was_login(player):
                 status.PLAYERS[client] = player
                 status.UNLOGIN_CLIENTS.pop(client)
