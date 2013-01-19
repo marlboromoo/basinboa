@@ -6,6 +6,7 @@ commands !
 import status
 from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from encode import texts_encoder
+from message import *
 
 class Command(object):
     """docstring for Command"""
@@ -91,12 +92,17 @@ class Command(object):
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
+                #. message to all the players in room
+                client_message_to_room(self.client, '%s go to %s!\n' % (player.get_name(), message))
+                #. move player to room
                 player.set_location(dst_xy)
-                #. remove client form source room
+                #. remove player form source room
                 room.remove_client(self.client)
                 #. add client in target room
                 status.WORLD.locate_client_room(self.client).add_client(self.client)
+                #. send message to all the players in target room
                 self.client.send('You go to %s !\n' % (message))
+                client_message_to_room(self.client, '%s come to here!\n' % (player.get_name()))
         else:
             self.client.send('Huh?\n')
 
@@ -118,9 +124,17 @@ class Command(object):
         if map_:
             if room:
                 src_map = status.WORLD.locate_client_map(self.client)
+                src_room = status.WORLD.locate_client_room(self.client)
+                #. send message notice all players in the room
+                client_message_to_room(self.client, "%s leave here.\n" % (status.PLAYERS[self.client].get_name()) )
+                #. remove player in old place
                 src_map.remove_client(self.client)
+                src_room.remove_client(self.client)
+                #. move player to destation
                 status.PLAYERS[self.client].set_location((x,y), map_.get_name())
                 map_.add_client(self.client)
+                #. send message 
+                client_message_to_room(self.client, '%s come to here!\n' % (status.PLAYERS[self.client].get_name()))
                 return self.look(None)
             else:
                 self.client.send("You can't!")
