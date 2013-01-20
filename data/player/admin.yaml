@@ -1,7 +1,7 @@
 hp: 100
 job: null
 login: null
-map_name: chinese
+map_name: void
 mp: 100
 nickname: T.R.O.N
 password: 1qaz2wsx
@@ -12,4 +12,4 @@ skills: null
 spells: null
 status: null
 username: admin
-xy: !!python/tuple [0, 1]
+xy: !!python/tuple [1, 1]

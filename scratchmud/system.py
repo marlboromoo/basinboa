@@ -26,7 +26,7 @@ def on_disconnect(client):
     print "-- Lost connection to %s" % client.addrport()
     #. save user data
     if status.PLAYERS.has_key(client):
-        status.PLAYER_LOADER.save(status.PLAYERS[client].get_name())
+        status.PLAYER_LOADER.save(status.PLAYERS[client])
     try:
         status.CLIENTS.remove(client)
         status.UNLOGIN_CLIENTS.pop(client)

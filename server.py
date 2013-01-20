@@ -29,6 +29,7 @@ status.PLAYER_LOADER = PlayerLoader('data/player')
 tick_10 = Tick(10)
 tick_1 = Tick(1)
 tick_2 = Tick(2)
+quit_tick = Tick(.1)
 process_tick = Tick(.1)
 
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     while status.SERVER_RUN:
         telnet_server.poll()
         tick_2.fire(kick_idle)
-        tick_1.fire(kick_quit)
+        quit_tick.fire(kick_quit)
         process_tick.fire(process_clients)
         tick_10.fire(echo, 'helloe tick 10!')
 

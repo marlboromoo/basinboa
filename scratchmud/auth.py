@@ -27,7 +27,7 @@ def find_origin_client_and_player(player):
     """docstring for find_origin_client"""
     for client, player_ in status.PLAYERS.items():
         if player_.get_name() == player.get_name():
-            return client, player
+            return client, player_
     return None, None
 
 def auth_client(client):
@@ -38,16 +38,14 @@ def auth_client(client):
         player = status.PLAYER_LOADER.get(login_status['username'])
         #. check password correct
         if player and player.get_password() == login_status['password']:
-            #. check was login ?
+            #. check current in game?
             if player_was_login(player):
                 client.send('\nThis username was login, kick the user!\n')
                 origin_client, origin_player = find_origin_client_and_player(player)
-                origin_player = copy.deepcopy(origin_player) #. copy the player object, because the origin player object wiil be drop
+                player = copy.deepcopy(origin_player) #. copy the player object, because the origin player object wiil be drop
                 origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
                 status.QUIT_CLIENTS.append(origin_client) #. origin player object drop here
-                status.PLAYERS[client] = origin_player
-            else:
-                status.PLAYERS[client] = player
+            status.PLAYERS[client] = player
             status.UNLOGIN_CLIENTS.pop(client)
             broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
             print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']))
