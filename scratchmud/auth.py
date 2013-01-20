@@ -2,6 +2,7 @@
 """
 auth system
 """
+import copy
 import status
 from message import broadcast
 
@@ -22,6 +23,13 @@ def player_was_login(player):
         return True
     return False
 
+def find_origin_client_and_player(player):
+    """docstring for find_origin_client"""
+    for client, player_ in status.PLAYERS.items():
+        if player_.get_name() == player.get_name():
+            return client, player
+    return None, None
+
 def auth_client(client):
     """auth the client."""
     if client in status.UNLOGIN_CLIENTS:
@@ -31,16 +39,19 @@ def auth_client(client):
         #. check password correct
         if player and player.get_password() == login_status['password']:
             #. check was login ?
-            #print player_was_login(player)
-            if not player_was_login(player):
-                status.PLAYERS[client] = player
-                status.UNLOGIN_CLIENTS.pop(client)
-                broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
-                print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']) )
-                return True
+            if player_was_login(player):
+                client.send('\nThis username was login, kick the user!\n')
+                origin_client, origin_player = find_origin_client_and_player(player)
+                origin_player = copy.deepcopy(origin_player) #. copy the player object, because the origin player object wiil be drop
+                origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
+                status.QUIT_CLIENTS.append(origin_client) #. origin player object drop here
+                status.PLAYERS[client] = origin_player
             else:
-                client.send('\nThis user was login !\n')
-                status.QUIT_CLIENTS.append(client)
+                status.PLAYERS[client] = player
+            status.UNLOGIN_CLIENTS.pop(client)
+            broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
+            print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']))
+            return True
         else:
             print ('!! Client %s login fail with username: %s.' % (client.addrport(), login_status['username']) )
             return False

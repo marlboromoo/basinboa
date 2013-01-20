@@ -140,8 +140,7 @@ class PlayerLoader(object):
 
     def get(self, username):
         """docstring for get"""
-        return self.players[username] if self.players.has_key(username) else None
-
+        return self.players.pop(username) if self.players.has_key(username) else None
 
 if __name__ == '__main__':
     username = 'admin'

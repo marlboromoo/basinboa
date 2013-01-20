@@ -29,7 +29,7 @@ status.PLAYER_LOADER = PlayerLoader('data/player')
 tick_10 = Tick(10)
 tick_1 = Tick(1)
 tick_2 = Tick(2)
-tick_dot_1 = Tick(.1)
+process_tick = Tick(.1)
 
 
 #------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         telnet_server.poll()
         tick_2.fire(kick_idle)
         tick_1.fire(kick_quit)
-        tick_dot_1.fire(process_clients)
-        tick_10.fire(echo, 'hellow tick 10!')
+        process_tick.fire(process_clients)
+        tick_10.fire(echo, 'helloe tick 10!')
 
     print(">> Server shutdown.")
