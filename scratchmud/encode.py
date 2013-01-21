@@ -9,7 +9,7 @@ def texts_encoder(texts):
     try:
         texts_ = texts.encode(ENCODE)
     except Exception:
-        texts = text_filtering_encoder(texts)
+        texts_ = text_filtering_encoder(texts)
     return texts_
 
 def text_filtering_encoder(texts):

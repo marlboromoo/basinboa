@@ -6,12 +6,12 @@ commands !
 import status
 from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from encode import texts_encoder
-from message import *
+from message import broadcast, client_message_to_room, client_message_to_map
 
 class Command(object):
     """docstring for Command"""
 
-    CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps',
+    CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs',
             'goto', 'north', 'south', 'west', 'east']
     CMDS_ALIAS = {
         'l' : 'look',
@@ -84,11 +84,10 @@ class Command(object):
         for client in room.get_clients():
             if client != self.client:
                 player = status.PLAYERS[client]
-                self.client.send("%s(%s) in here.\n" % (str(player.nickname), str(player.username)))
+                self.client.send(texts_encoder("%s(%s) in here.\n" % (player.nickname, player.username)))
         #. mobs
         for mob in room.get_mobs():
-            print mob
-            self.client.send("%s(%s) in here.\n" % (str(mob.nickname), str(mob.mobname)))
+            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
 
     def go(self, symbol, function, message):
         """docstring for go"""
@@ -159,6 +158,13 @@ class Command(object):
         for map_ in maps:
             self.client.send("%s\n" % repr(map_))
 
+    def mobs(self, args):
+        """docstring for mobs"""
+        maps = status.WORLD.get_maps()
+        for map_ in maps:
+            for mob in map_.get_mobs():
+                self.client.send("%s\n" % repr(mob))
+
     def west(self, args):
         """docstring for west"""
         self.go(WEST, west_xy, 'west')
@@ -178,6 +184,11 @@ class Command(object):
         """docstring for south"""
         self.go(SOUTH, south_xy, 'south')
         return self.look(None)
+
+    def who(self, args):
+        """docstring for who"""
+        for player in status.PLAYERS.values():
+            self.client.send("%s\n" % repr(player))
 
     def quit(self, args):
         """docstring for quit"""

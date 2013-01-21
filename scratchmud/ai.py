@@ -31,8 +31,8 @@ class Mob(Uid):
         self.reborn(data)
 
     def __repr__(self):
-        return "Mob:%s(%s), skeleton:%s, xy:%s, map:%s, uuid:%s" % (
-            str(self.nickname), str(self.mobname), str(self.skeleton), 
+        return "Mob:%s, skeleton:%s, xy:%s, map:%s, uuid:%s" % (
+            str(self.mobname), str(self.skeleton), 
             str(self.xy), str(self.map_name), str(self.uuid))
 
     def reborn(self, data):

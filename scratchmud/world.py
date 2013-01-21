@@ -100,6 +100,10 @@ class Map(object):
             for mob in room.get_mobs():
                 self.mobs.append(mob)
 
+    def get_mobs(self):
+        """docstring for get_mobs"""
+        return self.mobs
+
     def get_rooms(self):
         """docstring for get_rooms"""
         return self.rooms.values()
@@ -521,6 +525,8 @@ class WorldLoader(object):
                     print mob_
                     mob_.mobname = mob.get('mobname') if mob.has_key('mobname') else mob_.mobname
                     mob_.nickname = mob.get('nickname') if mob.has_key('nickname') else mob_.nickname
+                    mob_.xy = room.xy
+                    mob_.map_name = map_config['name']
                     room.add_mob(mob_)
                 i += 1
 

@@ -6,7 +6,7 @@ rooms:
         - skeleton: dog
         - skeleton: dog
           mobname : graydog
-          nickname: gray dog
+          nickname: 灰色的狗
         - skeleton: cat
     - texts: 我可以吞下兩塊玻璃, 而不傷身體
       mobs:
