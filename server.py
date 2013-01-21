@@ -11,8 +11,8 @@ from scratchmud import status
 from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
-from scratchmud.event import Tick, echo
-from scratchmud.ai import MobLoader
+from scratchmud.event import Tick
+from scratchmud.ai import MobLoader, mob_walking
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -28,11 +28,11 @@ status.MOB_LOADER = MobLoader('data/mob')
 wc = WorldLoader('data/map')
 wc.load_all()
 status.WORLD = wc.get()
-tick_10 = Tick(10)
 tick_1 = Tick(1)
 tick_2 = Tick(2)
 quit_tick = Tick(.1)
 process_tick = Tick(.1)
+walk_tick = Tick(10)
 
 
 #------------------------------------------------------------------------------
@@ -58,6 +58,6 @@ if __name__ == '__main__':
         tick_2.fire(kick_idle)
         quit_tick.fire(kick_quit)
         process_tick.fire(process_clients)
-        tick_10.fire(echo, 'helloe tick 10!')
+        walk_tick.fire(mob_walking)
 
     print(">> Server shutdown.")

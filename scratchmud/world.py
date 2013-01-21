@@ -69,6 +69,11 @@ class Room(object):
         """docstring for get_mobs"""
         return self.mobs
 
+    def remove_mob(self, mob):
+        """docstring for add_client"""
+        if mob in self.mobs:
+            self.mobs.remove(mob)
+
     def remove_mobs(self):
         """docstring for remove_mobs"""
         self.mobs = []
@@ -104,6 +109,20 @@ class Map(object):
         """docstring for get_mobs"""
         return self.mobs
 
+    def add_mob(self, mob):
+        """add mob to map"""
+        #. add to map
+        self.mobs.append(mob)
+        #. add to room 
+        self.get_room(mob.xy).add_mob(mob)
+
+    def remove_mob(self, mob):
+        """remove mob from map"""
+        #. remove from map
+        self.mobs.remove(mob)
+        #. remove from room
+        self.get_room(mob.xy).remove_mob(mob)
+
     def get_rooms(self):
         """docstring for get_rooms"""
         return self.rooms.values()
@@ -117,14 +136,19 @@ class Map(object):
         return self.name
 
     def add_client(self, client):
-        """docstring for add_client"""
+        """add client objcet to map"""
+        #. add to map
         self.clients[status.PLAYERS[client].username] = client
+        #. add to room
         self.get_room(status.PLAYERS[client].xy).add_client(client)
 
     def remove_client(self, client):
-        """docstring for add_client"""
+        """remove client object from map"""
+        #. remove from map
         if self.clients.has_key(status.PLAYERS[client].username):
             self.clients.pop(status.PLAYERS[client].username)
+        #. remove from room
+        self.get_room(status.PLAYERS[client].xy).remove_client(client)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -153,12 +177,20 @@ class World(object):
         return self.maps.values()
 
     def locate_client_room(self, client):
-        """docstring for locate_user_room"""
+        """find room by client object"""
         return self.get_map(status.PLAYERS[client].map_name).get_room(status.PLAYERS[client].xy)
 
     def locate_client_map(self, client):
-        """docstring for locate_user_map"""
+        """find map by client object"""
         return self.get_map(status.PLAYERS[client].map_name)
+
+    def locate_mob_room(self, mob):
+        """find room by mob object"""
+        return self.get_map(mob.map_name).get_room(mob.xy)
+
+    def locate_mob_map(self, mob):
+        """find map by mob object"""
+        return self.get_map(mob.map_name)
         
 
 class WorldLoader(object):
@@ -520,15 +552,13 @@ class WorldLoader(object):
             mobs = map_config['rooms'][i]['mobs']
             if mobs:
                 for mob in mobs:
-                    print mob
                     mob_ = status.MOB_LOADER.get(mob.get('skeleton'))
-                    print mob_
                     mob_.mobname = mob.get('mobname') if mob.has_key('mobname') else mob_.mobname
                     mob_.nickname = mob.get('nickname') if mob.has_key('nickname') else mob_.nickname
                     mob_.xy = room.xy
                     mob_.map_name = map_config['name']
                     room.add_mob(mob_)
-                i += 1
+            i += 1
 
 if __name__ == '__main__':
     wc = WorldLoader('../data/map')

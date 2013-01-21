@@ -3,6 +3,10 @@
 robot !
 """
 import copy
+import random
+import status
+from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+from message import broadcast, mob_message_to_room, mob_message_to_map
 from uid import Uid
 from loader import YamlLoader
 
@@ -75,6 +79,53 @@ class Mob(Uid):
         self.mp = data['mp']
         self.status = data['status']
 
+    def go(self, symbol, function, message):
+        """docstring for go"""
+        room = status.WORLD.locate_mob_room(self)
+        x, y = self.xy
+        if symbol in room.exits:
+            dst_xy = function(x, y)
+            if dst_xy in room.paths:
+                #. message to all the players in room
+                mob_message_to_room(self, '%s go to %s!\n' % (self.mobname, message))
+                #. move mob to room
+                self.xy = dst_xy
+                #. remove mob from source room
+                room.remove_mob(self)
+                #. add mob to target room
+                status.WORLD.locate_mob_room(self).add_mob(self)
+                #. send message to all the players in target room
+                mob_message_to_room(self, '%s come to here!\n' % (self.mobname))
+
+    def go_west(self):
+        """docstring for west"""
+        self.go(WEST, west_xy, 'west')
+
+    def go_east(self):
+        """docstring for east"""
+        self.go(EAST, east_xy, 'east')
+
+    def go_north(self):
+        """docstring for north"""
+        self.go(NORTH, north_xy, 'north')
+
+    def go_south(self):
+        """docstring for south"""
+        self.go(SOUTH, south_xy, 'south')
+
+    def random_walk(self):
+        """random go to room exits"""
+        room = status.WORLD.locate_mob_room(self)
+        exit = random.choice(room.exits)
+        if exit == NORTH:
+            self.go_north()
+        if exit == SOUTH:
+            self.go_south()
+        if exit == WEST:
+            self.go_west()
+        if exit == EAST:
+            self.go_east()
+        
 class MobLoader(YamlLoader):
     """docstring for MobLoader"""
     def __init__(self, data_dir):
@@ -100,6 +151,14 @@ class MobLoader(YamlLoader):
             mob = copy.deepcopy(self.skeletons.get(skeleton))
             mob.generate_uuid()
             return mob
+
+def mob_walking():
+    """docstring for mob_walking"""
+    maps = status.WORLD.get_maps()
+    for map_ in maps:
+        mobs = map_.get_mobs()
+        for mob in mobs:
+            mob.random_walk()
 
 if __name__ == '__main__':
     ml =  MobLoader('../data/mob/')

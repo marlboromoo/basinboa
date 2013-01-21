@@ -7,6 +7,10 @@ rooms:
       mobs:
     - texts: ...
       mobs:
+        - skeleton: dog
+          mobname: blackdog
+          nickname: black dog
+        - skeleton: dog
     - texts: ...
       mobs:
     - texts: ...
@@ -25,15 +29,21 @@ rooms:
       mobs:
     - texts: nothing here ..
       mobs:
+        - skeleton: cat
+        - skeleton: dog
+          mobname: yellowdog
+          nickname: yellow dog
     - texts: you can't see anythings ..
       mobs:
     - texts: you can't see anythings ..
       mobs:
     - texts: nothing here ..
       mobs:
+        - skeleton: dog
     - texts: nothing here ..
       mobs:
     - texts: nothing here ..
       mobs:
     - texts: nothing here ..
       mobs:
+        - skeleton: dog
