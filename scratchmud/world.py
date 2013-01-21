@@ -36,8 +36,8 @@ class Room(object):
         self.exits = exits
         self.paths = paths
         self.texts = None
-        self.mobs = {}
-        self.clients = {}
+        self.mobs = [] #. Mob objects
+        self.clients = {} #. key is Player.username, value is client object
 
     def __repr__(self):
         return "Room%s%s - %s, %s mobs/%s clients" % (
@@ -61,16 +61,27 @@ class Room(object):
         """docstring for get_clients"""
         return self.clients.values()
 
+    def add_mob(self, mob):
+        """docstring for add_mob"""
+        self.mobs.append(mob)
+
+    def get_mobs(self):
+        """docstring for get_mobs"""
+        return self.mobs
+
+    def remove_mobs(self):
+        """docstring for remove_mobs"""
+        self.mobs = []
 
 
 class Map(object):
     """docstring for Map"""
-    def __init__(self, name, rooms, mobs=[]):
+    def __init__(self, name, rooms):
         super(Map, self).__init__()
         self.name = name
-        self.mobs = {}
-        self.init_rooms(rooms)
-        self.clients = {}
+        self.clients = {} #. key is Player.username, value is client object
+        self.init_rooms(rooms) #. key is (x,y), value is Room object
+        self.init_mobs()
 
     def __repr__(self):
         return "Map(%s) - %s rooms/%s mobs/%s clients" % (
@@ -81,6 +92,13 @@ class Map(object):
         self.rooms = {}
         for room in rooms:
             self.rooms[room.xy] = room
+
+    def init_mobs(self):
+        """docstring for init_mobs"""
+        self.mobs = []
+        for room in self.rooms.values():
+            for mob in room.get_mobs():
+                self.mobs.append(mob)
 
     def get_rooms(self):
         """docstring for get_rooms"""
@@ -180,8 +198,10 @@ class WorldLoader(object):
                 map_config = yaml.load(f, Loader=yaml.Loader)
             if rooms:
                 #. init room data
-                texts = [room['texts'] for room in map_config['rooms']]
-                self.inject_rooms_texts(rooms, texts)
+                #texts = [room['texts'] for room in map_config['rooms']]
+                #self.inject_texts_to_rooms(rooms, texts)
+                self.inject_texts_to_rooms(rooms, map_config)
+                self.inject_mobs_to_rooms(rooms, map_config)
                 #. create Map() object
                 self.world.add_map(Map(name=map_config['name'], rooms=rooms))
             else:
@@ -368,7 +388,7 @@ class WorldLoader(object):
         while y < len(grid):
             #. check we
             if grid[y][0] in self.SYMBOL_PATHS or grid[y][len(grid[y])-1] in self.SYMBOL_PATHS:
-                print grid[y][0], grid[y][len(grid[y])-1]
+                #print grid[y][0], grid[y][len(grid[y])-1]
                 print 'invalid grid, path not connect to room.'
                 return False
             if y == 0 and y == len(grid)-1: 
@@ -468,17 +488,9 @@ class WorldLoader(object):
             symbol_grid = self.make_symbol_grid(map_data, replace_room_with_id=True)
             id_grid = self.make_id_grid(map_data)
             symbol_grid = self.make_exits(id_grid, symbol_grid)
-            #print symbol_grid
             grid = self.purge_symbol_from_grid(symbol_grid)
-            #print grid
             grid, coordinates = self.make_coordinates(grid)
-            #print grid
-            #print coordinates
-            #. create paths
             grid, paths = self.make_paths(grid)
-            #print coordinates
-            #print paths
-            #print grid
             #. check all data is okay
             if self.paths_okay(paths, coordinates):
                 #. create objects Room() from grid
@@ -486,17 +498,31 @@ class WorldLoader(object):
                 for row in grid:
                     for block in [block for block in row if block]:
                         rooms.append(Room(block['id'], block['xy'], block['exits'], block['paths']))
-                #print rooms
                 return rooms
         return None
 
-    def inject_rooms_texts(self, rooms, texts):
-        """docstring for inject_rooms_texts"""
+    def inject_texts_to_rooms(self, rooms, map_config):
+        """docstring for inject_texts_to_rooms"""
+        texts = [room['texts'] for room in map_config['rooms']]
         i = 0
         for room in rooms:
             room.texts = texts[i]
-            #print room.texts
             i += 1
+
+    def inject_mobs_to_rooms(self, rooms, map_config):
+        """docstring for inject_mobs_to_rooms"""
+        i = 0
+        for room in rooms:
+            mobs = map_config['rooms'][i]['mobs']
+            if mobs:
+                for mob in mobs:
+                    print mob
+                    mob_ = status.MOB_LOADER.get(mob.get('skeleton'))
+                    print mob_
+                    mob_.mobname = mob.get('mobname') if mob.has_key('mobname') else mob_.mobname
+                    mob_.nickname = mob.get('nickname') if mob.has_key('nickname') else mob_.nickname
+                    room.add_mob(mob_)
+                i += 1
 
 if __name__ == '__main__':
     wc = WorldLoader('../data/map')

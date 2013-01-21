@@ -20,6 +20,7 @@ UNLOGIN_CLIENTS = {}
 
 WORLD = None
 PLAYER_LOADER = None
+MOB_LOADER = None
 PLAYERS = {}
 
 

@@ -80,10 +80,15 @@ class Command(object):
         room = status.WORLD.locate_client_room(self.client)
         self.client.send('%s\n' % (texts_encoder(room.texts)))
         self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
+        #. other players
         for client in room.get_clients():
             if client != self.client:
                 player = status.PLAYERS[client]
                 self.client.send("%s(%s) in here.\n" % (str(player.nickname), str(player.username)))
+        #. mobs
+        for mob in room.get_mobs():
+            print mob
+            self.client.send("%s(%s) in here.\n" % (str(mob.nickname), str(mob.mobname)))
 
     def go(self, symbol, function, message):
         """docstring for go"""

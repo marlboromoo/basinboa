@@ -2,7 +2,8 @@ desc: a little dog.
 hp: 100
 map_name: null
 mp: 100
-nickname: whitedog
+mobname: whitedog
+nickname: white dog
 race: null
 skeleton: dog
 skills: null

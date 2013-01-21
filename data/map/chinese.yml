@@ -3,6 +3,11 @@ name: chinese
 rooms:
     - texts: 我可以吞下一塊玻璃, 而不傷身體
       mobs:
+        - skeleton: dog
+        - skeleton: dog
+          mobname : graydog
+          nickname: gray dog
+        - skeleton: cat
     - texts: 我可以吞下兩塊玻璃, 而不傷身體
       mobs:
     - texts: 我可以吞下三塊玻璃, 而不傷身體

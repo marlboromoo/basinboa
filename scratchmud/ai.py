@@ -2,6 +2,7 @@
 """
 robot !
 """
+import copy
 from uid import Uid
 from loader import YamlLoader
 
@@ -13,6 +14,7 @@ class Mob(Uid):
         #. mob type
         self.skeleton = None
         #. status
+        self.mobname = None
         self.nickname = None
         self.xy = None
         self.map_name = None
@@ -29,8 +31,9 @@ class Mob(Uid):
         self.reborn(data)
 
     def __repr__(self):
-        return "Mob:%s, skeleton:%s, xy:%s, map:%s, uudi:%s" % (
-            str(self.nickname), str(self.skeleton), str(self.xy), str(self.map_name), str(self.uuid))
+        return "Mob:%s(%s), skeleton:%s, xy:%s, map:%s, uuid:%s" % (
+            str(self.nickname), str(self.mobname), str(self.skeleton), 
+            str(self.xy), str(self.map_name), str(self.uuid))
 
     def reborn(self, data):
         """docstring for reborn"""
@@ -41,6 +44,7 @@ class Mob(Uid):
         return {
             'skeleton' : self.skeleton,
             #. status
+            'mobname' : self.mobname,
             'nickname' : self.nickname,
             'xy' : self.xy,
             'map_name' : self.map_name,
@@ -58,6 +62,7 @@ class Mob(Uid):
         """docstring for load"""
         self.skeleton = data['skeleton']
         #. status
+        self.mobname = data['mobname']
         self.nickname = data['nickname']
         self.xy = data['xy']
         self.map_name = data['map_name']
@@ -76,16 +81,25 @@ class MobLoader(YamlLoader):
         super(MobLoader, self).__init__(data_dir)
         self.skeletons = {}
         self.load_skeletons()
+        self.reborn_mobs()
 
     def load_skeletons(self):
         """docstring for load_skeletons"""
         datas = self.load_all()
         for data in datas:
             self.skeletons[data.get('skeleton')] = Mob(data)
+
+    def reborn_mobs(self):
+        """reborn mobs into world"""
+        # TODO: write code...
+        pass
     
     def get(self, skeleton):
         """docstring for get"""
-        return self.skeletons.get(skeleton) if self.skeletons.has_key(skeleton) else None
+        if self.skeletons.has_key(skeleton):
+            mob = copy.deepcopy(self.skeletons.get(skeleton))
+            mob.generate_uuid()
+            return mob
 
 if __name__ == '__main__':
     ml =  MobLoader('../data/mob/')

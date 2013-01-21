@@ -2,7 +2,8 @@ desc: a little cat.
 hp: 100
 map_name: null
 mp: 100
-nickname: blackcat
+mobname: blackcat
+nickname: black cat
 race: null
 skeleton: cat
 skills: null

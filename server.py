@@ -12,6 +12,7 @@ from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, p
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
 from scratchmud.event import Tick, echo
+from scratchmud.ai import MobLoader
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -22,10 +23,11 @@ ASCII_ART = '''
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
+status.PLAYER_LOADER = PlayerLoader('data/player')
+status.MOB_LOADER = MobLoader('data/mob')
 wc = WorldLoader('data/map')
 wc.load_all()
 status.WORLD = wc.get()
-status.PLAYER_LOADER = PlayerLoader('data/player')
 tick_10 = Tick(10)
 tick_1 = Tick(1)
 tick_2 = Tick(2)
