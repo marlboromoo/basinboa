@@ -11,7 +11,7 @@ from message import broadcast, client_message_to_room, client_message_to_map
 class Command(object):
     """docstring for Command"""
 
-    CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs',
+    CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs', 'save',
             'goto', 'north', 'south', 'west', 'east']
     CMDS_ALIAS = {
         'l' : 'look',
@@ -194,5 +194,10 @@ class Command(object):
         """docstring for quit"""
         self.client.send('\nSee you next time ! \n')
         status.QUIT_CLIENTS.append(self.client)
+
+    def save(self, args):
+        """docstring for save"""
+        msg = 'okay.' if  status.PLAYER_LOADER.save(status.PLAYERS[self.client]) else 'fail!'
+        self.client.send('%s\n' % (msg))
 
 

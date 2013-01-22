@@ -130,8 +130,12 @@ class PlayerLoader(object):
     def save_from_object(self, player):
         """docstring for save"""
         path = os.path.join(self.data_dir, "%s.yaml" % player.get_name())
-        with open(path, 'w') as f:
-            f.write(yaml.dump(player.dump()))
+        try:
+            with open(path, 'w') as f:
+                f.write(yaml.dump(player.dump()))
+                return True
+        except Exception:
+            return False
 
     def save(self, player):
         """docstring for save"""
