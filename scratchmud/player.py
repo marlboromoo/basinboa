@@ -6,7 +6,6 @@ import yaml
 import os
 import status
 from puppet import Puppet
-#from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from message import player_message_to_room 
 from encode import texts_encoder
 

@@ -4,7 +4,6 @@ commands !
 """
 
 import status
-#from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from encode import texts_encoder
 from message import broadcast, client_message_to_room, client_message_to_map
 
@@ -78,18 +77,6 @@ class Command(object):
 
     def look(self, args):
         """docstring for look"""
-        #room = status.WORLD.locate_client_room(self.client)
-        #self.client.send('%s\n' % (texts_encoder(room.texts)))
-        #mobs = [mob.mobname for mob in room.mobs]
-        #self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.exits, room.id_, str(room.xy), str(mobs)))
-        ##. other players
-        #for client in room.get_clients():
-        #    if client != self.client:
-        #        player = status.PLAYERS[client]
-        #        self.client.send(texts_encoder("%s(%s) in here.\n" % (player.nickname, player.username)))
-        ##. mobs
-        #for mob in room.get_mobs():
-        #    self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
         target = args[0] if args else None
         return status.PLAYERS[self.client].look(target)
 
@@ -151,9 +138,6 @@ class Command(object):
         """docstring for rooms"""
         rooms = status.WORLD.locate_client_map(self.client).get_rooms()
         for room in rooms:
-            #. TODO use repr() instesd .
-            #msg = "Room%s%s - %s,  " % (
-            #    str(room.id_), str(room.xy), str('/'.join(room.exits)))
             self.client.send("%s\n" % repr(room))
 
     def maps(self, args):
@@ -171,22 +155,18 @@ class Command(object):
 
     def west(self, args):
         """docstring for west"""
-        #self.go(WEST, west_xy, 'west')
         status.PLAYERS[self.client].go_west()
 
     def east(self, args):
         """docstring for east"""
-        #self.go(EAST, east_xy, 'east')
         status.PLAYERS[self.client].go_east()
 
     def north(self, args):
         """docstring for north"""
-        #self.go(NORTH, north_xy, 'north')
         status.PLAYERS[self.client].go_north()
 
     def south(self, args):
         """docstring for south"""
-        #self.go(SOUTH, south_xy, 'south')
         status.PLAYERS[self.client].go_south()
 
     def who(self, args):

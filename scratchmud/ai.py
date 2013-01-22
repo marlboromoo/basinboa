@@ -6,7 +6,6 @@ import copy
 import random
 import status
 from puppet import Puppet
-#from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from world import NORTH, SOUTH, EAST, WEST
 from message import mob_message_to_room
 from uid import Uid
