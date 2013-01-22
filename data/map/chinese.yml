@@ -8,6 +8,9 @@ rooms:
           mobname : graydog
           nickname: 灰色的狗
         - skeleton: cat
+          gossip: 
+                - 'meow ~ meow ~ meow ~'
+                - 'meow ~'
     - texts: 我可以吞下兩塊玻璃, 而不傷身體
       mobs:
     - texts: 我可以吞下三塊玻璃, 而不傷身體

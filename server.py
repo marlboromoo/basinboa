@@ -12,7 +12,7 @@ from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, p
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
 from scratchmud.event import Tick
-from scratchmud.ai import MobLoader, mob_walking
+from scratchmud.ai import MobLoader, mob_actions
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -58,6 +58,6 @@ if __name__ == '__main__':
         tick_2.fire(kick_idle)
         quit_tick.fire(kick_quit)
         process_tick.fire(process_clients)
-        walk_tick.fire(mob_walking)
+        walk_tick.fire(mob_actions)
 
     print(">> Server shutdown.")

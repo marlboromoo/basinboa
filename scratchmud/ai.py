@@ -31,6 +31,8 @@ class Mob(Uid):
         self.hp = 100
         self.mp = 100
         self.status = None
+        #. talk
+        self.gossip = None
         #. here we go
         self.reborn(data)
 
@@ -60,6 +62,8 @@ class Mob(Uid):
             'hp' : self.hp,
             'mp' : self.mp,
             'status' : self.status,
+            #.talk
+            'gossip' : self.gossip,
         }
 
     def load(self, data):
@@ -78,6 +82,8 @@ class Mob(Uid):
         self.hp = data['hp']
         self.mp = data['mp']
         self.status = data['status']
+        #. talk
+        self.gossip = data['gossip']
 
     def go(self, symbol, function, message):
         """docstring for go"""
@@ -127,9 +133,20 @@ class Mob(Uid):
             if exit == EAST:
                 self.go_east()
 
-        def random_say(self):
-            """docstring for random_say"""
-            pass
+    def random_say(self):
+        """docstring for random_say"""
+        if random.choice([True, False]) and self.gossip and type(self.gossip) == list:
+            mob_message_to_room(self, '%s say: %s\n' % 
+                                (self.mobname, random.choice(self.gossip)))
+
+def mob_actions():
+    """docstring for mob_walking"""
+    maps = status.WORLD.get_maps()
+    for map_ in maps:
+        mobs = map_.get_mobs()
+        for mob in mobs:
+            mob.random_walk()
+            mob.random_say()
         
 class MobLoader(YamlLoader):
     """docstring for MobLoader"""
@@ -156,14 +173,6 @@ class MobLoader(YamlLoader):
             mob = copy.deepcopy(self.skeletons.get(skeleton))
             mob.generate_uuid()
             return mob
-
-def mob_walking():
-    """docstring for mob_walking"""
-    maps = status.WORLD.get_maps()
-    for map_ in maps:
-        mobs = map_.get_mobs()
-        for mob in mobs:
-            mob.random_walk()
 
 if __name__ == '__main__':
     ml =  MobLoader('../data/mob/')
