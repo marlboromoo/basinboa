@@ -5,13 +5,15 @@ robot !
 import copy
 import random
 import status
-from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
-from message import broadcast, mob_message_to_room, mob_message_to_map
+from puppet import Puppet
+#from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+from world import NORTH, SOUTH, EAST, WEST
+from message import mob_message_to_room
 from uid import Uid
 from loader import YamlLoader
 
 
-class Mob(Uid):
+class Mob(Puppet, Uid):
     """docstring for Mob"""
     def __init__(self, data):
         super(Mob, self).__init__()
@@ -27,13 +29,6 @@ class Mob(Uid):
         self.race = None
         self.job = None
         self.desc = None
-        #. combat status
-        self.hp = 100
-        self.mp = 100
-        self.status = None
-        #. other status
-        self.follow_target = None
-        self.followers = []
         #. talk
         self.gossip = None
         #. here we go
@@ -105,46 +100,6 @@ class Mob(Uid):
                 status.WORLD.locate_mob_room(self).add_mob(self)
                 #. send message to all the players in target room
                 mob_message_to_room(self, '%s come to here!\n' % (self.mobname))
-
-    def go_west(self):
-        """docstring for west"""
-        self.go(WEST, west_xy, 'west')
-        #. notice follower
-        for follower in self.followers:
-            follower.go_west()
-
-    def go_east(self):
-        """docstring for east"""
-        self.go(EAST, east_xy, 'east')
-        #. notice follower
-        for follower in self.followers:
-            follower.go_east()
-
-    def go_north(self):
-        """docstring for north"""
-        self.go(NORTH, north_xy, 'north')
-        #. notice follower
-        for follower in self.followers:
-            follower.go_north()
-
-    def go_south(self):
-        """docstring for south"""
-        self.go(SOUTH, south_xy, 'south')
-        #. notice follower
-        for follower in self.followers:
-            follower.go_south()
-
-    def add_follower(self, object_):
-        """add mob/player object to followers list"""
-        self.followers.append(object_)
-
-    def remove_follower(self, object_):
-        """remove mob/player object from followers list"""
-        self.followers.remove(object_)
-
-    def follow(self, object_):
-        """follow mob/player"""
-        self.follow_target = object_
 
     def random_walk(self):
         """random go to room exits"""

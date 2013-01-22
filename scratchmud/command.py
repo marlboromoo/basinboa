@@ -173,25 +173,21 @@ class Command(object):
         """docstring for west"""
         #self.go(WEST, west_xy, 'west')
         status.PLAYERS[self.client].go_west()
-        return self.look(None)
 
     def east(self, args):
         """docstring for east"""
         #self.go(EAST, east_xy, 'east')
         status.PLAYERS[self.client].go_east()
-        return self.look(None)
 
     def north(self, args):
         """docstring for north"""
         #self.go(NORTH, north_xy, 'north')
         status.PLAYERS[self.client].go_north()
-        return self.look(None)
 
     def south(self, args):
         """docstring for south"""
         #self.go(SOUTH, south_xy, 'south')
         status.PLAYERS[self.client].go_south()
-        return self.look(None)
 
     def who(self, args):
         """docstring for who"""

@@ -12,4 +12,4 @@ skills: null
 spells: null
 status: null
 username: foo
-xy: !!python/tuple [1, 1]
+xy: !!python/tuple [0, 0]
