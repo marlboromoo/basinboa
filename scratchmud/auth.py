@@ -45,6 +45,7 @@ def auth_client(client):
                 player = copy.deepcopy(origin_player) #. copy the player object, because the origin player object wiil be drop
                 origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
                 status.QUIT_CLIENTS.append(origin_client) #. origin player object drop here
+            player.client = client
             status.PLAYERS[client] = player
             status.UNLOGIN_CLIENTS.pop(client)
             broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )

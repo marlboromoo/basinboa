@@ -4,7 +4,7 @@ commands !
 """
 
 import status
-from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+#from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
 from encode import texts_encoder
 from message import broadcast, client_message_to_room, client_message_to_map
 
@@ -12,6 +12,7 @@ class Command(object):
     """docstring for Command"""
 
     CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs', 'save',
+            'track', 'follow',
             'goto', 'north', 'south', 'west', 'east']
     CMDS_ALIAS = {
         'l' : 'look',
@@ -77,17 +78,20 @@ class Command(object):
 
     def look(self, args):
         """docstring for look"""
-        room = status.WORLD.locate_client_room(self.client)
-        self.client.send('%s\n' % (texts_encoder(room.texts)))
-        self.client.send('exits: %s, id: %s, xy: %s\n' % (room.exits, room.id_, str(room.xy)))
-        #. other players
-        for client in room.get_clients():
-            if client != self.client:
-                player = status.PLAYERS[client]
-                self.client.send(texts_encoder("%s(%s) in here.\n" % (player.nickname, player.username)))
-        #. mobs
-        for mob in room.get_mobs():
-            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
+        #room = status.WORLD.locate_client_room(self.client)
+        #self.client.send('%s\n' % (texts_encoder(room.texts)))
+        #mobs = [mob.mobname for mob in room.mobs]
+        #self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.exits, room.id_, str(room.xy), str(mobs)))
+        ##. other players
+        #for client in room.get_clients():
+        #    if client != self.client:
+        #        player = status.PLAYERS[client]
+        #        self.client.send(texts_encoder("%s(%s) in here.\n" % (player.nickname, player.username)))
+        ##. mobs
+        #for mob in room.get_mobs():
+        #    self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
+        target = args[0] if args else None
+        return status.PLAYERS[self.client].look(target)
 
     def go(self, symbol, function, message):
         """docstring for go"""
@@ -167,22 +171,26 @@ class Command(object):
 
     def west(self, args):
         """docstring for west"""
-        self.go(WEST, west_xy, 'west')
+        #self.go(WEST, west_xy, 'west')
+        status.PLAYERS[self.client].go_west()
         return self.look(None)
 
     def east(self, args):
         """docstring for east"""
-        self.go(EAST, east_xy, 'east')
+        #self.go(EAST, east_xy, 'east')
+        status.PLAYERS[self.client].go_east()
         return self.look(None)
 
     def north(self, args):
         """docstring for north"""
-        self.go(NORTH, north_xy, 'north')
+        #self.go(NORTH, north_xy, 'north')
+        status.PLAYERS[self.client].go_north()
         return self.look(None)
 
     def south(self, args):
         """docstring for south"""
-        self.go(SOUTH, south_xy, 'south')
+        #self.go(SOUTH, south_xy, 'south')
+        status.PLAYERS[self.client].go_south()
         return self.look(None)
 
     def who(self, args):
@@ -199,5 +207,30 @@ class Command(object):
         """docstring for save"""
         msg = 'okay.' if  status.PLAYER_LOADER.save(status.PLAYERS[self.client]) else 'fail!'
         self.client.send('%s\n' % (msg))
+
+    def _follow(self, function, name):
+        """docstring for _follow"""
+        target = function(name)
+        if target:
+            name = target.mobname if target.mobname else target.username
+            player = status.PLAYERS[self.client]
+            target.add_follower(player)
+            player.follow(target)
+            self.client.send("You start to follow %s!\n" % (name))
+        else:
+            self.client.send("No such target !\n")
+
+    def follow(self, args):
+        """docstring for follow"""
+        target_name = args[0]
+        room = status.WORLD.locate_client_room(self.client)
+        return self._follow(room.get_player_by_username, target_name)
+
+    def track(self, args):
+        """docstring for track"""
+        target_name = args[0]
+        room = status.WORLD.locate_client_room(self.client)
+        return self._follow(room.get_mob_by_mobname, target_name)
+
 
 

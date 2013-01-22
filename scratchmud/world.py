@@ -48,10 +48,22 @@ class Room(object):
         """docstring for add_client"""
         self.clients[status.PLAYERS[client].username] = client
 
+    def add_client_by_player(self, player):
+        """add client object by player object"""
+        for client, player_ in status.PLAYERS.items():
+            if player_ == player:
+                self.clients[player.username] = client
+                break
+
     def remove_client(self, client):
         """docstring for add_client"""
         if self.clients.has_key(status.PLAYERS[client].username):
             self.clients.pop(status.PLAYERS[client].username)
+
+    def remove_client_by_player(self, player):
+        """remove client object by player object"""
+        if self.clients.has_key(player.username):
+            self.clients.pop(player.username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -77,6 +89,20 @@ class Room(object):
     def remove_mobs(self):
         """docstring for remove_mobs"""
         self.mobs = []
+
+    def get_mob_by_mobname(self, mobname):
+        """return mob object by mobname else None"""
+        for mob in self.mobs:
+            if mobname == mob.mobname:
+                return mob
+        return None
+
+    def get_player_by_username(self, username):
+        """retunr player object by username else None"""
+        for username_, client in self.clients.items():
+            if username == username_:
+                return status.PLAYERS[client]
+        return None
 
 
 class Map(object):
@@ -142,6 +168,16 @@ class Map(object):
         #. add to room
         self.get_room(status.PLAYERS[client].xy).add_client(client)
 
+    def add_client_by_player(self, player):
+        """add client objcet by player object"""
+        for player_, client in status.PLAYERS.items():
+            if player_ == player:
+                #. add to map
+                self.clients[player.username] = client
+                #. add to room
+                self.get_room(player.xy).add_client(client)
+                break
+
     def remove_client(self, client):
         """remove client object from map"""
         #. remove from map
@@ -149,6 +185,17 @@ class Map(object):
             self.clients.pop(status.PLAYERS[client].username)
         #. remove from room
         self.get_room(status.PLAYERS[client].xy).remove_client(client)
+
+    def remove_client_by_player(self, player):
+        """remove client object by player object"""
+        for player_, client in status.PLAYERS.items():
+            if player_ == player:
+                #. remove from map
+                if self.clients.has_key(player.username):
+                    self.clients.pop(player.username)
+                #. remove from room
+                self.get_room(player.xy).remove_client(client)
+                break
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -183,6 +230,14 @@ class World(object):
     def locate_client_map(self, client):
         """find map by client object"""
         return self.get_map(status.PLAYERS[client].map_name)
+
+    def locate_player_room(self, player):
+        """find room by player object"""
+        return self.get_map(player.map_name).get_room(player.xy)
+
+    def locate_plyer_map(self, player):
+        """find map by player object"""
+        return self.get_map(player.map_name)
 
     def locate_mob_room(self, mob):
         """find room by mob object"""

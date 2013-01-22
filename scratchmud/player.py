@@ -4,6 +4,10 @@ player player
 """
 import yaml
 import os
+import status
+from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+from message import broadcast, player_message_to_room, player_message_to_map
+from encode import texts_encoder
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
@@ -12,6 +16,7 @@ class Player(object):
     """docstring for Player"""
     def __init__(self, username=None):
         super(Player, self).__init__()
+        self.client = None
         self.login = None
         self.username = username
         self.password = None
@@ -29,6 +34,9 @@ class Player(object):
         self.hp = 100
         self.mp = 100
         self.status = None
+        #. other status
+        self.follow_target = None
+        self.followers = []
 
     def __repr__(self):
         return "User:%s, role:%s, xy:%s, map:%s" % (
@@ -105,6 +113,83 @@ class Player(object):
         self.hp = data['hp']
         self.mp = data['mp']
         self.status = data['status']
+
+    def go(self, symbol, function, message):
+        """docstring for go"""
+        room = status.WORLD.locate_player_room(self)
+        x, y = self.xy
+        if symbol in room.exits:
+            dst_xy = function(x, y)
+            if dst_xy in room.paths:
+                #. message to all the players in room
+                player_message_to_room(self, '%s go to %s!\n' % (self.username, message))
+                #. move player to room
+                self.xy = dst_xy
+                #. remove client from source room
+                room.remove_client_by_player(self)
+                #. add mob to target room
+                status.WORLD.locate_player_room(self).add_client_by_player(self)
+                #. send message to all the players in target room
+                player_message_to_room(self, '%s come to here!\n' % (self.username))
+
+    def go_west(self):
+        """docstring for west"""
+        self.go(WEST, west_xy, 'west')
+        #. notice follower
+        for follower in self.followers:
+            follower.go_west()
+        return self.look()
+
+    def go_east(self):
+        """docstring for east"""
+        self.go(EAST, east_xy, 'east')
+        #. notice follower
+        for follower in self.followers:
+            follower.go_east()
+        return self.look()
+
+    def go_north(self):
+        """docstring for north"""
+        self.go(NORTH, north_xy, 'north')
+        #. notice follower
+        for follower in self.followers:
+            follower.go_north()
+        return self.look()
+
+    def go_south(self):
+        """docstring for south"""
+        self.go(SOUTH, south_xy, 'south')
+        #. notice follower
+        for follower in self.followers:
+            follower.go_south()
+        return self.look()
+
+    def add_follower(self, object_):
+        """add mob/player object to followers list"""
+        self.followers.append(object_)
+
+    def remove_follower(self, object_):
+        """remove mob/player object from followers list"""
+        self.followers.remove(object_)
+
+    def follow(self, object_):
+        """follow mob/player"""
+        self.follow_target = object_
+
+    def look(self, target=None):
+        """docstring for look"""
+        room = status.WORLD.locate_player_room(self)
+        self.client.send('%s\n' % (texts_encoder(room.texts)))
+        mobs = [mob.mobname for mob in room.mobs]
+        self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.exits, room.id_, str(room.xy), str(mobs)))
+        #. other players
+        for client_ in room.get_clients():
+            if client_ != self.client:
+                player_ = status.PLAYERS[client_]
+                self.client.send(texts_encoder("%s(%s) in here.\n" % (player_.nickname, player_.username)))
+        #. mobs
+        for mob in room.get_mobs():
+            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
 
 class PlayerLoader(object):
     """docstring for PlayerLoader"""
