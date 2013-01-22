@@ -208,7 +208,7 @@ class Command(object):
         """docstring for _follow"""
         target = function(name)
         if target:
-            name = target.mobname if target.mobname else target.username
+            name = target.mobname if hasattr(target, 'mobname') else target.username
             player = status.PLAYERS[self.client]
             target.add_follower(player)
             player.follow(target)
