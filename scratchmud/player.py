@@ -124,6 +124,8 @@ class Player(Puppet):
                 status.WORLD.locate_player_room(self).add_client_by_player(self)
                 #. send message to all the players in target room
                 player_message_to_room(self, '%s come to here!\n' % (self.username))
+        else:
+            self.client.send('Huh?\n')
 
     def look(self, target=None):
         """docstring for look"""
