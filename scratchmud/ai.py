@@ -115,16 +115,21 @@ class Mob(Uid):
 
     def random_walk(self):
         """random go to room exits"""
-        room = status.WORLD.locate_mob_room(self)
-        exit = random.choice(room.exits)
-        if exit == NORTH:
-            self.go_north()
-        if exit == SOUTH:
-            self.go_south()
-        if exit == WEST:
-            self.go_west()
-        if exit == EAST:
-            self.go_east()
+        if random.choice([True, False, False]):
+            room = status.WORLD.locate_mob_room(self)
+            exit = random.choice(room.exits)
+            if exit == NORTH:
+                self.go_north()
+            if exit == SOUTH:
+                self.go_south()
+            if exit == WEST:
+                self.go_west()
+            if exit == EAST:
+                self.go_east()
+
+        def random_say(self):
+            """docstring for random_say"""
+            pass
         
 class MobLoader(YamlLoader):
     """docstring for MobLoader"""
