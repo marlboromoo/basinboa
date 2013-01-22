@@ -2,13 +2,12 @@
 """
 event in the world.
 """
-import status
 import time
 
-class Tick(object):
+class Cycle(object):
     """tick base on second"""
     def __init__(self, second):
-        super(Tick, self).__init__()
+        super(Cycle, self).__init__()
         self.second = second
         self.previous_time = None
         self.time = None
@@ -35,6 +34,6 @@ def echo(msg):
 
 if __name__ == '__main__':
     second = 1
-    e = Tick(second)
+    e = Cycle(second)
     e.fire(echo, 'hello tick %s' % str(second))
         

@@ -11,7 +11,7 @@ from scratchmud import status
 from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients
 from scratchmud.world import WorldLoader
 from scratchmud.player import PlayerLoader
-from scratchmud.event import Tick
+from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
 
 ASCII_ART = '''
@@ -28,11 +28,14 @@ status.MOB_LOADER = MobLoader('data/mob')
 wc = WorldLoader('data/map')
 wc.load_all()
 status.WORLD = wc.get()
-tick_1 = Tick(1)
-tick_2 = Tick(2)
-quit_tick = Tick(.1)
-process_tick = Tick(.1)
-walk_tick = Tick(10)
+
+#------------------------------------------------------------------------------
+#       Initial Cycle
+#------------------------------------------------------------------------------
+kick_cycle = Cycle(2)
+quit_cycle = Cycle(.1)
+process_cycle = Cycle(.1)
+walk_cycle = Cycle(10)
 
 
 #------------------------------------------------------------------------------
@@ -55,9 +58,9 @@ if __name__ == '__main__':
     ## Server Loop
     while status.SERVER_RUN:
         telnet_server.poll()
-        tick_2.fire(kick_idle)
-        quit_tick.fire(kick_quit)
-        process_tick.fire(process_clients)
-        walk_tick.fire(mob_actions)
+        kick_cycle.fire(kick_idle)
+        quit_cycle.fire(kick_quit)
+        process_cycle.fire(process_clients)
+        walk_cycle.fire(mob_actions)
 
     print(">> Server shutdown.")
