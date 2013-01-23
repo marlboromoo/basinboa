@@ -38,6 +38,7 @@ def auth_client(client):
         character = status.CHARACTER_LOADER.get(login_status['username'])
         #. check password correct
         if character and character.get_password() == login_status['password']:
+            origin_client, origin_character = None, None
             #. check current in game?
             if character_was_login(character):
                 client.send('\nThis username was login, kick the user!\n')
@@ -46,7 +47,11 @@ def auth_client(client):
                 origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
                 status.QUIT_CLIENTS.append(origin_client) #. origin character object drop here
             character.client = client
+            #. remove origin_character in characters list if exist
+            if origin_client:
+                status.CHARACTERS.pop(origin_client) if status.CHARACTERS.has_key(origin_client) else None
             status.CHARACTERS[client] = character
+            #. remove client from login queue
             status.UNLOGIN_CLIENTS.pop(client)
             broadcast('%s enter the world.\n' % status.CHARACTERS[client].get_name() )
             print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']))
