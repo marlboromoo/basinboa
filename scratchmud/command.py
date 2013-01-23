@@ -4,8 +4,9 @@ commands !
 """
 
 import status
-from encode import texts_encoder
-from message import broadcast, client_message_to_room, client_message_to_map
+#from encode import texts_encoder
+#from message import broadcast, client_message_to_room, client_message_to_map
+from message import client_message_to_room
 
 class Command(object):
     """docstring for Command"""
@@ -181,7 +182,7 @@ class Command(object):
 
     def save(self, args):
         """docstring for save"""
-        msg = 'okay.' if  status.CHARACTER_LOADER.save(status.CHARACTERS[self.client]) else 'fail!'
+        msg = 'okay.' if  status.CHARACTER_LOADER.dump(status.CHARACTERS[self.client]) else 'fail!'
         self.client.send('%s\n' % (msg))
 
     def _follow(self, function, name):

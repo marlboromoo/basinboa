@@ -135,7 +135,6 @@ class MobLoader(YamlLoader):
         super(MobLoader, self).__init__(data_dir)
         self.skeletons = {}
         self.load_skeletons()
-        self.reborn_mobs()
 
     def load_skeletons(self):
         """docstring for load_skeletons"""
@@ -143,25 +142,10 @@ class MobLoader(YamlLoader):
         for data in datas:
             self.skeletons[data.get('skeleton')] = Mob(data)
 
-    def reborn_mobs(self):
-        """reborn mobs into world"""
-        # TODO: write code...
-        pass
-    
     def get(self, skeleton):
         """docstring for get"""
         if self.skeletons.has_key(skeleton):
             mob = copy.deepcopy(self.skeletons.get(skeleton))
             mob.generate_uuid()
             return mob
-
-if __name__ == '__main__':
-    ml =  MobLoader('../data/mob/')
-    dog = ml.get('dog')
-    dog.map_name = 'void'
-    dog.xy = (1,1)
-    cat = ml.get('cat')
-    cat.map_name = 'chinese'
-    cat.xy = (1,1)
-    print dog, cat
 

@@ -2,9 +2,10 @@
 """
 character character
 """
-import yaml
-import os
+#import yaml
+#import os
 import status
+from loader import YamlLoader
 from puppet import Puppet
 from message import character_message_to_room 
 from encode import texts_encoder
@@ -142,57 +143,18 @@ class Character(Puppet):
         for mob in room.get_mobs():
             self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
 
-class CharacterLoader(object):
+class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""
     def __init__(self, data_dir):
-        super(CharacterLoader, self).__init__()
+        super(CharacterLoader, self).__init__(data_dir)
         self.data_dir = data_dir
-        self.characters = {}
-
-    def load(self, username):
-        """docstring for load"""
-        path = os.path.join(self.data_dir, "%s.yml" % username)
-        #print path
-        try:
-            with open(path, 'r') as f:
-                data = yaml.load(f, Loader=yaml.Loader)
-                character = Character(data['username'])
-                character.load(data)
-                self.characters[username] = character
-        except Exception:
-            pass
-            #print "Error! no such character !"
-
-    def save_from_object(self, character):
-        """docstring for save"""
-        path = os.path.join(self.data_dir, "%s.yml" % character.get_name())
-        try:
-            with open(path, 'w') as f:
-                f.write(yaml.dump(character.dump()))
-                return True
-        except Exception:
-            return False
-
-    def save(self, character):
-        """docstring for save"""
-        return self.save_from_object(character)
 
     def get(self, username):
         """docstring for get"""
-        return self.characters.pop(username) if self.characters.has_key(username) else None
+        data = self.load(username)
+        if data:
+            character = Character(data.get(username))
+            character.load(data)
+            return character
+        return None
 
-if __name__ == '__main__':
-    username = 'admin'
-    #character = Character(username)
-    pf = CharacterLoader('../data/character')
-    #pf.save(username)
-    pf.load(username)
-    character = pf.get(username)
-    print character
-    character.set_role(ROLE_ADMIN)
-    print character
-    print character.get_password()
-
-        
-
-        

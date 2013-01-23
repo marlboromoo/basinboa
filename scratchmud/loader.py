@@ -40,14 +40,14 @@ class YamlLoader(object):
     def dump_from_object(self, object_):
         """docstring for dump"""
         path = os.path.join(self.data_dir, "%s.%s" % (object_.get_name(), self.FILE_TYPE))
-        with open(path, 'w') as f:
-            f.write(yaml.dump(object_.dump()))
+        try:
+            with open(path, 'w') as f:
+                f.write(yaml.dump(object_.dump()))
+                return True
+        except Exception:
+            return False
 
     def dump(self, object_):
         """dump object to yaml file"""
         return self.dump_from_object(object_)
 
-if __name__ == '__main__':
-    yl = YamlLoader('../data/mob/')
-    print yl.load_all()
-    print yl.load('dog')
