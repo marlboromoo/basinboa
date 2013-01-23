@@ -132,7 +132,7 @@ class Character(Puppet):
         """docstring for look"""
         room = status.WORLD.locate_character_room(self)
         self.client.send('%s\n' % (texts_encoder(room.texts)))
-        mobs = [mob.mobname for mob in room.mobs]
+        mobs = [mob.name for mob in room.mobs]
         self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.exits, room.id_, str(room.xy), str(mobs)))
         #. other characters
         for client_ in room.get_clients():
@@ -141,7 +141,7 @@ class Character(Puppet):
                 self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.name)))
         #. mobs
         for mob in room.get_mobs():
-            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
+            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.name)))
 
 class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""

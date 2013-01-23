@@ -189,7 +189,7 @@ class Command(object):
         """docstring for _follow"""
         target = function(name)
         if target:
-            name = target.mobname if hasattr(target, 'mobname') else target.name
+            name = target.name if hasattr(target, 'name') else target.name
             character = status.CHARACTERS[self.client]
             target.add_follower(character)
             character.follow(target)
@@ -207,7 +207,7 @@ class Command(object):
         """docstring for track"""
         target_name = args[0]
         room = status.WORLD.locate_client_room(self.client)
-        return self._follow(room.get_mob_by_mobname, target_name)
+        return self._follow(room.get_mob_by_name, target_name)
 
 
 

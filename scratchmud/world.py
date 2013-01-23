@@ -90,10 +90,10 @@ class Room(object):
         """docstring for remove_mobs"""
         self.mobs = []
 
-    def get_mob_by_mobname(self, mobname):
-        """return mob object by mobname else None"""
+    def get_mob_by_name(self, name):
+        """return mob object by name else None"""
         for mob in self.mobs:
-            if mobname == mob.mobname:
+            if name == mob.name:
                 return mob
         return None
 
@@ -608,7 +608,7 @@ class WorldLoader(object):
             if mobs:
                 for mob in mobs:
                     mob_ = status.MOB_LOADER.get(mob.get('skeleton'))
-                    mob_.mobname = mob.get('mobname') if mob.has_key('mobname') else mob_.mobname
+                    mob_.name = mob.get('name') if mob.has_key('name') else mob_.name
                     mob_.nickname = mob.get('nickname') if mob.has_key('nickname') else mob_.nickname
                     mob_.gossip = mob.get('gossip') if mob.has_key('gossip') else mob_.gossip
                     mob_.xy = room.xy

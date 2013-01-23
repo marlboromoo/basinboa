@@ -19,7 +19,7 @@ class Mob(Puppet, Uid):
         #. mob type
         self.skeleton = None
         #. status
-        self.mobname = None
+        self.name = None
         self.nickname = None
         self.xy = None
         self.map_name = None
@@ -35,7 +35,7 @@ class Mob(Puppet, Uid):
 
     def __repr__(self):
         return "Mob:%s, skeleton:%s, xy:%s, map:%s, uuid:%s" % (
-            str(self.mobname), str(self.skeleton), 
+            str(self.name), str(self.skeleton), 
             str(self.xy), str(self.map_name), str(self.uuid))
 
     def reborn(self, data):
@@ -47,7 +47,7 @@ class Mob(Puppet, Uid):
         return {
             'skeleton' : self.skeleton,
             #. status
-            'mobname' : self.mobname,
+            'name' : self.name,
             'nickname' : self.nickname,
             'xy' : self.xy,
             'map_name' : self.map_name,
@@ -67,7 +67,7 @@ class Mob(Puppet, Uid):
         """docstring for load"""
         self.skeleton = data['skeleton']
         #. status
-        self.mobname = data['mobname']
+        self.name = data['name']
         self.nickname = data['nickname']
         self.xy = data['xy']
         self.map_name = data['map_name']
@@ -90,7 +90,7 @@ class Mob(Puppet, Uid):
             dst_xy = function(x, y)
             if dst_xy in room.paths:
                 #. message to all the characters in room
-                mob_message_to_room(self, '%s go to %s!\n' % (self.mobname, message))
+                mob_message_to_room(self, '%s go to %s!\n' % (self.name, message))
                 #. move mob to room
                 self.xy = dst_xy
                 #. remove mob from source room
@@ -98,7 +98,7 @@ class Mob(Puppet, Uid):
                 #. add mob to target room
                 status.WORLD.locate_mob_room(self).add_mob(self)
                 #. send message to all the characters in target room
-                mob_message_to_room(self, '%s come to here!\n' % (self.mobname))
+                mob_message_to_room(self, '%s come to here!\n' % (self.name))
 
     def random_walk(self):
         """random go to room exits"""
@@ -118,7 +118,7 @@ class Mob(Puppet, Uid):
         """docstring for random_say"""
         if random.choice([True, False]) and self.gossip and type(self.gossip) == list:
             mob_message_to_room(self, '%s say: %s\n' % 
-                                (self.mobname, random.choice(self.gossip)))
+                                (self.name, random.choice(self.gossip)))
 
 def mob_actions():
     """docstring for mob_walking"""
