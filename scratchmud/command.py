@@ -157,11 +157,13 @@ class Command(object):
         """docstring for _follow"""
         target = function(name)
         if target:
-            name = target.name if hasattr(target, 'name') else target.name
+            if target in status.CHARACTERS[self.client].get_followers():
+                self.client.send("You can't ! %s already follow you.\n." % (target.name))
+                return
             character = status.CHARACTERS[self.client]
             target.add_follower(character)
             character.follow(target)
-            self.client.send("You start to follow %s!\n" % (name))
+            self.client.send("You start to follow %s!\n" % (target.name))
         else:
             self.client.send("No such target !\n")
 

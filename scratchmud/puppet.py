@@ -74,10 +74,25 @@ class Puppet(object):
 
     def remove_follower(self, object_):
         """remove mob/character object from followers list"""
-        self.followers.remove(object_)
+        self.followers.remove(object_) if object_ in self.followers else None
+
+    def get_followers(self):
+        """docstring for get_followers"""
+        return self.followers
 
     def follow(self, object_):
         """follow mob/character"""
-        self.follow_target = object_
+        if object_ == self:
+            self.stop_follow()
+        else:
+            self.follow_target = object_
+
+    def stop_follow(self):
+        """docstring for stop_follow"""
+        if self.follow_target:
+            self.follow_target.remove_follower(self)
+            self.follow_target = None
+        if self in self.followers:
+            self.followers.remove(self)
          
 
