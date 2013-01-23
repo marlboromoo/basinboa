@@ -10,7 +10,7 @@ from miniboa import TelnetServer
 from scratchmud import status
 from scratchmud.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients
 from scratchmud.world import WorldLoader
-from scratchmud.player import PlayerLoader
+from scratchmud.character import CharacterLoader
 from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
 
@@ -23,7 +23,7 @@ ASCII_ART = '''
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
-status.PLAYER_LOADER = PlayerLoader('data/player')
+status.CHARACTER_LOADER = CharacterLoader('data/character')
 status.MOB_LOADER = MobLoader('data/mob')
 wc = WorldLoader('data/map')
 wc.load_all()

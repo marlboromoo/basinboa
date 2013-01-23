@@ -3,7 +3,7 @@ job: null
 login: null
 map_name: chinese
 mp: 100
-nickname: T.R.O.N
+nickname: bar
 password: 1qaz2wsx
 prompt: null
 race: null
@@ -11,5 +11,5 @@ role: user
 skills: null
 spells: null
 status: null
-username: admin
-xy: !!python/tuple [0, 1]
+username: foo
+xy: !!python/tuple [1, 1]

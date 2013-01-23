@@ -25,16 +25,15 @@ def on_disconnect(client):
     """
     print "-- Lost connection to %s" % client.addrport()
     #. save user data
-    if status.PLAYERS.has_key(client):
-        status.PLAYER_LOADER.save(status.PLAYERS[client])
+    if status.CHARACTERS.has_key(client):
+        status.CHARACTER_LOADER.save(status.CHARACTERS[client])
     try:
         status.CLIENTS.remove(client)
         status.UNLOGIN_CLIENTS.pop(client)
-        status.PLAYERS.pop(client)
+        status.CHARACTERS.pop(client)
     except Exception:
         pass
     broadcast('%s leaves the world.\n' % client.addrport() )
-
 
 def kick_idle():
     """
@@ -58,13 +57,13 @@ def process_clients():
     input available via client.get_command().
     """
     for client in status.CLIENTS:
-        if not status.PLAYERS.has_key(client):
+        if not status.CHARACTERS.has_key(client):
             #. disconnect after sending message to client
             if status.UNLOGIN_CLIENTS[client]['retry'] >= 3:
                 disconnect(client)
             else:
                 login(client)
-        if client in status.PLAYERS and client.active and client.cmd_ready:
+        if client in status.CHARACTERS and client.active and client.cmd_ready:
             process_command(client)
 
 def process_command(client):

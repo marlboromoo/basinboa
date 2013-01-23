@@ -17,38 +17,38 @@ def login_queue(client):
         'retry' : 0,
     }
 
-def player_was_login(player):
-    """docstring for player_in_game"""
-    if player.username in [player.username for player in status.PLAYERS.values()]:
+def character_was_login(character):
+    """docstring for character_in_game"""
+    if character.username in [character.username for character in status.CHARACTERS.values()]:
         return True
     return False
 
-def find_origin_client_and_player(player):
+def find_origin_client_and_character(character):
     """docstring for find_origin_client"""
-    for client, player_ in status.PLAYERS.items():
-        if player_.get_name() == player.get_name():
-            return client, player_
+    for client, character_ in status.CHARACTERS.items():
+        if character_.get_name() == character.get_name():
+            return client, character_
     return None, None
 
 def auth_client(client):
     """auth the client."""
     if client in status.UNLOGIN_CLIENTS:
         login_status = status.UNLOGIN_CLIENTS[client]
-        status.PLAYER_LOADER.load(login_status['username'])
-        player = status.PLAYER_LOADER.get(login_status['username'])
+        status.CHARACTER_LOADER.load(login_status['username'])
+        character = status.CHARACTER_LOADER.get(login_status['username'])
         #. check password correct
-        if player and player.get_password() == login_status['password']:
+        if character and character.get_password() == login_status['password']:
             #. check current in game?
-            if player_was_login(player):
+            if character_was_login(character):
                 client.send('\nThis username was login, kick the user!\n')
-                origin_client, origin_player = find_origin_client_and_player(player)
-                player = copy.deepcopy(origin_player) #. copy the player object, because the origin player object wiil be drop
+                origin_client, origin_character = find_origin_client_and_character(character)
+                character = copy.deepcopy(origin_character) #. copy the character object, because the origin character object wiil be drop
                 origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
-                status.QUIT_CLIENTS.append(origin_client) #. origin player object drop here
-            player.client = client
-            status.PLAYERS[client] = player
+                status.QUIT_CLIENTS.append(origin_client) #. origin character object drop here
+            character.client = client
+            status.CHARACTERS[client] = character
             status.UNLOGIN_CLIENTS.pop(client)
-            broadcast('%s enter the world.\n' % status.PLAYERS[client].get_name() )
+            broadcast('%s enter the world.\n' % status.CHARACTERS[client].get_name() )
             print ('** Client %s login success with username: %s.' % (client.addrport(), login_status['username']))
             return True
         else:
@@ -102,7 +102,7 @@ def login(client):
             return 
         #. final login
         if login_status['login']:
-            client.send("\nWelcome !!! %s !!! \n"  % (status.PLAYERS[client].get_name()))
+            client.send("\nWelcome !!! %s !!! \n"  % (status.CHARACTERS[client].get_name()))
             status.WORLD.locate_client_map(client).add_client(client)
         else:
             login_status['password'], login_status['password_process'] = None, None

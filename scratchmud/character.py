@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 """
-player player
+character character
 """
 import yaml
 import os
 import status
 from puppet import Puppet
-from message import player_message_to_room 
+from message import character_message_to_room 
 from encode import texts_encoder
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
 
-class Player(Puppet):
-    """docstring for Player"""
+class Character(Puppet):
+    """docstring for Character"""
     def __init__(self, username=None):
-        super(Player, self).__init__()
+        super(Character, self).__init__()
         self.client = None
         self.login = None
         self.username = username
@@ -109,45 +109,45 @@ class Player(Puppet):
 
     def go(self, symbol, function, message):
         """docstring for go"""
-        room = status.WORLD.locate_player_room(self)
+        room = status.WORLD.locate_character_room(self)
         x, y = self.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
-                #. message to all the players in room
-                player_message_to_room(self, '%s go to %s!\n' % (self.username, message))
-                #. move player to room
+                #. message to all the characters in room
+                character_message_to_room(self, '%s go to %s!\n' % (self.username, message))
+                #. move character to room
                 self.xy = dst_xy
                 #. remove client from source room
-                room.remove_client_by_player(self)
+                room.remove_client_by_character(self)
                 #. add mob to target room
-                status.WORLD.locate_player_room(self).add_client_by_player(self)
-                #. send message to all the players in target room
-                player_message_to_room(self, '%s come to here!\n' % (self.username))
+                status.WORLD.locate_character_room(self).add_client_by_character(self)
+                #. send message to all the characters in target room
+                character_message_to_room(self, '%s come to here!\n' % (self.username))
         else:
             self.client.send('Huh?\n')
 
     def look(self, target=None):
         """docstring for look"""
-        room = status.WORLD.locate_player_room(self)
+        room = status.WORLD.locate_character_room(self)
         self.client.send('%s\n' % (texts_encoder(room.texts)))
         mobs = [mob.mobname for mob in room.mobs]
         self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.exits, room.id_, str(room.xy), str(mobs)))
-        #. other players
+        #. other characters
         for client_ in room.get_clients():
             if client_ != self.client:
-                player_ = status.PLAYERS[client_]
-                self.client.send(texts_encoder("%s(%s) in here.\n" % (player_.nickname, player_.username)))
+                character_ = status.CHARACTERS[client_]
+                self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.username)))
         #. mobs
         for mob in room.get_mobs():
             self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
 
-class PlayerLoader(object):
-    """docstring for PlayerLoader"""
+class CharacterLoader(object):
+    """docstring for CharacterLoader"""
     def __init__(self, data_dir):
-        super(PlayerLoader, self).__init__()
+        super(CharacterLoader, self).__init__()
         self.data_dir = data_dir
-        self.players = {}
+        self.characters = {}
 
     def load(self, username):
         """docstring for load"""
@@ -156,42 +156,42 @@ class PlayerLoader(object):
         try:
             with open(path, 'r') as f:
                 data = yaml.load(f, Loader=yaml.Loader)
-                player = Player(data['username'])
-                player.load(data)
-                self.players[username] = player
+                character = Character(data['username'])
+                character.load(data)
+                self.characters[username] = character
         except Exception:
             pass
-            #print "Error! no such player !"
+            #print "Error! no such character !"
 
-    def save_from_object(self, player):
+    def save_from_object(self, character):
         """docstring for save"""
-        path = os.path.join(self.data_dir, "%s.yaml" % player.get_name())
+        path = os.path.join(self.data_dir, "%s.yaml" % character.get_name())
         try:
             with open(path, 'w') as f:
-                f.write(yaml.dump(player.dump()))
+                f.write(yaml.dump(character.dump()))
                 return True
         except Exception:
             return False
 
-    def save(self, player):
+    def save(self, character):
         """docstring for save"""
-        return self.save_from_object(player)
+        return self.save_from_object(character)
 
     def get(self, username):
         """docstring for get"""
-        return self.players.pop(username) if self.players.has_key(username) else None
+        return self.characters.pop(username) if self.characters.has_key(username) else None
 
 if __name__ == '__main__':
     username = 'admin'
-    #player = Player(username)
-    pf = PlayerLoader('../data/player')
+    #character = Character(username)
+    pf = CharacterLoader('../data/character')
     #pf.save(username)
     pf.load(username)
-    player = pf.get(username)
-    print player
-    player.set_role(ROLE_ADMIN)
-    print player
-    print player.get_password()
+    character = pf.get(username)
+    print character
+    character.set_role(ROLE_ADMIN)
+    print character
+    print character.get_password()
 
         
 

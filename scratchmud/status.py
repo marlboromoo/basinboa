@@ -19,9 +19,9 @@ UNLOGIN_CLIENTS = {}
 #------------------------------------------------------------------------------
 
 WORLD = None
-PLAYER_LOADER = None
+CHARACTER_LOADER = None
 MOB_LOADER = None
-PLAYERS = {}
+CHARACTERS = {}
 
 
 

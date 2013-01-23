@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
-player is puppet, because player control by client
-mob is puppet, because mob control by computer
+base actions of character/mob
 """
 
 from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
@@ -55,15 +54,15 @@ class Puppet(object):
         return self.__look()
 
     def add_follower(self, object_):
-        """add mob/player object to followers list"""
+        """add mob/character object to followers list"""
         self.followers.append(object_)
 
     def remove_follower(self, object_):
-        """remove mob/player object from followers list"""
+        """remove mob/character object from followers list"""
         self.followers.remove(object_)
 
     def follow(self, object_):
-        """follow mob/player"""
+        """follow mob/character"""
         self.follow_target = object_
          
 

@@ -24,7 +24,7 @@ class Command(object):
     def __init__(self, client, inputs):
         super(Command, self).__init__()
         self.client = client
-        self.player = status.PLAYERS[client]
+        self.character = status.CHARACTERS[client]
         self.inputs = inputs
         self.process_inputs(inputs)
 
@@ -67,37 +67,37 @@ class Command(object):
         Echo whatever client types to everyone.
         """
         msg = ' '.join(args)
-        print '%s says, "%s"' % (self.player.get_name(), msg)
+        print '%s says, "%s"' % (self.character.get_name(), msg)
     
         for guest in status.CLIENTS:
             if guest != self.client:
-                guest.send('%s says: %s\n' % (self.player.get_name(), msg))
+                guest.send('%s says: %s\n' % (self.character.get_name(), msg))
             else:
                 guest.send('You say: %s\n' % msg)
 
     def look(self, args):
         """docstring for look"""
         target = args[0] if args else None
-        return status.PLAYERS[self.client].look(target)
+        return status.CHARACTERS[self.client].look(target)
 
     def go(self, symbol, function, message):
         """docstring for go"""
         room = status.WORLD.locate_client_room(self.client)
-        x, y = self.player.xy
+        x, y = self.character.xy
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
-                #. message to all the players in room
-                client_message_to_room(self.client, '%s go to %s!\n' % (self.player.get_name(), message))
-                #. move player to room
-                self.player.set_location(dst_xy)
-                #. remove player form source room
+                #. message to all the characters in room
+                client_message_to_room(self.client, '%s go to %s!\n' % (self.character.get_name(), message))
+                #. move character to room
+                self.character.set_location(dst_xy)
+                #. remove character form source room
                 room.remove_client(self.client)
                 #. add client in target room
                 status.WORLD.locate_client_room(self.client).add_client(self.client)
-                #. send message to all the players in target room
+                #. send message to all the characters in target room
                 self.client.send('You go to %s !\n' % (message))
-                client_message_to_room(self.client, '%s come to here!\n' % (self.player.get_name()))
+                client_message_to_room(self.client, '%s come to here!\n' % (self.character.get_name()))
         else:
             self.client.send('Huh?\n')
 
@@ -107,7 +107,7 @@ class Command(object):
             x, y, map_ = args
         elif len(args) == 2:
             x, y = args
-            map_ = self.player.map_name
+            map_ = self.character.map_name
         else:
             return self.invalid_args()
         try:
@@ -120,16 +120,16 @@ class Command(object):
             if room:
                 src_map = status.WORLD.locate_client_map(self.client)
                 src_room = status.WORLD.locate_client_room(self.client)
-                #. send message notice all players in the room
-                client_message_to_room(self.client, "%s leave here.\n" % (self.player.get_name()) )
-                #. remove player in old place
+                #. send message notice all characters in the room
+                client_message_to_room(self.client, "%s leave here.\n" % (self.character.get_name()) )
+                #. remove character in old place
                 src_map.remove_client(self.client)
                 src_room.remove_client(self.client)
-                #. move player to destation
-                self.player.set_location((x,y), map_.get_name())
+                #. move character to destation
+                self.character.set_location((x,y), map_.get_name())
                 map_.add_client(self.client)
                 #. send message 
-                client_message_to_room(self.client, '%s come to here!\n' % (self.player.get_name()))
+                client_message_to_room(self.client, '%s come to here!\n' % (self.character.get_name()))
                 return self.look(None)
             else:
                 self.client.send("You can't!")
@@ -155,24 +155,24 @@ class Command(object):
 
     def west(self, args):
         """docstring for west"""
-        status.PLAYERS[self.client].go_west()
+        status.CHARACTERS[self.client].go_west()
 
     def east(self, args):
         """docstring for east"""
-        status.PLAYERS[self.client].go_east()
+        status.CHARACTERS[self.client].go_east()
 
     def north(self, args):
         """docstring for north"""
-        status.PLAYERS[self.client].go_north()
+        status.CHARACTERS[self.client].go_north()
 
     def south(self, args):
         """docstring for south"""
-        status.PLAYERS[self.client].go_south()
+        status.CHARACTERS[self.client].go_south()
 
     def who(self, args):
         """docstring for who"""
-        for player in status.PLAYERS.values():
-            self.client.send("%s\n" % repr(player))
+        for character in status.CHARACTERS.values():
+            self.client.send("%s\n" % repr(character))
 
     def quit(self, args):
         """docstring for quit"""
@@ -181,7 +181,7 @@ class Command(object):
 
     def save(self, args):
         """docstring for save"""
-        msg = 'okay.' if  status.PLAYER_LOADER.save(status.PLAYERS[self.client]) else 'fail!'
+        msg = 'okay.' if  status.CHARACTER_LOADER.save(status.CHARACTERS[self.client]) else 'fail!'
         self.client.send('%s\n' % (msg))
 
     def _follow(self, function, name):
@@ -189,9 +189,9 @@ class Command(object):
         target = function(name)
         if target:
             name = target.mobname if hasattr(target, 'mobname') else target.username
-            player = status.PLAYERS[self.client]
-            target.add_follower(player)
-            player.follow(target)
+            character = status.CHARACTERS[self.client]
+            target.add_follower(character)
+            character.follow(target)
             self.client.send("You start to follow %s!\n" % (name))
         else:
             self.client.send("No such target !\n")
@@ -200,7 +200,7 @@ class Command(object):
         """docstring for follow"""
         target_name = args[0]
         room = status.WORLD.locate_client_room(self.client)
-        return self._follow(room.get_player_by_username, target_name)
+        return self._follow(room.get_character_by_username, target_name)
 
     def track(self, args):
         """docstring for track"""

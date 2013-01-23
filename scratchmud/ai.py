@@ -89,7 +89,7 @@ class Mob(Puppet, Uid):
         if symbol in room.exits:
             dst_xy = function(x, y)
             if dst_xy in room.paths:
-                #. message to all the players in room
+                #. message to all the characters in room
                 mob_message_to_room(self, '%s go to %s!\n' % (self.mobname, message))
                 #. move mob to room
                 self.xy = dst_xy
@@ -97,7 +97,7 @@ class Mob(Puppet, Uid):
                 room.remove_mob(self)
                 #. add mob to target room
                 status.WORLD.locate_mob_room(self).add_mob(self)
-                #. send message to all the players in target room
+                #. send message to all the characters in target room
                 mob_message_to_room(self, '%s come to here!\n' % (self.mobname))
 
     def random_walk(self):

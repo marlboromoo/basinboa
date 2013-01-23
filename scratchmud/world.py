@@ -46,24 +46,24 @@ class Room(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[status.PLAYERS[client].username] = client
+        self.clients[status.CHARACTERS[client].username] = client
 
-    def add_client_by_player(self, player):
-        """add client object by player object"""
-        for client, player_ in status.PLAYERS.items():
-            if player_ == player:
-                self.clients[player.username] = client
+    def add_client_by_character(self, character):
+        """add client object by character object"""
+        for client, character_ in status.CHARACTERS.items():
+            if character_ == character:
+                self.clients[character.username] = client
                 break
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(status.PLAYERS[client].username):
-            self.clients.pop(status.PLAYERS[client].username)
+        if self.clients.has_key(status.CHARACTERS[client].username):
+            self.clients.pop(status.CHARACTERS[client].username)
 
-    def remove_client_by_player(self, player):
-        """remove client object by player object"""
-        if self.clients.has_key(player.username):
-            self.clients.pop(player.username)
+    def remove_client_by_character(self, character):
+        """remove client object by character object"""
+        if self.clients.has_key(character.username):
+            self.clients.pop(character.username)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -97,11 +97,11 @@ class Room(object):
                 return mob
         return None
 
-    def get_player_by_username(self, username):
-        """retunr player object by username else None"""
+    def get_character_by_username(self, username):
+        """retunr character object by username else None"""
         for username_, client in self.clients.items():
             if username == username_:
-                return status.PLAYERS[client]
+                return status.CHARACTERS[client]
         return None
 
 
@@ -164,37 +164,37 @@ class Map(object):
     def add_client(self, client):
         """add client objcet to map"""
         #. add to map
-        self.clients[status.PLAYERS[client].username] = client
+        self.clients[status.CHARACTERS[client].username] = client
         #. add to room
-        self.get_room(status.PLAYERS[client].xy).add_client(client)
+        self.get_room(status.CHARACTERS[client].xy).add_client(client)
 
-    def add_client_by_player(self, player):
-        """add client objcet by player object"""
-        for player_, client in status.PLAYERS.items():
-            if player_ == player:
+    def add_client_by_character(self, character):
+        """add client objcet by character object"""
+        for character_, client in status.CHARACTERS.items():
+            if character_ == character:
                 #. add to map
-                self.clients[player.username] = client
+                self.clients[character.username] = client
                 #. add to room
-                self.get_room(player.xy).add_client(client)
+                self.get_room(character.xy).add_client(client)
                 break
 
     def remove_client(self, client):
         """remove client object from map"""
         #. remove from map
-        if self.clients.has_key(status.PLAYERS[client].username):
-            self.clients.pop(status.PLAYERS[client].username)
+        if self.clients.has_key(status.CHARACTERS[client].username):
+            self.clients.pop(status.CHARACTERS[client].username)
         #. remove from room
-        self.get_room(status.PLAYERS[client].xy).remove_client(client)
+        self.get_room(status.CHARACTERS[client].xy).remove_client(client)
 
-    def remove_client_by_player(self, player):
-        """remove client object by player object"""
-        for player_, client in status.PLAYERS.items():
-            if player_ == player:
+    def remove_client_by_character(self, character):
+        """remove client object by character object"""
+        for character_, client in status.CHARACTERS.items():
+            if character_ == character:
                 #. remove from map
-                if self.clients.has_key(player.username):
-                    self.clients.pop(player.username)
+                if self.clients.has_key(character.username):
+                    self.clients.pop(character.username)
                 #. remove from room
-                self.get_room(player.xy).remove_client(client)
+                self.get_room(character.xy).remove_client(client)
                 break
 
     def get_client(self, name):
@@ -225,19 +225,19 @@ class World(object):
 
     def locate_client_room(self, client):
         """find room by client object"""
-        return self.get_map(status.PLAYERS[client].map_name).get_room(status.PLAYERS[client].xy)
+        return self.get_map(status.CHARACTERS[client].map_name).get_room(status.CHARACTERS[client].xy)
 
     def locate_client_map(self, client):
         """find map by client object"""
-        return self.get_map(status.PLAYERS[client].map_name)
+        return self.get_map(status.CHARACTERS[client].map_name)
 
-    def locate_player_room(self, player):
-        """find room by player object"""
-        return self.get_map(player.map_name).get_room(player.xy)
+    def locate_character_room(self, character):
+        """find room by character object"""
+        return self.get_map(character.map_name).get_room(character.xy)
 
-    def locate_plyer_map(self, player):
-        """find map by player object"""
-        return self.get_map(player.map_name)
+    def locate_plyer_map(self, character):
+        """find map by character object"""
+        return self.get_map(character.map_name)
 
     def locate_mob_room(self, mob):
         """find room by mob object"""
