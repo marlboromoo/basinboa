@@ -108,6 +108,30 @@ class Character(Puppet):
         self.mp = data['mp']
         self.status = data['status']
 
+    def goto(self, xy, map_):
+        """docstring for goto"""
+        try:
+            map_ = status.WORLD.get_map(map_)
+            room =  map_.get_room(xy)
+        except Exception:
+            map_, room = None, None
+        if map_ and room:
+            src_map = status.WORLD.locate_client_map(self.client)
+            src_room = status.WORLD.locate_client_room(self.client)
+            #. send message notice all characters in the room
+            character_message_to_room(self, "%s leave here.\n" % (self.get_name()) )
+            #. remove character in old place
+            src_map.remove_client(self.client)
+            src_room.remove_client(self.client)
+            #. move character to destation
+            self.set_location(xy, map_.get_name())
+            map_.add_client(self.client)
+            #. send message 
+            character_message_to_room(self, '%s come to here!\n' % (self.get_name()))
+            return self.look(None)
+        else:
+            self.client.send("You can't!")
+
     def go(self, symbol, function, message):
         """docstring for go"""
         room = status.WORLD.locate_character_room(self)

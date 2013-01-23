@@ -82,6 +82,27 @@ class Mob(Puppet, Uid):
         #. talk
         self.gossip = data['gossip']
 
+    def goto(self, xy, map_):
+        """docstring for goto"""
+        try:
+            map_ = status.WORLD.get_map(map_)
+            room =  map_.get_room(xy)
+        except Exception:
+            map_, room = None, None
+        if map_ and room:
+            src_map = status.WORLD.locate_mob_map(self)
+            src_room = status.WORLD.locate_mob_room(self)
+            #. send message notice all characters in the room
+            mob_message_to_room(self, "%s leave here.\n" % (self.get_name()) )
+            #. remove mob from old place
+            src_map.remove_mob(self)
+            src_room.remove_mob(self)
+            #. move mob to destation
+            self.set_location(xy, map_.get_name())
+            map_.add_mob(self)
+            #. send message 
+            mob_message_to_room(self, '%s come to here!\n' % (self.get_name()))
+
     def go(self, symbol, function, message):
         """docstring for go"""
         room = status.WORLD.locate_mob_room(self)

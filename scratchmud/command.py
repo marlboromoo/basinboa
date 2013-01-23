@@ -4,9 +4,6 @@ commands !
 """
 
 import status
-#from encode import texts_encoder
-#from message import broadcast, client_message_to_room, client_message_to_map
-from message import client_message_to_room
 
 class Command(object):
     """docstring for Command"""
@@ -81,27 +78,6 @@ class Command(object):
         target = args[0] if args else None
         return status.CHARACTERS[self.client].look(target)
 
-    def go(self, symbol, function, message):
-        """docstring for go"""
-        room = status.WORLD.locate_client_room(self.client)
-        x, y = self.character.xy
-        if symbol in room.exits:
-            dst_xy = function(x, y)
-            if dst_xy in room.paths:
-                #. message to all the characters in room
-                client_message_to_room(self.client, '%s go to %s!\n' % (self.character.get_name(), message))
-                #. move character to room
-                self.character.set_location(dst_xy)
-                #. remove character form source room
-                room.remove_client(self.client)
-                #. add client in target room
-                status.WORLD.locate_client_room(self.client).add_client(self.client)
-                #. send message to all the characters in target room
-                self.client.send('You go to %s !\n' % (message))
-                client_message_to_room(self.client, '%s come to here!\n' % (self.character.get_name()))
-        else:
-            self.client.send('Huh?\n')
-
     def goto(self, args):
         """docstring for goto"""
         if len(args) == 3:
@@ -115,25 +91,7 @@ class Command(object):
             x, y = int(x), int(y)
         except Exception:
             return self.invalid_args()
-        map_ = status.WORLD.get_map(map_)
-        room =  map_.get_room((x,y))
-        if map_:
-            if room:
-                src_map = status.WORLD.locate_client_map(self.client)
-                src_room = status.WORLD.locate_client_room(self.client)
-                #. send message notice all characters in the room
-                client_message_to_room(self.client, "%s leave here.\n" % (self.character.get_name()) )
-                #. remove character in old place
-                src_map.remove_client(self.client)
-                src_room.remove_client(self.client)
-                #. move character to destation
-                self.character.set_location((x,y), map_.get_name())
-                map_.add_client(self.client)
-                #. send message 
-                client_message_to_room(self.client, '%s come to here!\n' % (self.character.get_name()))
-                return self.look(None)
-            else:
-                self.client.send("You can't!")
+        return status.CHARACTERS.get(self.client).goto((x, y), map_)
 
     def rooms(self, args):
         """docstring for rooms"""
