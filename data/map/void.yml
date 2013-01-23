@@ -3,6 +3,10 @@ name: void
 rooms:
     - texts: nothing here ..
       mobs:
+      links: 
+        - map: chinese 
+          xy: !!python/tuple [1, 1]
+          exit: u
     - texts: you can't see anythings ..
       mobs:
     - texts: ...
@@ -47,3 +51,7 @@ rooms:
     - texts: nothing here ..
       mobs:
         - skeleton: dog
+      links: 
+        - map: chinese 
+          xy: !!python/tuple [0, 1]
+          exit: d 

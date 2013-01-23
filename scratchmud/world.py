@@ -10,6 +10,29 @@ NORTH = 'n'
 SOUTH = 's'
 EAST = 'e'
 WEST = 'w'
+UP = 'u'
+DOWN = 'd'
+NORTH_NAME = 'north'
+SOUTH_NAME = 'south'
+WEST_NAME = 'west'
+EAST_NAME = 'east'
+UP_NAME = 'up'
+DOWN_NAME = 'down'
+
+def exit_name(symbol):
+    """docstring for exit_message"""
+    if symbol == NORTH:
+        return NORTH_NAME
+    if symbol == SOUTH:
+        return SOUTH_NAME
+    if symbol == WEST:
+        return WEST_NAME
+    if symbol == EAST:
+        return EAST_NAME
+    if symbol == UP:
+        return UP_NAME
+    if symbol == DOWN:
+        return DOWN_NAME
 
 def north_xy(x, y):
     """docstring for north_xy"""
@@ -38,11 +61,12 @@ class Room(object):
         self.texts = None
         self.mobs = [] #. Mob objects
         self.clients = {} #. key is Player.name, value is client object
+        self.links = [] #. 
 
     def __repr__(self):
-        return "Room%s%s - %s, %s mobs/%s clients" % (
+        return "Room%s%s - %s, %s mobs/%s clients, links: %s" % (
             str(self.id_), str(self.xy), str('/'.join(self.exits)), 
-                                             str(len(self.mobs)), str(len(self.clients)))
+            str(len(self.mobs)), str(len(self.clients)), str(self.links))
 
     def add_client(self, client):
         """docstring for add_client"""
@@ -104,6 +128,45 @@ class Room(object):
                 return status.CHARACTERS[client]
         return None
 
+    def add_link(self, map_, xy, exit):
+        """docstring for add_link"""
+        if exit in self.exits:
+            print "!! Link error, exit: '%s' alreay exist." % (exit)
+            return False
+        self.links.append({'exit' : exit, 'map' : map_, 'xy' : xy})
+        return True
+
+    def remove_link(self, exit):
+        """docstring for remove_link"""
+        for link in self.links:
+            if link['exit'] == exit:
+                self.links.remove(link)
+                break
+
+    def get_link(self, exit):
+        """docstring for get_link"""
+        for link in self.links:
+            if link['exit'] == exit:
+                return link
+        return None
+
+    def has_link(self, exit):
+        """docstring for has_link"""
+        for link in self.links:
+            if link['exit'] == exit:
+                return True
+        return False
+
+    def get_exits(self):
+        """docstring for get_exits"""
+        if len(self.links) > 0:
+            exits = []
+            exits.extend(self.exits)
+            for link in self.links:
+                exits.append(link['exit'])
+            return exits
+        else:
+            return self.exits
 
 class Map(object):
     """docstring for Map"""
@@ -289,10 +352,9 @@ class WorldLoader(object):
                 map_config = yaml.load(f, Loader=yaml.Loader)
             if rooms:
                 #. init room data
-                #texts = [room['texts'] for room in map_config['rooms']]
-                #self.inject_texts_to_rooms(rooms, texts)
                 self.inject_texts_to_rooms(rooms, map_config)
                 self.inject_mobs_to_rooms(rooms, map_config)
+                self.inject_links_to_rooms(rooms, map_config)
                 #. create Map() object
                 self.world.add_map(Map(name=map_config['name'], rooms=rooms))
             else:
@@ -615,6 +677,28 @@ class WorldLoader(object):
                     mob_.map_name = map_config['name']
                     room.add_mob(mob_)
             i += 1
+
+    def inject_links_to_rooms(self, rooms, map_config):
+        """docstring for inject_links_to_rooms"""
+        i = 0
+        for room in rooms:
+            try:
+                links = map_config['rooms'][i]['links']
+            except Exception:
+                links = None
+            if links:
+                for link in links:
+                    try:
+                        map_ = link['map']
+                        xy = link['xy']
+                        exit = link['exit']
+                    except Exception, e:
+                        print "!! Link error, missing values 'map' or 'xy' or 'exit'."
+                        continue
+                    #. TODO: check map or xy exist
+                    room.add_link(map_, xy, exit)
+            i += 1
+
 
 if __name__ == '__main__':
     wc = WorldLoader('../data/map')

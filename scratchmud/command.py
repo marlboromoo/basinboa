@@ -10,13 +10,15 @@ class Command(object):
 
     CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs', 'save',
             'track', 'follow',
-            'goto', 'north', 'south', 'west', 'east']
+            'goto', 'north', 'south', 'west', 'east', 'up', 'down']
     CMDS_ALIAS = {
         'l' : 'look',
         'n' : 'north',
         'w' : 'west',
         'e' : 'east',
         's' : 'south',
+        'u' : 'up',
+        'd' : 'down',
     }
 
     def __init__(self, client, inputs):
@@ -127,6 +129,14 @@ class Command(object):
     def south(self, args):
         """docstring for south"""
         status.CHARACTERS[self.client].go_south()
+
+    def up(self, args):
+        """docstring for up"""
+        status.CHARACTERS[self.client].go_up()
+
+    def down(self, args):
+        """docstring for down"""
+        status.CHARACTERS[self.client].go_down()
 
     def who(self, args):
         """docstring for who"""

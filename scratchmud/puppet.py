@@ -3,7 +3,8 @@
 base actions of character/mob
 """
 
-from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST
+from world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
+from world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
 
 class Puppet(object):
     """docstring for Puppet"""
@@ -23,7 +24,7 @@ class Puppet(object):
 
     def go_west(self):
         """docstring for west"""
-        self.go(WEST, west_xy, 'west')
+        self.go(WEST, west_xy, WEST_NAME)
         #. notice follower
         for follower in self.followers:
             follower.go_west()
@@ -31,7 +32,7 @@ class Puppet(object):
 
     def go_east(self):
         """docstring for east"""
-        self.go(EAST, east_xy, 'east')
+        self.go(EAST, east_xy, EAST_NAME)
         #. notice follower
         for follower in self.followers:
             follower.go_east()
@@ -39,7 +40,7 @@ class Puppet(object):
 
     def go_north(self):
         """docstring for north"""
-        self.go(NORTH, north_xy, 'north')
+        self.go(NORTH, north_xy, NORTH_NAME)
         #. notice follower
         for follower in self.followers:
             follower.go_north()
@@ -47,10 +48,24 @@ class Puppet(object):
 
     def go_south(self):
         """docstring for south"""
-        self.go(SOUTH, south_xy, 'south')
+        self.go(SOUTH, south_xy, SOUTH_NAME)
         #. notice follower
         for follower in self.followers:
             follower.go_south()
+        return self.__look()
+
+    def go_up(self):
+        """docstring for go_up"""
+        self.go(UP, None, UP_NAME)
+        for follower in self.followers:
+            follower.go_up()
+        return self.__look()
+
+    def go_down(self):
+        """docstring for go_down"""
+        self.go(DOWN, None, DOWN_NAME)
+        for follower in self.followers:
+            follower.go_down()
         return self.__look()
 
     def add_follower(self, object_):

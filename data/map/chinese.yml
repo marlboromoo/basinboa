@@ -17,4 +17,7 @@ rooms:
       mobs:
     - texts: 我可以吞下四塊玻璃, 而不傷身體
       mobs:
-
+      links: 
+        - map: void 
+          xy: !!python/tuple [1, 1]
+          exit: e
