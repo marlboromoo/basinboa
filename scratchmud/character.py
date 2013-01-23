@@ -151,7 +151,7 @@ class CharacterLoader(object):
 
     def load(self, username):
         """docstring for load"""
-        path = os.path.join(self.data_dir, "%s.yaml" % username)
+        path = os.path.join(self.data_dir, "%s.yml" % username)
         #print path
         try:
             with open(path, 'r') as f:
@@ -165,7 +165,7 @@ class CharacterLoader(object):
 
     def save_from_object(self, character):
         """docstring for save"""
-        path = os.path.join(self.data_dir, "%s.yaml" % character.get_name())
+        path = os.path.join(self.data_dir, "%s.yml" % character.get_name())
         try:
             with open(path, 'w') as f:
                 f.write(yaml.dump(character.dump()))

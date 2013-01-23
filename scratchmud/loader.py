@@ -8,7 +8,7 @@ import yaml
 class YamlLoader(object):
     """docstring for YamlLoader"""
 
-    FILE_TYPE = 'yaml'
+    FILE_TYPE = 'yml'
 
     def __init__(self, data_dir):
         super(YamlLoader, self).__init__()
@@ -39,7 +39,7 @@ class YamlLoader(object):
 
     def dump_from_object(self, object_):
         """docstring for dump"""
-        path = os.path.join(self.data_dir, "%s.yaml" % object_.get_name())
+        path = os.path.join(self.data_dir, "%s.%s" % (object_.get_name(), self.FILE_TYPE))
         with open(path, 'w') as f:
             f.write(yaml.dump(object_.dump()))
 
