@@ -37,7 +37,7 @@ class Room(object):
         self.paths = paths
         self.texts = None
         self.mobs = [] #. Mob objects
-        self.clients = {} #. key is Player.username, value is client object
+        self.clients = {} #. key is Player.name, value is client object
 
     def __repr__(self):
         return "Room%s%s - %s, %s mobs/%s clients" % (
@@ -46,24 +46,24 @@ class Room(object):
 
     def add_client(self, client):
         """docstring for add_client"""
-        self.clients[status.CHARACTERS[client].username] = client
+        self.clients[status.CHARACTERS[client].name] = client
 
     def add_client_by_character(self, character):
         """add client object by character object"""
         for client, character_ in status.CHARACTERS.items():
             if character_ == character:
-                self.clients[character.username] = client
+                self.clients[character.name] = client
                 break
 
     def remove_client(self, client):
         """docstring for add_client"""
-        if self.clients.has_key(status.CHARACTERS[client].username):
-            self.clients.pop(status.CHARACTERS[client].username)
+        if self.clients.has_key(status.CHARACTERS[client].name):
+            self.clients.pop(status.CHARACTERS[client].name)
 
     def remove_client_by_character(self, character):
         """remove client object by character object"""
-        if self.clients.has_key(character.username):
-            self.clients.pop(character.username)
+        if self.clients.has_key(character.name):
+            self.clients.pop(character.name)
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -97,10 +97,10 @@ class Room(object):
                 return mob
         return None
 
-    def get_character_by_username(self, username):
-        """retunr character object by username else None"""
-        for username_, client in self.clients.items():
-            if username == username_:
+    def get_character_by_name(self, name):
+        """retunr character object by name else None"""
+        for name_, client in self.clients.items():
+            if name == name_:
                 return status.CHARACTERS[client]
         return None
 
@@ -110,7 +110,7 @@ class Map(object):
     def __init__(self, name, rooms):
         super(Map, self).__init__()
         self.name = name
-        self.clients = {} #. key is Player.username, value is client object
+        self.clients = {} #. key is Player.name, value is client object
         self.init_rooms(rooms) #. key is (x,y), value is Room object
         self.init_mobs()
 
@@ -164,7 +164,7 @@ class Map(object):
     def add_client(self, client):
         """add client objcet to map"""
         #. add to map
-        self.clients[status.CHARACTERS[client].username] = client
+        self.clients[status.CHARACTERS[client].name] = client
         #. add to room
         self.get_room(status.CHARACTERS[client].xy).add_client(client)
 
@@ -173,7 +173,7 @@ class Map(object):
         for character_, client in status.CHARACTERS.items():
             if character_ == character:
                 #. add to map
-                self.clients[character.username] = client
+                self.clients[character.name] = client
                 #. add to room
                 self.get_room(character.xy).add_client(client)
                 break
@@ -181,8 +181,8 @@ class Map(object):
     def remove_client(self, client):
         """remove client object from map"""
         #. remove from map
-        if self.clients.has_key(status.CHARACTERS[client].username):
-            self.clients.pop(status.CHARACTERS[client].username)
+        if self.clients.has_key(status.CHARACTERS[client].name):
+            self.clients.pop(status.CHARACTERS[client].name)
         #. remove from room
         self.get_room(status.CHARACTERS[client].xy).remove_client(client)
 
@@ -191,8 +191,8 @@ class Map(object):
         for character_, client in status.CHARACTERS.items():
             if character_ == character:
                 #. remove from map
-                if self.clients.has_key(character.username):
-                    self.clients.pop(character.username)
+                if self.clients.has_key(character.name):
+                    self.clients.pop(character.name)
                 #. remove from room
                 self.get_room(character.xy).remove_client(client)
                 break

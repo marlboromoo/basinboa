@@ -15,11 +15,11 @@ ROLE_USER = 'user'
 
 class Character(Puppet):
     """docstring for Character"""
-    def __init__(self, username=None):
+    def __init__(self, name=None):
         super(Character, self).__init__()
         self.client = None
         self.login = None
-        self.username = username
+        self.name = name
         self.password = None
         #. status
         self.nickname = None
@@ -34,15 +34,15 @@ class Character(Puppet):
 
     def __repr__(self):
         return "User:%s, role:%s, xy:%s, map:%s" % (
-            str(self.username), str(self.role), str(self.xy), str(self.map_name))
+            str(self.name), str(self.role), str(self.xy), str(self.map_name))
 
     def set_name(self, name):
         """docstring for set_name"""
-        self.username = name
+        self.name = name
 
     def get_name(self):
         """docstring for get_name"""
-        return self.username
+        return self.name
 
     def set_password(self, password):
         """docstring for set_password"""
@@ -70,7 +70,7 @@ class Character(Puppet):
         """docstring for dump"""
         return {
             'login' : self.login,
-            'username' : self.username,
+            'name' : self.name,
             'password' : self.password,
             #. status
             'nickname' : self.nickname,
@@ -91,7 +91,7 @@ class Character(Puppet):
     def load(self, data):
         """docstring for load"""
         self.login = data['login']
-        self.username = data['username']
+        self.name = data['name']
         self.password = data['password']
         #. status
         self.nickname = data['nickname']
@@ -116,7 +116,7 @@ class Character(Puppet):
             dst_xy = function(x, y)
             if dst_xy in room.paths:
                 #. message to all the characters in room
-                character_message_to_room(self, '%s go to %s!\n' % (self.username, message))
+                character_message_to_room(self, '%s go to %s!\n' % (self.name, message))
                 #. move character to room
                 self.xy = dst_xy
                 #. remove client from source room
@@ -124,7 +124,7 @@ class Character(Puppet):
                 #. add mob to target room
                 status.WORLD.locate_character_room(self).add_client_by_character(self)
                 #. send message to all the characters in target room
-                character_message_to_room(self, '%s come to here!\n' % (self.username))
+                character_message_to_room(self, '%s come to here!\n' % (self.name))
         else:
             self.client.send('Huh?\n')
 
@@ -138,7 +138,7 @@ class Character(Puppet):
         for client_ in room.get_clients():
             if client_ != self.client:
                 character_ = status.CHARACTERS[client_]
-                self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.username)))
+                self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.name)))
         #. mobs
         for mob in room.get_mobs():
             self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.mobname)))
@@ -149,11 +149,11 @@ class CharacterLoader(YamlLoader):
         super(CharacterLoader, self).__init__(data_dir)
         self.data_dir = data_dir
 
-    def get(self, username):
+    def get(self, name):
         """docstring for get"""
-        data = self.load(username)
+        data = self.load(name)
         if data:
-            character = Character(data.get(username))
+            character = Character(data.get(name))
             character.load(data)
             return character
         return None

@@ -11,5 +11,5 @@ role: user
 skills: null
 spells: null
 status: null
-username: admin
+name: admin
 xy: !!python/tuple [1, 1]
