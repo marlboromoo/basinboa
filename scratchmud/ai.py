@@ -6,7 +6,7 @@ import copy
 import random
 import status
 from puppet import Puppet
-from world import NORTH, SOUTH, EAST, WEST
+from world import NORTH, SOUTH, EAST, WEST, UP, DOWN, exit_name
 from message import mob_message_to_room
 from uid import Uid
 from loader import YamlLoader
@@ -120,6 +120,11 @@ class Mob(Puppet, Uid):
                 status.WORLD.locate_mob_room(self).add_mob(self)
                 #. send message to all the characters in target room
                 mob_message_to_room(self, '%s come to here!\n' % (self.name))
+            elif room.has_link(symbol):
+                link = room.get_link(symbol)
+                self.goto(link['xy'], link['map'], exit_name(symbol))
+            else:
+                pass
 
     def random_walk(self):
         """random go to room exits"""
@@ -134,6 +139,10 @@ class Mob(Puppet, Uid):
                 self.go_west()
             if exit == EAST:
                 self.go_east()
+            if exit == UP:
+                self.go_up()
+            if exit == DOWN:
+                self.go_down()
 
     def random_say(self):
         """docstring for random_say"""
