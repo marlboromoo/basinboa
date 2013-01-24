@@ -48,6 +48,11 @@ rooms:
       mobs:
     - texts: nothing here ..
       mobs:
+      links: 
+        #. bad link
+        - map: chinese 
+          xy: !!python/tuple [4, 4]
+          exit: d 
     - texts: nothing here ..
       mobs:
         - skeleton: dog

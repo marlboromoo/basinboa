@@ -13,7 +13,7 @@ from scratchmud.world import WorldLoader
 from scratchmud.character import CharacterLoader
 from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
-from scratchmud.debug import dump_status
+#from scratchmud.debug import dump_status
 
 ASCII_ART = '''
  ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
@@ -21,31 +21,32 @@ ASCII_ART = '''
 /__/\__|_| \__,_|\__\__|_||_|_|_|_\_,_\__,_|
 
 '''
+
+if __name__ == '__main__':
+    print(ASCII_ART)
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
-status.CHARACTER_LOADER = CharacterLoader('data/character')
-status.MOB_LOADER = MobLoader('data/mob')
-wc = WorldLoader('data/map')
-wc.load_all()
-status.WORLD = wc.get()
+    status.CHARACTER_LOADER = CharacterLoader('data/character')
+    status.MOB_LOADER = MobLoader('data/mob')
+    wl = WorldLoader('data/map')
+    wl.load_all()
+    status.WORLD = wl.get()
+    status.WORLD.check_links()
 
 #------------------------------------------------------------------------------
 #       Initial Cycle
 #------------------------------------------------------------------------------
-login_cycle = Cycle(.3)
-kick_cycle = Cycle(2)
-quit_cycle = Cycle(.2)
-process_cycle = Cycle(.1)
-walk_cycle = Cycle(10)
-debug_cycle = Cycle(2)
-
+    login_cycle = Cycle(.3)
+    kick_cycle = Cycle(2)
+    quit_cycle = Cycle(.2)
+    process_cycle = Cycle(.1)
+    walk_cycle = Cycle(10)
+    debug_cycle = Cycle(2)
 
 #------------------------------------------------------------------------------
 #       Main
 #------------------------------------------------------------------------------
-
-if __name__ == '__main__':
     telnet_server = TelnetServer(
         port=7777,
         address='',
@@ -53,8 +54,7 @@ if __name__ == '__main__':
         on_disconnect=on_disconnect,
         timeout = .05
         )
-    print(ASCII_ART)
-    print status.WORLD.get_maps()
+    print ">> Maps: %s " % (str(status.WORLD.get_maps()))
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)
 

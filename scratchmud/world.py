@@ -130,7 +130,7 @@ class Room(object):
 
     def add_link(self, map_, xy, exit):
         """docstring for add_link"""
-        if exit in self.exits:
+        if exit in self.exits or self.has_link(exit):
             print "!! Link error, exit: '%s' alreay exist." % (exit)
             return False
         self.links.append({'exit' : exit, 'map' : map_, 'xy' : xy})
@@ -149,6 +149,10 @@ class Room(object):
             if link['exit'] == exit:
                 return link
         return None
+
+    def get_links(self):
+        """docstring for get_links"""
+        return self.links
 
     def has_link(self, exit):
         """docstring for has_link"""
@@ -170,9 +174,10 @@ class Room(object):
 
 class Map(object):
     """docstring for Map"""
-    def __init__(self, name, rooms):
+    def __init__(self, name, rooms, coordinates):
         super(Map, self).__init__()
         self.name = name
+        self.coordinates = coordinates
         self.clients = {} #. key is Player.name, value is client object
         self.init_rooms(rooms) #. key is (x,y), value is Room object
         self.init_mobs()
@@ -268,6 +273,10 @@ class Map(object):
         """docstring for get_clients"""
         return self.clients.values()
 
+    def has_coordinates(self, xy):
+        """docstring for check_coordinates"""
+        return True if xy in self.coordinates else False
+
 class World(object):
     """docstring for World"""
     def __init__(self):
@@ -285,6 +294,10 @@ class World(object):
     def get_maps(self):
         """docstring for get_maps"""
         return self.maps.values()
+
+    def has_map(self, map_name):
+        """docstring for has_map"""
+        return True if self.maps.has_key(map_name) else False
 
     def locate_client_room(self, client):
         """find room by client object"""
@@ -309,7 +322,22 @@ class World(object):
     def locate_mob_map(self, mob):
         """find map by mob object"""
         return self.get_map(mob.map_name)
-        
+
+    def check_links(self):
+        """check links in whole world."""
+        print ">> Checking links in whole world .."
+        for map_ in self.get_maps():
+            for room in map_.get_rooms():
+                for link in room.get_links():
+                    if not self.has_map(link['map']):
+                        print "!! Invalid link: %s, remove it!" % (str(link))
+                        room.remove_link(link['exit'])
+                        continue
+                    else:
+                        if not self.get_map(link['map']).has_coordinates(link['xy']):
+                            print "!! Invalid link: %s, remove it!" % (str(link))
+                            room.remove_link(link['exit'])
+                            continue
 
 class WorldLoader(object):
     """docstring for WorldLoader"""
@@ -345,7 +373,7 @@ class WorldLoader(object):
             #. load data
             with open(data_path, 'r') as f:
                 map_data = f.readlines()
-                rooms = self.make_rooms(map_data)
+                rooms, coordinates = self.make_rooms(map_data)
                 #print ''.join(map_data)
             #. load config
             with open(config_path, 'r') as f:
@@ -356,12 +384,13 @@ class WorldLoader(object):
                 self.inject_mobs_to_rooms(rooms, map_config)
                 self.inject_links_to_rooms(rooms, map_config)
                 #. create Map() object
-                self.world.add_map(Map(name=map_config['name'], rooms=rooms))
+                self.world.add_map(Map(name=map_config['name'], rooms=rooms, coordinates=coordinates))
             else:
-                print "Map %s process error! " % (map_name)
+                print "!! Map %s process error! " % (map_name)
 
     def load_all(self):
         """docstring for load_all"""
+        print ">> Loading all maps .."
         maps = self.list()
         #print maps
         for map_ in maps:
@@ -542,12 +571,12 @@ class WorldLoader(object):
             #. check we
             if grid[y][0] in self.SYMBOL_PATHS or grid[y][len(grid[y])-1] in self.SYMBOL_PATHS:
                 #print grid[y][0], grid[y][len(grid[y])-1]
-                print 'invalid grid, path not connect to room.'
+                print '!! Invalid grid, path not connect to room.'
                 return False
             if y == 0 and y == len(grid)-1: 
                 for block in grid[y]:
                     if block == self.SYMBOL_NS:
-                        print 'invalid grid, path(%s) not connect to room.' % (self.SYMBOL_NS)
+                        print '!! Invalid grid, path(%s) not connect to room.' % (self.SYMBOL_NS)
                         return False
             y += 2
         return True
@@ -557,13 +586,13 @@ class WorldLoader(object):
         x, y = xy
         if symbol != self.SYMBOL_ROOM and not allow_void:
             if notice:
-                print "Invalid grid, block(%s, %s) '%s' must be '%s'." % (
+                print "!! Invalid grid, block(%s, %s) '%s' must be '%s'." % (
                     x, y, symbol, self.SYMBOL_ROOM
                 )
             return False
         if symbol != self.SYMBOL_ROOM and symbol != self.SYMBOL_VOID and allow_void:
             if notice:
-                print "Invalid grid, block(%s, %s) '%s' must be '%s' or '%s'." % (
+                print "!! Invalid grid, block(%s, %s) '%s' must be '%s' or '%s'." % (
                     x, y, symbol, self.SYMBOL_ROOM, self.SYMBOL_VOID
                 )
             return False
@@ -573,7 +602,7 @@ class WorldLoader(object):
         """docstring for symbol_must_be_path"""
         x, y = xy
         if symbol not in self.SYMBOL_PATHS and symbol != self.SYMBOL_VOID: 
-            print "Invalid grid, block(%s, %s) '%s' must be '%s' or follow one: '%s'." % (
+            print "!! Invalid grid, block(%s, %s) '%s' must be '%s' or follow one: '%s'." % (
                 x, y, symbol, self.SYMBOL_VOID, "' '".join(self.SYMBOL_PATHS)
             )
             return False
@@ -595,7 +624,7 @@ class WorldLoader(object):
         #print 'row:', row
         if not self.symbol_must_be_room(row[0], (0,y), notice=False) or \
            not self.symbol_must_be_room(row[len(row)-1], (len(row)-1,y), notice=False):
-            print "Invalid grid, first/last symbol of row%s must be '%s'" % (
+            print "!! Invalid grid, first/last symbol of row%s must be '%s'" % (
                 y, self.SYMBOL_ROOM
             )
             return False
@@ -630,7 +659,7 @@ class WorldLoader(object):
         for xy in paths:
             if xy not in coordinates:
                 # need log here..
-                print "invalid path %s, please check your map data." % (str(xy))
+                print "!! invalid path %s, please check your map data." % (str(xy))
                 return False
         return True
 
@@ -651,8 +680,8 @@ class WorldLoader(object):
                 for row in grid:
                     for block in [block for block in row if block]:
                         rooms.append(Room(block['id'], block['xy'], block['exits'], block['paths']))
-                return rooms
-        return None
+                return rooms, coordinates
+        return None, None
 
     def inject_texts_to_rooms(self, rooms, map_config):
         """docstring for inject_texts_to_rooms"""
@@ -692,23 +721,10 @@ class WorldLoader(object):
                         map_ = link['map']
                         xy = link['xy']
                         exit = link['exit']
-                    except Exception, e:
+                    except Exception:
                         print "!! Link error, missing values 'map' or 'xy' or 'exit'."
                         continue
                     #. TODO: check map or xy exist
                     room.add_link(map_, xy, exit)
             i += 1
-
-
-if __name__ == '__main__':
-    wc = WorldLoader('../data/map')
-    wc.load_all()
-    world = wc.get()
-    print world.get_maps()
-    void = world.get_map('void')
-    print void.get_room((0,0))
-    print void.get_room((1,0))
-        
-        
-
 
