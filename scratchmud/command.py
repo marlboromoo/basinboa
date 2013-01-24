@@ -77,8 +77,8 @@ class Command(object):
 
     def look(self, args):
         """docstring for look"""
-        target = args[0] if args else None
-        return status.CHARACTERS[self.client].look(target)
+        target_name = args[0] if args else None
+        return status.CHARACTERS[self.client].look(target_name)
 
     def goto(self, args):
         """docstring for goto"""

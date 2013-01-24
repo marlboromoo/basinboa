@@ -10,6 +10,7 @@ class Puppet(object):
     """docstring for Puppet"""
     def __init__(self):
         super(Puppet, self).__init__()
+        self.desc = None
         #. combat status
         self.hp = 100
         self.mp = 100
@@ -94,5 +95,9 @@ class Puppet(object):
             self.follow_target = None
         if self in self.followers:
             self.followers.remove(self)
+
+    def get_desc(self):
+        """docstring for get_desc"""
+        return str(self.desc)
          
 

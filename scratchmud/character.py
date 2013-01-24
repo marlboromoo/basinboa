@@ -162,20 +162,31 @@ class Character(Puppet):
         else:
             self.client.send('Huh?\n')
 
-    def look(self, target=None):
+    def look(self, target_name=None):
         """docstring for look"""
         room = status.WORLD.locate_character_room(self)
-        self.client.send('%s\n' % (texts_encoder(room.texts)))
-        mobs = [mob.name for mob in room.mobs]
-        self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % (room.get_exits(), room.id_, str(room.xy), str(mobs)))
-        #. other characters
-        for client_ in room.get_clients():
-            if client_ != self.client:
-                character_ = status.CHARACTERS[client_]
-                self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.name)))
-        #. mobs
-        for mob in room.get_mobs():
-            self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.name)))
+        if not target_name:
+            #. view
+            self.client.send('%s\n' % (texts_encoder(room.texts)))
+            #. prompt
+            mobs = [mob.name for mob in room.mobs]
+            self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % 
+                             (room.get_exits(), room.id_, str(room.xy), str(mobs)))
+            #. other characters
+            for client_ in room.get_clients():
+                if client_ != self.client:
+                    character_ = status.CHARACTERS[client_]
+                    self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.name)))
+            #. mobs
+            for mob in room.get_mobs():
+                self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.name)))
+        else:
+            target_character= room.get_character_by_name(target_name)
+            target_mob = room.get_mob_by_name(target_name)
+            if target_character:
+                self.client.send("%s\n" % (target_character.get_desc()))
+            if target_mob:
+                self.client.send("%s\n" % (target_mob.get_desc()))
 
 class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""

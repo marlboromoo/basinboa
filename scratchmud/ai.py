@@ -27,7 +27,6 @@ class Mob(Puppet, Uid):
         self.spells = None
         self.race = None
         self.job = None
-        self.desc = None
         #. talk
         self.gossip = None
         #. here we go
