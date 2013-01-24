@@ -151,16 +151,26 @@ class Character(Puppet):
         else:
             self.client.send('Huh?\n')
 
+    def send_prompt(self, room=None):
+        """docstring for send_prompt"""
+        room = status.WORLD.locate_character_room(self) if room == None else room
+        mobs = [mob.get_name() for mob in room.get_mobs()]
+        self.client.send('hp:%s/mp:%s, exits: %s, id: %s, xy: %s mobs: %s\n' % 
+                         (str(self.get_hp()), str(self.get_mp()), room.get_exits(),
+                          room.id_, str(room.xy), str(mobs)))
+
     def look(self, target_name=None):
         """docstring for look"""
+        self.client.send('\n')
         room = status.WORLD.locate_character_room(self)
         if not target_name:
             #. view
             self.client.send('%s\n' % (texts_encoder(room.texts)))
             #. prompt
-            mobs = [mob.name for mob in room.mobs]
-            self.client.send('exits: %s, id: %s, xy: %s mobs: %s\n' % 
-                             (room.get_exits(), room.id_, str(room.xy), str(mobs)))
+            #mobs = [mob.name for mob in room.mobs]
+            #self.client.send('hp:%s/mp:%s, exits: %s, id: %s, xy: %s mobs: %s\n' % 
+            #                 (str(self.get_hp()), str(self.get_mp()), room.get_exits(), room.id_, str(room.xy), str(mobs)))
+            self.send_prompt(room)
             #. other characters
             for client_ in room.get_clients():
                 if client_ != self.client:
@@ -203,13 +213,14 @@ class Character(Puppet):
         target_mob = room.get_mob_by_name(target_name)
         if target_mob:
             self.add_combat_target(target_mob)
+            target_mob.add_combat_target(self)
             self.client.send("You try to kill %s\n" % (target_mob.get_name()))
             return
         target_character= room.get_character_by_name(target_name)
         if target_character:
             self.client.send("You can't 'kill' player, use 'murder' insted.\n")
             return
-        if not target_character and not target_character:
+        if not target_character and not target_mob:
             self.client.send("No such target!\n")
             return
 

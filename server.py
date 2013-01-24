@@ -13,6 +13,7 @@ from scratchmud.world import WorldLoader
 from scratchmud.character import CharacterLoader
 from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
+from scratchmud.combat import fight
 #from scratchmud.debug import dump_status
 
 if __name__ == '__main__':
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     kick_cycle = Cycle(2)
     quit_cycle = Cycle(.2)
     process_cycle = Cycle(.1)
+    combat_cycle = Cycle(5)
     walk_cycle = Cycle(10)
     debug_cycle = Cycle(2)
 
@@ -58,6 +60,7 @@ if __name__ == '__main__':
         kick_cycle.fire(kick_idle)
         quit_cycle.fire(kick_quit)
         process_cycle.fire(process_clients)
+        combat_cycle.fire(fight)
         walk_cycle.fire(mob_actions)
         #debug_cycle.fire(dump_status)
 

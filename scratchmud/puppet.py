@@ -21,7 +21,7 @@ class Puppet(object):
         self.xy = None
         self.map_name = None
         #. combat status
-        self.combat_target = []
+        self.combat_targets = []
         self.hp = 100
         self.mp = 100
         self.status = None
@@ -116,13 +116,38 @@ class Puppet(object):
 
     def add_combat_target(self, object_):
         """docstring for set_combat_target"""
-        self.combat_target.append(object_)
+        self.combat_targets.append(object_)
 
     def remove_combat_target(self, object_):
         """docstring for remove_combat_target"""
-        self.combat_target.remove(object_)
+        self.combat_targets.remove(object_)
+
+    def get_combat_targets(self):
+        """docstring for get_combat_target"""
+        return self.combat_targets
+
+    def increase_hp(self, value):
+        """docstring for increase_hp"""
+        self.hp += value
+
+    def decrease_hp(self, value):
+        """docstring for increase_hp"""
+        self.hp -= value
+        self.hp = 0 if self.hp <= 0 else self.hp
+
+    def hurt(self, _object):
+        """docstring for hurt"""
+        _object.decrease_hp(10)
 
     def is_player(self):
         """docstring for is_player"""
         return True if hasattr(self, 'client') else False
+
+    def get_hp(self):
+        """docstring for get_hp"""
+        return self.hp
+
+    def get_mp(self):
+        """docstring for get_mp"""
+        return self.mp
 

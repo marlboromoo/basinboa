@@ -5,7 +5,7 @@ rooms:
       mobs:
         - skeleton: dog
         - skeleton: dog
-          mobname : graydog
+          name : graydog
           nickname: 灰色的狗
         - skeleton: cat
           gossip: 

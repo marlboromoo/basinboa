@@ -118,21 +118,23 @@ class Mob(Puppet, Uid):
 
     def random_walk(self):
         """random go to room exits"""
-        if random.choice([True, False, False]):
-            room = status.WORLD.locate_mob_room(self)
-            exit = random.choice(room.exits)
-            if exit == NORTH:
-                self.go_north()
-            if exit == SOUTH:
-                self.go_south()
-            if exit == WEST:
-                self.go_west()
-            if exit == EAST:
-                self.go_east()
-            if exit == UP:
-                self.go_up()
-            if exit == DOWN:
-                self.go_down()
+        #. not in fight
+        if len(self.get_combat_targets()) == 0:
+            if random.choice([True, False, False]):
+                room = status.WORLD.locate_mob_room(self)
+                exit = random.choice(room.exits)
+                if exit == NORTH:
+                    self.go_north()
+                if exit == SOUTH:
+                    self.go_south()
+                if exit == WEST:
+                    self.go_west()
+                if exit == EAST:
+                    self.go_east()
+                if exit == UP:
+                    self.go_up()
+                if exit == DOWN:
+                    self.go_down()
 
     def random_say(self):
         """docstring for random_say"""
