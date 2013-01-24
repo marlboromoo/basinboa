@@ -185,6 +185,8 @@ class Character(Puppet):
             target_mob = room.get_mob_by_name(target_name)
             if target_character:
                 self.client.send("%s\n" % (target_character.get_desc()))
+                if not target_character.client == self.client:
+                    target_character.client.send("%s look at you.\n" % (self.get_name()))
             if target_mob:
                 self.client.send("%s\n" % (target_mob.get_desc()))
 
