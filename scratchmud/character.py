@@ -149,9 +149,9 @@ class Character(Puppet):
                 character_message_to_room(self, '%s go to %s!\n' % (self.name, message))
                 #. move character to room
                 self.xy = dst_xy
-                #. remove client from source room
+                #. remove character from source room
                 room.remove_client_by_character(self)
-                #. add mob to target room
+                #. add character to target room
                 status.WORLD.locate_character_room(self).add_client_by_character(self)
                 #. send message to all the characters in target room
                 character_message_to_room(self, '%s come to here!\n' % (self.name))
