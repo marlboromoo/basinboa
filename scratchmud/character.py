@@ -20,17 +20,10 @@ class Character(Puppet):
         super(Character, self).__init__()
         self.client = None
         self.login = None
-        self.name = name
         self.password = None
-        #. status
-        self.nickname = None
         self.xy = (1, 0)
         self.map_name = 'void'
-        self.skills = None
-        self.spells = None
-        self.race = None
         self.role = ROLE_USER
-        self.job = None
         self.prompt = None
 
     def __repr__(self):
@@ -40,10 +33,6 @@ class Character(Puppet):
     def set_name(self, name):
         """docstring for set_name"""
         self.name = name
-
-    def get_name(self):
-        """docstring for get_name"""
-        return self.name
 
     def set_password(self, password):
         """docstring for set_password"""
@@ -182,13 +171,47 @@ class Character(Puppet):
                 self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.name)))
         else:
             target_character= room.get_character_by_name(target_name)
-            target_mob = room.get_mob_by_name(target_name)
             if target_character:
                 self.client.send("%s\n" % (target_character.get_desc()))
                 if not target_character.client == self.client:
                     target_character.client.send("%s look at you.\n" % (self.get_name()))
+                return
+            target_mob = room.get_mob_by_name(target_name)
             if target_mob:
                 self.client.send("%s\n" % (target_mob.get_desc()))
+                return
+
+    def follow(self, function, name):
+        """docstring for _follow"""
+        target = function(name)
+        if target:
+            if target in self.get_followers():
+                self.client.send("You can't ! %s already follow you.\n." % (target.name))
+                return
+            target.add_follower(self)
+            self.start_follow(target)
+            name = target.name if target != self else 'yourself'
+            self.client.send("You start to follow %s!\n" % (name))
+            if target.is_player() and target != self:
+                target.client.send("%s start to follow you!" % (self.get_name()))
+        else:
+            self.client.send("No such target !\n")
+
+    def kill(self, target_name):
+        """docstring for kill"""
+        room = status.WORLD.locate_character_room(self)
+        target_mob = room.get_mob_by_name(target_name)
+        if target_mob:
+            self.add_combat_target(target_mob)
+            self.client.send("You try to kill %s\n" % (target_mob.get_name()))
+            return
+        target_character= room.get_character_by_name(target_name)
+        if target_character:
+            self.client.send("You can't 'kill' player, use 'murder' insted.\n")
+            return
+        if not target_character and not target_character:
+            self.client.send("No such target!\n")
+            return
 
 class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""

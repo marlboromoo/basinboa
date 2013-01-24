@@ -18,15 +18,6 @@ class Mob(Puppet, Uid):
         super(Mob, self).__init__()
         #. mob type
         self.skeleton = None
-        #. status
-        self.name = None
-        self.nickname = None
-        self.xy = None
-        self.map_name = None
-        self.skills = None
-        self.spells = None
-        self.race = None
-        self.job = None
         #. talk
         self.gossip = None
         #. here we go

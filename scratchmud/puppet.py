@@ -10,14 +10,28 @@ class Puppet(object):
     """docstring for Puppet"""
     def __init__(self):
         super(Puppet, self).__init__()
+        self.name = None
+        self.nickname = None
         self.desc = None
+        self.skills = None
+        self.spells = None
+        self.race = None
+        self.job = None
+        #. geo
+        self.xy = None
+        self.map_name = None
         #. combat status
+        self.combat_target = []
         self.hp = 100
         self.mp = 100
         self.status = None
         #. other status
         self.follow_target = None
         self.followers = []
+
+    def get_name(self):
+        """docstring for get_name"""
+        return self.name
 
     def __look(self):
         """if have function look then fire it"""
@@ -81,7 +95,7 @@ class Puppet(object):
         """docstring for get_followers"""
         return self.followers
 
-    def follow(self, object_):
+    def start_follow(self, object_):
         """follow mob/character"""
         if object_ == self:
             self.stop_follow()
@@ -99,5 +113,16 @@ class Puppet(object):
     def get_desc(self):
         """docstring for get_desc"""
         return str(self.desc)
-         
+
+    def add_combat_target(self, object_):
+        """docstring for set_combat_target"""
+        self.combat_target.append(object_)
+
+    def remove_combat_target(self, object_):
+        """docstring for remove_combat_target"""
+        self.combat_target.remove(object_)
+
+    def is_player(self):
+        """docstring for is_player"""
+        return True if hasattr(self, 'client') else False
 

@@ -9,7 +9,7 @@ class Command(object):
     """docstring for Command"""
 
     CMDS = [ 'chat', 'quit', 'look', 'rooms', 'maps', 'who', 'mobs', 'save',
-            'track', 'follow',
+            'track', 'follow', 'kill',
             'goto', 'north', 'south', 'west', 'east', 'up', 'down']
     CMDS_ALIAS = {
         'l' : 'look',
@@ -153,31 +153,25 @@ class Command(object):
         msg = 'okay.' if  status.CHARACTER_LOADER.dump(status.CHARACTERS[self.client]) else 'fail!'
         self.client.send('%s\n' % (msg))
 
-    def _follow(self, function, name):
-        """docstring for _follow"""
-        target = function(name)
-        if target:
-            character = status.CHARACTERS[self.client]
-            if target in character.get_followers():
-                self.client.send("You can't ! %s already follow you.\n." % (target.name))
-                return
-            target.add_follower(character)
-            character.follow(target)
-            self.client.send("You start to follow %s!\n" % (target.name))
-        else:
-            self.client.send("No such target !\n")
-
     def follow(self, args):
         """docstring for follow"""
-        target_name = args[0]
+        target_name = args[0] if len(args) > 0 else None
         room = status.WORLD.locate_client_room(self.client)
-        return self._follow(room.get_character_by_name, target_name)
+        return status.CHARACTERS[self.client].follow(room.get_character_by_name, target_name) \
+                if target_name else self.client.send('Huh?\n')
 
     def track(self, args):
         """docstring for track"""
-        target_name = args[0]
+        target_name = args[0] if len(args) > 0 else None
         room = status.WORLD.locate_client_room(self.client)
-        return self._follow(room.get_mob_by_name, target_name)
+        return status.CHARACTERS[self.client].follow(room.get_mob_by_name, target_name) \
+                if target_name else self.client.send('Huh?\n')
+
+    def kill(self, args):
+        """docstring for kill"""
+        target_name = args[0] if len(args) > 0 else None
+        return status.CHARACTERS[self.client].kill(target_name) \
+                if target_name else self.client.send('Huh?\n')
 
 
 
