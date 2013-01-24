@@ -15,15 +15,8 @@ from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
 #from scratchmud.debug import dump_status
 
-ASCII_ART = '''
- ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
-(_-</ _| '_/ _` |  _/ _| ' \| '  \ || / _` |
-/__/\__|_| \__,_|\__\__|_||_|_|_|_\_,_\__,_|
-
-'''
-
 if __name__ == '__main__':
-    print(ASCII_ART)
+    print(status.ASCII_ART)
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
