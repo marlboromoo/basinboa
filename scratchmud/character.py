@@ -5,11 +5,11 @@ character character
 #import yaml
 #import os
 import status
-from loader import YamlLoader
-from puppet import Puppet
-from message import character_message_to_room 
-from encode import texts_encoder
-from world import exit_name
+from scratchmud.loader import YamlLoader
+from scratchmud.puppet import Puppet
+from scratchmud.message import character_message_to_room 
+from scratchmud.encode import texts_encoder
+from scratchmud.world import exit_name
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'

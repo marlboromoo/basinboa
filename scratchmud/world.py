@@ -2,9 +2,9 @@
 """
 world
 """
-import status
 import os
 import yaml
+from scratchmud import status
 
 NORTH = 'n'
 SOUTH = 's'

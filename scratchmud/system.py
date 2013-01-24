@@ -3,9 +3,9 @@
 system libs
 """
 import status
-from auth import login_queue, login
-from command import Command as command
-from message import broadcast
+from scratchmud.auth import login_queue, login
+from scratchmud.command import Command as command
+from scratchmud.message import broadcast
 
 
 def clean_status(client):

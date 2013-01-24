@@ -3,7 +3,7 @@
 message system
 """
 
-import status
+from scratchmud import status
 
 def broadcast(msg):
     """

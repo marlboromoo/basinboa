@@ -4,7 +4,7 @@ auth system
 """
 import copy
 import status
-from message import broadcast
+from scratchmud.message import broadcast
 
 def login_queue(client):
     """docstring for login_queue"""

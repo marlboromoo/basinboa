@@ -2,7 +2,7 @@
 """
 debug utils.
 """
-import status
+from scratchmud import status
 
 def dump_status():
     """docstring for dump_status"""
