@@ -122,6 +122,10 @@ class Puppet(object):
         """docstring for remove_combat_target"""
         self.combat_targets.remove(object_)
 
+    def remove_all_combat_targets(self):
+        """docstring for remove_all_combat_targets"""
+        self.combat_targets = []
+
     def get_combat_targets(self):
         """docstring for get_combat_target"""
         return self.combat_targets
@@ -133,11 +137,24 @@ class Puppet(object):
     def decrease_hp(self, value):
         """docstring for increase_hp"""
         self.hp -= value
-        self.hp = 0 if self.hp <= 0 else self.hp
+        if self.hp <= 0:
+            self.client.send_cc('^RYou Dead!^~\n')
+            self.hp = 1
+            for target in self.get_combat_targets():
+                target.remove_combat_target(self)
+            self.remove_all_combat_targets()
 
     def hurt(self, _object):
         """docstring for hurt"""
-        _object.decrease_hp(10)
+        damage = 10
+        _object.decrease_hp(damage)
+        return damage
+
+    def hit(self, _object):
+        """docstring for hit"""
+        damage = 10
+        _object.decrease_hp(damage)
+        return damage
 
     def is_player(self):
         """docstring for is_player"""
