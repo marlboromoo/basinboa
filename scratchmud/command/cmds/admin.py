@@ -22,3 +22,18 @@ def mobs(self, args):
     for map_ in maps:
         for mob in map_.get_mobs():
             self.client.send("%s\n" % repr(mob))
+
+def goto(self, args):
+    """docstring for goto"""
+    if len(args) == 3:
+        x, y, map_ = args
+    elif len(args) == 2:
+        x, y = args
+        map_ = self.character.map_name
+    else:
+        return self.invalid_args()
+    try:
+        x, y = int(x), int(y)
+    except Exception:
+        return self.invalid_args()
+    return status.CHARACTERS.get(self.client).goto((x, y), map_)
