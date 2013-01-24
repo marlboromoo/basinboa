@@ -22,7 +22,7 @@ def on_connect(client):
     print "++ Opened connection to %s" % client.addrport()
     broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
     status.CLIENTS.append(client)
-    client.send("%s\n" % (status.ASCII_ART))
+    client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
     client.send("Welcome to the strachmud, please login.\n")
     login_queue(client)
 
