@@ -56,6 +56,10 @@ class Character(Puppet):
         """docstring for get_role"""
         return self.role
 
+    def is_admin(self):
+        """docstring for is_admin"""
+        return True if self.get_role() == ROLE_ADMIN else False
+
     def dump(self):
         """docstring for dump"""
         return {
@@ -155,9 +159,12 @@ class Character(Puppet):
         """docstring for send_prompt"""
         room = status.WORLD.locate_character_room(self) if room == None else room
         mobs = [mob.get_name() for mob in room.get_mobs()]
-        self.client.send('hp:%s/mp:%s, exits: %s, id: %s, xy: %s mobs: %s\n' % 
-                         (str(self.get_hp()), str(self.get_mp()), room.get_exits(),
-                          room.id_, str(room.xy), str(mobs)))
+        self.client.send('hp:%s/mp:%s, exits: %s' % 
+                         (str(self.get_hp()), str(self.get_mp()), room.get_exits()))
+        if self.is_admin():
+            self.client.send("id: %s, xy: %s mobs: %s\n" % (room.id_, str(room.xy), str(mobs)))
+        else:
+            self.client.send("\n")
 
     def look(self, target_name=None):
         """docstring for look"""

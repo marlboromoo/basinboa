@@ -8,8 +8,8 @@ nickname: T.R.O.N
 password: 1qaz2wsx
 prompt: null
 race: null
-role: user
+role: admin
 skills: null
 spells: null
 status: null
-xy: !!python/tuple [0, 0]
+xy: !!python/tuple [1, 0]
