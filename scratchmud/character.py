@@ -8,8 +8,9 @@ import status
 from scratchmud.loader import YamlLoader
 from scratchmud.puppet import Puppet
 from scratchmud.message import character_message_to_room 
-from scratchmud.encode import texts_encoder
+#from scratchmud.encode import texts_encoder
 from scratchmud.world import exit_name
+from scratchmud.command.cmds.inspect import look
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
@@ -126,7 +127,7 @@ class Character(Puppet):
             #. send message 
             character_message_to_room(self, '%s come to here!\n' % (self.get_name()))
             if autolook:
-                return self.look(None)
+                return look(self.client, None)
         else:
             self.client.send("You can't!\n")
 
@@ -155,81 +156,17 @@ class Character(Puppet):
         else:
             self.client.send('Huh?\n')
 
-    def send_prompt(self, room=None):
-        """docstring for send_prompt"""
+    def get_prompt(self, room=None):
+        """docstring for get_prompt"""
+        prompt = ''
         room = status.WORLD.locate_character_room(self) if room == None else room
         mobs = [mob.get_name() for mob in room.get_mobs()]
-        self.client.send('hp:%s/mp:%s, exits: %s' % 
-                         (str(self.get_hp()), str(self.get_mp()), room.get_exits()))
+        prompt += "hp:%s/mp:%s, exits: %s" % (str(self.get_hp()), str(self.get_mp()), room.get_exits())
         if self.is_admin():
-            self.client.send("id: %s, xy: %s mobs: %s\n" % (room.id_, str(room.xy), str(mobs)))
+            prompt += "id: %s, xy: %s mobs: %s\n" % (room.id_, str(room.xy), str(mobs))
         else:
-            self.client.send("\n")
-
-    def look(self, target_name=None):
-        """docstring for look"""
-        self.client.send('\n')
-        room = status.WORLD.locate_character_room(self)
-        if not target_name:
-            #. view
-            self.client.send('%s\n' % (texts_encoder(room.texts)))
-            #. prompt
-            #mobs = [mob.name for mob in room.mobs]
-            #self.client.send('hp:%s/mp:%s, exits: %s, id: %s, xy: %s mobs: %s\n' % 
-            #                 (str(self.get_hp()), str(self.get_mp()), room.get_exits(), room.id_, str(room.xy), str(mobs)))
-            self.send_prompt(room)
-            #. other characters
-            for client_ in room.get_clients():
-                if client_ != self.client:
-                    character_ = status.CHARACTERS[client_]
-                    self.client.send(texts_encoder("%s(%s) in here.\n" % (character_.nickname, character_.name)))
-            #. mobs
-            for mob in room.get_mobs():
-                self.client.send(texts_encoder("%s(%s) in here.\n" % (mob.nickname, mob.name)))
-        else:
-            target_character= room.get_character_by_name(target_name)
-            if target_character:
-                self.client.send("%s\n" % (target_character.get_desc()))
-                if not target_character.client == self.client:
-                    target_character.client.send("%s look at you.\n" % (self.get_name()))
-                return
-            target_mob = room.get_mob_by_name(target_name)
-            if target_mob:
-                self.client.send("%s\n" % (target_mob.get_desc()))
-                return
-
-    def follow(self, function, name):
-        """docstring for _follow"""
-        target = function(name)
-        if target:
-            if target in self.get_followers():
-                self.client.send("You can't ! %s already follow you.\n." % (target.name))
-                return
-            target.add_follower(self)
-            self.start_follow(target)
-            name = target.name if target != self else 'yourself'
-            self.client.send("You start to follow %s!\n" % (name))
-            if target.is_player() and target != self:
-                target.client.send("%s start to follow you!" % (self.get_name()))
-        else:
-            self.client.send("No such target !\n")
-
-    def kill(self, target_name):
-        """docstring for kill"""
-        room = status.WORLD.locate_character_room(self)
-        target_mob = room.get_mob_by_name(target_name)
-        if target_mob:
-            self.add_combat_target(target_mob)
-            target_mob.add_combat_target(self)
-            self.client.send("You try to kill %s\n" % (target_mob.get_name()))
-            return
-        target_character= room.get_character_by_name(target_name)
-        if target_character:
-            self.client.send("You can't 'kill' player, use 'murder' insted.\n")
-            return
-        if not target_character and not target_mob:
-            self.client.send("No such target!\n")
-            return
+            prompt += "\n"
+        return prompt
 
 class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""

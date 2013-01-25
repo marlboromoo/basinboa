@@ -5,6 +5,7 @@ base actions of character/mob
 
 from scratchmud.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
 from scratchmud.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
+from scratchmud.command.cmds.inspect import look
 
 class Puppet(object):
     """docstring for Puppet"""
@@ -34,8 +35,8 @@ class Puppet(object):
         return self.name
 
     def __look(self):
-        """if have function look then fire it"""
-        return self.look() if hasattr(self, 'look') else None
+        """docstring for __look"""
+        return look(self.client, None) if self.is_player() else None
 
     def go_west(self):
         """docstring for west"""
