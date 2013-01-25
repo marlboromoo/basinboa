@@ -14,6 +14,7 @@ from scratchmud.character import CharacterLoader
 from scratchmud.event import Cycle
 from scratchmud.ai import MobLoader, mob_actions
 from scratchmud.combat import fight
+from scratchmud.command.base import register_cmds
 #from scratchmud.debug import dump_status
 
 if __name__ == '__main__':
@@ -27,6 +28,8 @@ if __name__ == '__main__':
     wl.load_all()
     status.WORLD = wl.get()
     status.WORLD.check_links()
+    print ">> Maps: %s " % (str(status.WORLD.get_maps()))
+    register_cmds()
 
 #------------------------------------------------------------------------------
 #       Initial Cycle
@@ -49,7 +52,6 @@ if __name__ == '__main__':
         on_disconnect=on_disconnect,
         timeout = .05
         )
-    print ">> Maps: %s " % (str(status.WORLD.get_maps()))
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)
 

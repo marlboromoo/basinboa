@@ -3,6 +3,7 @@
 commands !
 """
 
+from scratchmud import status
 from scratchmud.command import cmds
 from inspect import isfunction
 
@@ -22,14 +23,11 @@ def alias_2_cmd(cmd):
 
 def cmd_exist(cmd):
     """docstring for check_cmd"""
-    if hasattr(cmds, str(cmd)):
-        if isfunction(getattr(cmds, cmd)):
-            return True 
-    return False
+    return True if status.COMMANDS.has_key(cmd) else False
 
 def fire_cmd(client, cmd, args):
     """docstring for fire_cmd"""
-    getattr(cmds, cmd)(client, args)
+    status.COMMANDS.get(cmd)(client, args)
     
 def process_inputs(client, inputs):
     """docstring for process_inputs"""
@@ -47,7 +45,12 @@ def process_inputs(client, inputs):
     else:
         fire_cmd(client, cmd, args)
 
-def invalid_args(client):
-    """docstring for invalid_args"""
-    client.send("Invalid args !")
-
+def register_cmds():
+    """register commands from cmds.* to global status"""
+    for attr in dir(cmds):
+        object_ = getattr(cmds, attr)
+        if isfunction(object_) and hasattr(object_, 'is_command'):
+            #. check the functions is command
+            if object_.is_command:
+                status.COMMANDS[attr] = object_
+    print ">> Register commands: %s" % (status.COMMANDS.keys())

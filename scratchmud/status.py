@@ -30,6 +30,7 @@ WORLD = None
 CHARACTER_LOADER = None
 MOB_LOADER = None
 CHARACTERS = {}
+COMMANDS = {} #. key is functin(command) name value is function(command)
 
 
 

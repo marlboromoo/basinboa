@@ -3,29 +3,46 @@
 admin commands.
 """
 from scratchmud import status
+from scratchmud.decorator import command
 from scratchmud.message import invalid_args
 
+@command
 def rooms(client, args):
-    """docstring for rooms"""
+    """
+    admin only. list rooms in the map.
+    useage: rooms
+    """
     rooms = status.WORLD.locate_client_map(client).get_rooms()
     for room in rooms:
         client.send("%s\n" % repr(room))
 
+@command
 def maps(client, args):
-    """docstring for maps"""
+    """
+    admin only. list map in the world.
+    useage: maps
+    """
     maps = status.WORLD.get_maps()
     for map_ in maps:
         client.send("%s\n" % repr(map_))
 
+@command
 def mobs(client, args):
-    """docstring for mobs"""
+    """
+    admin only. list mob in the world.
+    useage: mobs
+    """
     maps = status.WORLD.get_maps()
     for map_ in maps:
         for mob in map_.get_mobs():
             client.send("%s\n" % repr(mob))
 
+@command
 def goto(client, args):
-    """docstring for goto"""
+    """
+    admin only. goto any room.
+    useage: goto <x> <y> <map_name>
+    """
     if len(args) == 3:
         x, y, map_ = args
     elif len(args) == 2:
@@ -38,3 +55,4 @@ def goto(client, args):
     except Exception:
         return invalid_args(client)
     return status.CHARACTERS[client].goto((x, y), map_)
+

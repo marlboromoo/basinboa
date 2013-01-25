@@ -3,41 +3,83 @@
 move commands.
 """
 from scratchmud import status
+from scratchmud.decorator import command
 
+@command
 def west(client, args):
-    """docstring for west"""
+    """
+    go to west.
+    useage: west
+    alias: w
+    """
     status.CHARACTERS[client].go_west()
 
+@command
 def east(client, args):
-    """docstring for east"""
+    """
+    go to east.
+    useage: east
+    alias: e
+    """
     status.CHARACTERS[client].go_east()
 
+@command
 def north(client, args):
-    """docstring for north"""
+    """
+    go to north.
+    useage: north
+    alias: n
+    """
     status.CHARACTERS[client].go_north()
 
+@command
 def south(client, args):
-    """docstring for south"""
+    """
+    go to south.
+    useage: sourth.
+    alias: s
+    """
     status.CHARACTERS[client].go_south()
 
+@command
 def up(client, args):
-    """docstring for up"""
+    """
+    go to up.
+    useage: up
+    alias: u
+    """
     status.CHARACTERS[client].go_up()
 
+@command
 def down(client, args):
-    """docstring for down"""
+    """
+    go to down.
+    useage: down
+    alias: d
+    """
     status.CHARACTERS[client].go_down()
 
+@command
 def follow(client, args):
-    """docstring for follow"""
+    """
+    follow the player.
+    useage: follow <PLAYER_NAME>
+            follow <YOUR_NAME> to cancle following player.
+    """
     target_name = args[0] if len(args) > 0 else None
     room = status.WORLD.locate_client_room(client)
     return status.CHARACTERS[client].follow(room.get_character_by_name, target_name) \
             if target_name else client.send('Huh?\n')
 
+@command
 def track(client, args):
-    """docstring for track"""
+    """
+    follow the mob.
+    useage: follow <MOB_NAME>
+            follow <YOUR_NAME> to cancle following mob.
+    """
     target_name = args[0] if len(args) > 0 else None
     room = status.WORLD.locate_client_room(client)
     return status.CHARACTERS[client].follow(room.get_mob_by_name, target_name) \
             if target_name else client.send('Huh?\n')
+

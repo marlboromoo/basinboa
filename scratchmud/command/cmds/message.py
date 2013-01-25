@@ -4,10 +4,13 @@ message commands
 """
 
 from scratchmud import status
+from scratchmud.decorator import command
 
+@command
 def chat(client, args):
     """
-    Echo whatever client types to everyone.
+    talk with players in the world.
+    useage: chat <MESSAGES..>
     """
     msg = ' '.join(args)
     print '%s says, "%s"' % (status.CHARACTERS[client].get_name(), msg)
