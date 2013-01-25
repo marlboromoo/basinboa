@@ -2,7 +2,7 @@
 """
 base actions of character/mob
 """
-
+from scratchmud import status
 from scratchmud.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
 from scratchmud.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
 from scratchmud.command.cmds.inspect import look
@@ -38,51 +38,62 @@ class Puppet(object):
         """docstring for __look"""
         return look(self.client, None) if self.is_player() else None
 
-    def go_west(self):
+    def go_west(self, is_follow=False):
         """docstring for west"""
-        self.go(WEST, west_xy, WEST_NAME)
-        #. notice follower
-        for follower in self.followers:
-            follower.go_west()
+        self.notice_follwers(WEST)
+        status.WORLD.move(self, WEST, west_xy, WEST_NAME, is_follow)
         return self.__look()
 
-    def go_east(self):
+    def go_east(self, is_follow=False):
         """docstring for east"""
-        self.go(EAST, east_xy, EAST_NAME)
-        #. notice follower
-        for follower in self.followers:
-            follower.go_east()
+        self.notice_follwers(EAST)
+        status.WORLD.move(self, EAST, east_xy, EAST_NAME, is_follow)
         return self.__look()
 
-    def go_north(self):
+    def go_north(self, is_follow=False):
         """docstring for north"""
-        self.go(NORTH, north_xy, NORTH_NAME)
-        #. notice follower
-        for follower in self.followers:
-            follower.go_north()
+        self.notice_follwers(NORTH)
+        status.WORLD.move(self, NORTH, north_xy, NORTH_NAME, is_follow)
         return self.__look()
 
-    def go_south(self):
+    def go_south(self, is_follow=False):
         """docstring for south"""
-        self.go(SOUTH, south_xy, SOUTH_NAME)
-        #. notice follower
-        for follower in self.followers:
-            follower.go_south()
+        self.notice_follwers(SOUTH)
+        status.WORLD.move(self, SOUTH, south_xy, SOUTH_NAME, is_follow)
         return self.__look()
 
-    def go_up(self):
+    def go_up(self, is_follow=False):
         """docstring for go_up"""
-        self.go(UP, None, UP_NAME)
-        for follower in self.followers:
-            follower.go_up()
+        self.notice_follwers(UP)
+        status.WORLD.move(self, UP, None, UP_NAME, is_follow)
         return self.__look()
 
-    def go_down(self):
+    def go_down(self, is_follow=False):
         """docstring for go_down"""
-        self.go(DOWN, None, DOWN_NAME)
-        for follower in self.followers:
-            follower.go_down()
+        self.notice_follwers(DOWN)
+        status.WORLD.move(self, DOWN, None, DOWN_NAME, is_follow)
         return self.__look()
+
+    def notice_follwers(self, direction):
+        """notice all followers to move in the same room"""
+        for follower in self.followers:
+            #. follower must in the same room
+            if follower.xy == self.xy and follower.map_name == self.map_name:
+                self.client.send("%s follow your steps!\n" % (follower.get_name()))
+                if direction == UP:
+                    follower.go_up(is_follow=True)
+                if direction == DOWN:
+                    follower.go_down(is_follow=True)
+                if direction == WEST:
+                    follower.go_west(is_follow=True)
+                if direction == EAST:
+                    follower.go_east(is_follow=True)
+                if direction == NORTH:
+                    follower.go_north(is_follow=True)
+                if direction == SOUTH:
+                    follower.go_south(is_follow=True)
+                if follower.is_player():
+                    follower.client.send("You follow the %s's steps!\n" % (self.get_name()))
 
     def add_follower(self, object_):
         """add mob/character object to followers list"""
@@ -95,6 +106,10 @@ class Puppet(object):
     def get_followers(self):
         """docstring for get_followers"""
         return self.followers
+
+    def has_follower(self, object_):
+        """docstring for has_follower"""
+        return True if object_ in self.followers else False
 
     def start_follow(self, object_):
         """follow mob/character"""

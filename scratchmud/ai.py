@@ -6,7 +6,7 @@ import copy
 import random
 import status
 from scratchmud.puppet import Puppet
-from scratchmud.world import NORTH, SOUTH, EAST, WEST, UP, DOWN, exit_name
+from scratchmud.world import NORTH, SOUTH, EAST, WEST, UP, DOWN 
 from scratchmud.message import mob_message_to_room
 from scratchmud.uid import Uid
 from scratchmud.loader import YamlLoader
@@ -71,50 +71,6 @@ class Mob(Puppet, Uid):
         self.status = data['status']
         #. talk
         self.gossip = data['gossip']
-
-    def goto(self, xy, map_):
-        """docstring for goto"""
-        try:
-            map_ = status.WORLD.get_map(map_)
-            room =  map_.get_room(xy)
-        except Exception:
-            map_, room = None, None
-        if map_ and room:
-            src_map = status.WORLD.locate_mob_map(self)
-            src_room = status.WORLD.locate_mob_room(self)
-            #. send message notice all characters in the room
-            mob_message_to_room(self, "%s leave here.\n" % (self.get_name()) )
-            #. remove mob from old place
-            src_map.remove_mob(self)
-            src_room.remove_mob(self)
-            #. move mob to destation
-            self.set_location(xy, map_.get_name())
-            map_.add_mob(self)
-            #. send message 
-            mob_message_to_room(self, '%s come to here!\n' % (self.get_name()))
-
-    def go(self, symbol, function, message):
-        """docstring for go"""
-        room = status.WORLD.locate_mob_room(self)
-        x, y = self.xy
-        if symbol in room.exits:
-            dst_xy = function(x, y)
-            if dst_xy in room.paths:
-                #. message to all the characters in room
-                mob_message_to_room(self, '%s go to %s!\n' % (self.name, message))
-                #. move mob to room
-                self.xy = dst_xy
-                #. remove mob from source room
-                room.remove_mob(self)
-                #. add mob to target room
-                status.WORLD.locate_mob_room(self).add_mob(self)
-                #. send message to all the characters in target room
-                mob_message_to_room(self, '%s come to here!\n' % (self.name))
-            elif room.has_link(symbol):
-                link = room.get_link(symbol)
-                self.goto(link['xy'], link['map'], exit_name(symbol))
-            else:
-                pass
 
     def random_walk(self):
         """random go to room exits"""

@@ -59,7 +59,7 @@ def down(client, args):
     """
     status.CHARACTERS[client].go_down()
 
-def __follow(client, function, name):
+def __follow(client, function, name, is_track=False):
     """docstring for _follow"""
     character = status.CHARACTERS.get(client)
     target = function(name)
@@ -70,9 +70,10 @@ def __follow(client, function, name):
         target.add_follower(character)
         character.start_follow(target)
         name = target.name if target != character else 'yourself'
-        character.client.send("You start to follow %s!\n" % (name))
+        action = 'track' if is_track else 'follow'
+        character.client.send("You start to %s %s!\n" % (action, name))
         if target.is_player() and target != character:
-            target.client.send("%s start to follow you!" % (character.get_name()))
+            target.client.send("%s start to follow you!\n" % (character.get_name()))
     else:
         character.client.send("No such target !\n")
 
@@ -97,6 +98,6 @@ def track(client, args):
     """
     target_name = args[0] if len(args) > 0 else None
     room = status.WORLD.locate_client_room(client)
-    return __follow(client, room.get_mob_by_name, target_name) \
+    return __follow(client, room.get_mob_by_name, target_name, is_track=True) \
             if target_name else client.send('Huh?\n')
 

@@ -7,10 +7,7 @@ character character
 import status
 from scratchmud.loader import YamlLoader
 from scratchmud.puppet import Puppet
-from scratchmud.message import character_message_to_room 
 #from scratchmud.encode import texts_encoder
-from scratchmud.world import exit_name
-from scratchmud.command.cmds.inspect import look
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
@@ -102,59 +99,6 @@ class Character(Puppet):
         self.hp = data['hp']
         self.mp = data['mp']
         self.status = data['status']
-
-    def goto(self, xy, map_, message=None, autolook=True):
-        """docstring for goto"""
-        try:
-            map_ = status.WORLD.get_map(map_)
-            room =  map_.get_room(xy)
-        except Exception:
-            map_, room = None, None
-        if map_ and room:
-            src_map = status.WORLD.locate_client_map(self.client)
-            src_room = status.WORLD.locate_client_room(self.client)
-            #. send message notice all characters in the room
-            if message:
-                character_message_to_room(self, "%s go to %s.\n" % (self.get_name(), message))
-            else:
-                character_message_to_room(self, "%s leave here.\n" % (self.get_name()) )
-            #. remove character in old place
-            src_map.remove_client(self.client)
-            src_room.remove_client(self.client)
-            #. move character to destation
-            self.set_location(xy, map_.get_name())
-            map_.add_client(self.client)
-            #. send message 
-            character_message_to_room(self, '%s come to here!\n' % (self.get_name()))
-            if autolook:
-                return look(self.client, None)
-        else:
-            self.client.send("You can't!\n")
-
-    def go(self, symbol, function, message):
-        """docstring for go"""
-        room = status.WORLD.locate_character_room(self)
-        x, y = self.xy
-        #. check n,s,w,e
-        if symbol in room.exits:
-            dst_xy = function(x, y)
-            if dst_xy in room.paths:
-                #. message to all the characters in room
-                character_message_to_room(self, '%s go to %s!\n' % (self.name, message))
-                #. move character to room
-                self.xy = dst_xy
-                #. remove character from source room
-                room.remove_client_by_character(self)
-                #. add character to target room
-                status.WORLD.locate_character_room(self).add_client_by_character(self)
-                #. send message to all the characters in target room
-                character_message_to_room(self, '%s come to here!\n' % (self.name))
-        #. check link
-        elif room.has_link(symbol):
-            link = room.get_link(symbol)
-            self.goto(link['xy'], link['map'], exit_name(symbol), autolook=False)
-        else:
-            self.client.send('Huh?\n')
 
     def get_prompt(self, room=None):
         """docstring for get_prompt"""

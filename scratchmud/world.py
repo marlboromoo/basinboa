@@ -5,6 +5,8 @@ world
 import os
 import yaml
 from scratchmud import status
+from scratchmud.message import character_message_to_room, mob_message_to_room
+from scratchmud.command.cmds.inspect import look
 
 NORTH = 'n'
 SOUTH = 's'
@@ -311,7 +313,7 @@ class World(object):
         """find room by character object"""
         return self.get_map(character.map_name).get_room(character.xy)
 
-    def locate_plyer_map(self, character):
+    def locate_character_map(self, character):
         """find map by character object"""
         return self.get_map(character.map_name)
 
@@ -338,6 +340,83 @@ class World(object):
                             print "!! Invalid link: %s, remove it!" % (str(link))
                             room.remove_link(link['exit'])
                             continue
+
+    def move(self, object_, symbol, function, message, is_follow=False):
+        """move character(client)/mob object between rooms if rooms connected"""
+        if object_.is_player():
+            room = self.locate_client_room(object_.client)
+        else:
+            room = self.locate_mob_room(object_)
+        x, y = object_.xy
+        #. check n,s,w,e
+        if symbol in room.exits:
+            dst_xy = function(x, y)
+            if dst_xy in room.paths:
+                #. message to all the characters in room
+                msg_func = character_message_to_room if object_.is_player() else mob_message_to_room
+                msg_func(object_, '%s go to %s!\n' % (object_.get_name(), message), is_follow)
+                #. move object_ to room
+                object_.xy = dst_xy
+                #. remove object_ from source room
+                if object_.is_player():
+                    room.remove_client(object_.client)
+                else:
+                    room.remove_mob(object_)
+                #. add object_ to target room
+                if object_.is_player():
+                    self.locate_client_room(object_.client).add_client(object_.client)
+                else:
+                    self.locate_mob_room(object_).add_mob(object_)
+                #. send message to all the characters in target room
+                msg_func(object_, '%s come to here!\n' % (object_.get_name()))
+        #. check link
+        elif room.has_link(symbol):
+            link = room.get_link(symbol)
+            self.move_to(object_, link['xy'], link['map'], exit_name(symbol), autolook=False)
+        else:
+            if object_.is_player():
+                object_.client.send('Huh?\n')
+
+    def move_to(self, object_, xy, map_name, message=None, autolook=True):
+        """move character(client)/mob object between rooms even if rooms not connected"""
+        try:
+            map_ = self.get_map(map_name)
+            room =  map_.get_room(xy)
+        except Exception:
+            map_, room = None, None
+        if map_ and room:
+            if object_.is_player():
+                src_map = self.locate_client_map(object_.client)
+                src_room = self.locate_client_room(object_.client)
+            else:
+                src_map = self.locate_mob_map(object_)
+                src_room = self.locate_mob_room(object_)
+            #. send message notice all characters in the room
+            msg_func = character_message_to_room if object_.is_player() else mob_message_to_room
+            if message:
+                msg_func(object_, "%s go to %s.\n" % (object_.get_name(), message))
+            else:
+                msg_func(object_, "%s leave here.\n" % (object_.get_name()))
+            #. remove object_ in old place
+            if object_.is_player():
+                src_map.remove_client(object_.client)
+                src_room.remove_client(object_.client)
+            else:
+                src_map.remove_mob(object_)
+                src_room.remove_mob(object_)
+            #. move object_ to destation
+            object_.set_location(xy, map_.get_name())
+            if object_.is_player():
+                map_.add_client(object_.client)
+            else:
+                map_.add_mob(object_)
+            #. send message to all the characters in target room
+            msg_func(object_, '%s come to here!\n' % (object_.get_name()))
+            if autolook and object_.is_player():
+                return look(object_.client, None)
+        else:
+            if object_.is_player():
+                object_.client.send("You can't!\n")
 
 class WorldLoader(object):
     """docstring for WorldLoader"""

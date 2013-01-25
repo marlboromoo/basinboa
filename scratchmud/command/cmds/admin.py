@@ -54,5 +54,5 @@ def goto(client, args):
         x, y = int(x), int(y)
     except Exception:
         return invalid_args(client)
-    return status.CHARACTERS[client].goto((x, y), map_)
+    return status.WORLD.move_to(status.CHARACTERS[client], (x, y), map_)
 
