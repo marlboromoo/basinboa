@@ -13,14 +13,11 @@ def broadcast(msg):
     for client in status.CHARACTERS:
         client.send(msg)
 
-def client_message_to_room(client, msg, is_follow=False):
+def client_message_to_room(client, msg):
     """send client message to room"""
     room = status.WORLD.locate_client_room(client)
     for client_ in room.get_clients():
         if client_ != client and status.CHARACTERS.has_key(client_):
-            #. don't send message if client is follow client_
-            #if not is_follow and not status.CHARACTERS.get(client_).has_follower(status.CHARACTERS.get(client)): 
-            #    client_.send(msg)
             client_.send(msg)
             
 
@@ -31,15 +28,12 @@ def client_message_to_map(client, msg):
         if client_ != client and status.CHARACTERS.has_key(client_):
             client_.send(msg)
 
-def character_message_to_room(character, msg, is_follow=False):
+def character_message_to_room(character, msg):
     """send character message to room"""
     room = status.WORLD.locate_character_room(character)
     for client in room.get_clients():
         character_ = status.CHARACTERS[client] if status.CHARACTERS.has_key(client) else None
         if character_ and character_ != character:
-            #. don't send message if character follow character_
-            #if not is_follow and not character_.has_follower(character): 
-            #    client.send(msg)
             client.send(msg)
 
 def character_message_to_map(character, msg):
@@ -50,14 +44,11 @@ def character_message_to_map(character, msg):
         if character_ and character_ != character:
             client.send(msg)
 
-def mob_message_to_room(mob, msg, is_follow=False):
+def mob_message_to_room(mob, msg):
     """send mob message to room"""
     room = status.WORLD.locate_mob_room(mob)
     for client_ in room.get_clients():
         if status.CHARACTERS.has_key(client_):
-            #. don't send message if mob is follow client_
-            #if not is_follow and not status.CHARACTERS.get(client_).has_follower(mob):
-            #    client_.send(msg)
             client_.send(msg)
 
 def mob_message_to_map(mob, msg):
@@ -69,5 +60,5 @@ def mob_message_to_map(mob, msg):
 
 def invalid_args(client):
     """docstring for invalid_args"""
-    client.send("Invalid args !")
+    client.send("Invalid args !\n")
 

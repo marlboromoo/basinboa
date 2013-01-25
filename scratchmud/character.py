@@ -40,12 +40,6 @@ class Character(Puppet):
         """docstring for get_password"""
         return self.password
 
-    def set_location(self, xy, map_name=None):
-        """docstring for set_location"""
-        map_name = map_name if map_name else self.map_name
-        self.xy = xy
-        self.map_name = map_name
-
     def set_role(self, role):
         """docstring for set_role"""
         self.role = role
@@ -99,6 +93,8 @@ class Character(Puppet):
         self.hp = data['hp']
         self.mp = data['mp']
         self.status = data['status']
+        #. other
+        #self.init_prev_location()
 
     def get_prompt(self, room=None):
         """docstring for get_prompt"""

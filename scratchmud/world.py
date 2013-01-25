@@ -341,7 +341,7 @@ class World(object):
                             room.remove_link(link['exit'])
                             continue
 
-    def move(self, object_, symbol, function, message, is_follow=False):
+    def move(self, object_, symbol, function, message):
         """move character(client)/mob object between rooms if rooms connected"""
         if object_.is_player():
             room = self.locate_client_room(object_.client)
@@ -354,8 +354,9 @@ class World(object):
             if dst_xy in room.paths:
                 #. message to all the characters in room
                 msg_func = character_message_to_room if object_.is_player() else mob_message_to_room
-                msg_func(object_, '%s go to %s!\n' % (object_.get_name(), message), is_follow)
+                msg_func(object_, '%s go to %s!\n' % (object_.get_name(), message))
                 #. move object_ to room
+                object_.set_prev_location(object_.xy, object_.map_name)
                 object_.xy = dst_xy
                 #. remove object_ from source room
                 if object_.is_player():
@@ -405,6 +406,7 @@ class World(object):
                 src_map.remove_mob(object_)
                 src_room.remove_mob(object_)
             #. move object_ to destation
+            object_.set_prev_location(object_.xy, object_.map_name)
             object_.set_location(xy, map_.get_name())
             if object_.is_player():
                 map_.add_client(object_.client)

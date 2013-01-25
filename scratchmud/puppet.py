@@ -20,7 +20,9 @@ class Puppet(object):
         self.job = None
         #. geo
         self.xy = None
+        self.prev_xy = None
         self.map_name = None
+        self.prev_map_name = None
         #. combat status
         self.combat_targets = []
         self.hp = 100
@@ -38,62 +40,61 @@ class Puppet(object):
         """docstring for __look"""
         return look(self.client, None) if self.is_player() else None
 
-    def go_west(self, is_follow=False):
+    def go_west(self):
         """docstring for west"""
+        status.WORLD.move(self, WEST, west_xy, WEST_NAME)
         self.notice_follwers(WEST)
-        status.WORLD.move(self, WEST, west_xy, WEST_NAME, is_follow)
         return self.__look()
 
-    def go_east(self, is_follow=False):
+    def go_east(self):
         """docstring for east"""
+        status.WORLD.move(self, EAST, east_xy, EAST_NAME)
         self.notice_follwers(EAST)
-        status.WORLD.move(self, EAST, east_xy, EAST_NAME, is_follow)
         return self.__look()
 
-    def go_north(self, is_follow=False):
+    def go_north(self):
         """docstring for north"""
+        status.WORLD.move(self, NORTH, north_xy, NORTH_NAME)
         self.notice_follwers(NORTH)
-        status.WORLD.move(self, NORTH, north_xy, NORTH_NAME, is_follow)
         return self.__look()
 
-    def go_south(self, is_follow=False):
+    def go_south(self):
         """docstring for south"""
+        status.WORLD.move(self, SOUTH, south_xy, SOUTH_NAME)
         self.notice_follwers(SOUTH)
-        status.WORLD.move(self, SOUTH, south_xy, SOUTH_NAME, is_follow)
         return self.__look()
 
-    def go_up(self, is_follow=False):
+    def go_up(self):
         """docstring for go_up"""
+        status.WORLD.move(self, UP, None, UP_NAME)
         self.notice_follwers(UP)
-        status.WORLD.move(self, UP, None, UP_NAME, is_follow)
         return self.__look()
 
-    def go_down(self, is_follow=False):
+    def go_down(self):
         """docstring for go_down"""
+        status.WORLD.move(self, DOWN, None, DOWN_NAME)
         self.notice_follwers(DOWN)
-        status.WORLD.move(self, DOWN, None, DOWN_NAME, is_follow)
         return self.__look()
 
     def notice_follwers(self, direction):
         """notice all followers to move in the same room"""
         for follower in self.followers:
-            #. follower must in the same room
-            if follower.xy == self.xy and follower.map_name == self.map_name:
-                self.client.send("%s follow your steps!\n" % (follower.get_name()))
-                if direction == UP:
-                    follower.go_up(is_follow=True)
-                if direction == DOWN:
-                    follower.go_down(is_follow=True)
-                if direction == WEST:
-                    follower.go_west(is_follow=True)
-                if direction == EAST:
-                    follower.go_east(is_follow=True)
-                if direction == NORTH:
-                    follower.go_north(is_follow=True)
-                if direction == SOUTH:
-                    follower.go_south(is_follow=True)
+            #. follower must be in the same room
+            if follower.xy == self.prev_xy and follower.map_name == self.prev_map_name:
                 if follower.is_player():
                     follower.client.send("You follow the %s's steps!\n" % (self.get_name()))
+                if direction == UP:
+                    follower.go_up()
+                if direction == DOWN:
+                    follower.go_down()
+                if direction == WEST:
+                    follower.go_west()
+                if direction == EAST:
+                    follower.go_east()
+                if direction == NORTH:
+                    follower.go_north()
+                if direction == SOUTH:
+                    follower.go_south()
 
     def add_follower(self, object_):
         """add mob/character object to followers list"""
@@ -184,3 +185,19 @@ class Puppet(object):
         """docstring for get_mp"""
         return self.mp
 
+    def set_location(self, xy, map_name=None):
+        """docstring for set_location"""
+        map_name = map_name if map_name else self.map_name
+        self.xy = xy
+        self.map_name = map_name
+
+    def set_prev_location(self, xy, map_name=None):
+        """docstring for set_location"""
+        map_name = map_name if map_name else self.map_name
+        self.prev_xy = xy
+        self.prev_map_name = map_name
+
+    def init_prev_location(self):
+        """docstring for set_location"""
+        self.prev_xy = self.xy
+        self.prev_map_name = self.map_name

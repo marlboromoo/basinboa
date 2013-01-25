@@ -71,6 +71,8 @@ class Mob(Puppet, Uid):
         self.status = data['status']
         #. talk
         self.gossip = data['gossip']
+        #. other
+        self.init_prev_location()
 
     def random_walk(self):
         """random go to room exits"""
