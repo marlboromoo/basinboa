@@ -3,37 +3,38 @@
 admin commands.
 """
 from scratchmud import status
+from scratchmud.message import invalid_args
 
-def rooms(self, args):
+def rooms(client, args):
     """docstring for rooms"""
-    rooms = status.WORLD.locate_client_map(self.client).get_rooms()
+    rooms = status.WORLD.locate_client_map(client).get_rooms()
     for room in rooms:
-        self.client.send("%s\n" % repr(room))
+        client.send("%s\n" % repr(room))
 
-def maps(self, args):
+def maps(client, args):
     """docstring for maps"""
     maps = status.WORLD.get_maps()
     for map_ in maps:
-        self.client.send("%s\n" % repr(map_))
+        client.send("%s\n" % repr(map_))
 
-def mobs(self, args):
+def mobs(client, args):
     """docstring for mobs"""
     maps = status.WORLD.get_maps()
     for map_ in maps:
         for mob in map_.get_mobs():
-            self.client.send("%s\n" % repr(mob))
+            client.send("%s\n" % repr(mob))
 
-def goto(self, args):
+def goto(client, args):
     """docstring for goto"""
     if len(args) == 3:
         x, y, map_ = args
     elif len(args) == 2:
         x, y = args
-        map_ = self.character.map_name
+        map_ = status.CHARACTERS[client].map_name
     else:
-        return self.invalid_args()
+        return invalid_args(client)
     try:
         x, y = int(x), int(y)
     except Exception:
-        return self.invalid_args()
-    return status.CHARACTERS.get(self.client).goto((x, y), map_)
+        return invalid_args(client)
+    return status.CHARACTERS[client].goto((x, y), map_)

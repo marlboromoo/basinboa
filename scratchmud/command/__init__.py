@@ -1,1 +1,2 @@
-from scratchmud.command.base import Command
+from scratchmud.command.base import process_inputs
+

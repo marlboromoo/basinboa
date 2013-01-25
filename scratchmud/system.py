@@ -4,7 +4,7 @@ system libs
 """
 import status
 from scratchmud.auth import login_queue, login
-from scratchmud.command import Command as command
+from scratchmud.command import process_inputs
 from scratchmud.message import broadcast
 
 
@@ -88,7 +88,7 @@ def process_command(client):
     #. other commands
     else:
         if len(cmd) > 0:
-            command(client, inputs)
+            process_inputs(client, inputs)
 
 def disconnect(client):
     """disconnect the client."""

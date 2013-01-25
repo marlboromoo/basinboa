@@ -5,6 +5,7 @@ message system
 
 from scratchmud import status
 
+
 def broadcast(msg):
     """
     Send msg to every client.
@@ -55,4 +56,8 @@ def mob_message_to_map(mob, msg):
     for client_ in map_.get_clients():
         if status.CHARACTERS.has_key(client_):
             client_.send(msg)
+
+def invalid_args(client):
+    """docstring for invalid_args"""
+    client.send("Invalid args !")
 
