@@ -62,7 +62,7 @@ def process_clients():
     """
     for client in status.CHARACTERS.keys():
         if client.active and client.cmd_ready:
-            process_command(client)
+            process_inputs(client)
 
 def login_clients():
     """docstring for login_clients"""
@@ -73,22 +73,6 @@ def login_clients():
                 disconnect(client)
             else:
                 login(client)
-
-
-def process_command(client):
-    """
-    Process the client input.
-    """
-    inputs = client.get_command()
-
-    cmd = inputs.lower()
-    #. check if system command
-    if cmd == 'shutdown':
-        shutdown()
-    #. other commands
-    else:
-        if len(cmd) > 0:
-            process_inputs(client, inputs)
 
 def disconnect(client):
     """disconnect the client."""
