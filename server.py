@@ -5,10 +5,11 @@ reference: http://code.google.com/p/bogboa/source/browse/trunk/server_start.py
 """
 
 import sys
+import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from scratchmud import status
-from scratchmud.system import on_connect, on_disconnect, login_clients, kick_idle, kick_quit, process_clients
+from scratchmud.system import on_connect, on_disconnect, login_clients, kick_idle, kick_quit, process_clients, SettingsLoader
 from scratchmud.world import WorldLoader
 from scratchmud.character import CharacterLoader
 from scratchmud.event import Cycle
@@ -19,6 +20,16 @@ from scratchmud.command.base import register_cmds
 
 if __name__ == '__main__':
     print(status.ASCII_ART)
+
+#------------------------------------------------------------------------------
+#       Loading settings
+#------------------------------------------------------------------------------
+    sl = SettingsLoader('config/')
+    status.SERVER_CONFIG = sl.get_server_config()
+    print ">> Server settings:"
+    pp = pprint.PrettyPrinter(indent=2)
+    pp.pprint(status.SERVER_CONFIG)
+
 #------------------------------------------------------------------------------
 #       Loading data
 #------------------------------------------------------------------------------
@@ -28,8 +39,9 @@ if __name__ == '__main__':
     wl.load_all()
     status.WORLD = wl.get()
     status.WORLD.check_links()
-    print ">> Maps: %s " % (str(status.WORLD.get_maps()))
+    print ">> Maps: " % (status.WORLD.get_maps())
     register_cmds()
+    print ">> Register commands: %s" % (status.COMMANDS.keys())
 
 #------------------------------------------------------------------------------
 #       Initial Cycle
@@ -46,11 +58,11 @@ if __name__ == '__main__':
 #       Main
 #------------------------------------------------------------------------------
     telnet_server = TelnetServer(
-        port=7777,
-        address='',
+        port=status.SERVER_CONFIG.get('port'),
+        address=status.SERVER_CONFIG.get('address'),
         on_connect=on_connect,
         on_disconnect=on_disconnect,
-        timeout = .05
+        timeout=status.SERVER_CONFIG.get('timeout')
         )
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)

@@ -1,0 +1,8 @@
+mud_name: scratchmud
+recall_map_name: void
+recall_xy: !!python/tuple [1, 1]
+
+#. telnet server
+address: ''
+port: 7777
+timeout: .05

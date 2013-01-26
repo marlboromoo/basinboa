@@ -71,4 +71,3 @@ def register_cmds():
             #. check the functions is command
             if object_.is_command:
                 status.COMMANDS[attr] = object_
-    print ">> Register commands: %s" % (status.COMMANDS.keys())

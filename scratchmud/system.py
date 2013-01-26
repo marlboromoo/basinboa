@@ -2,11 +2,12 @@
 """
 system libs
 """
+
 import status
 from scratchmud.auth import login_queue, login
 from scratchmud.command import process_inputs
 from scratchmud.message import broadcast
-
+from scratchmud.loader import YamlLoader
 
 def clean_status(client):
     """remove client from status"""
@@ -81,4 +82,18 @@ def disconnect(client):
 def shutdown():
     """Shutdown the server."""
     status.SERVER_RUN = False
+
+class SettingsLoader(YamlLoader):
+    """docstring for SettingsLoader"""
+    SERVER_CONFIG = 'server'
+
+    def __init__(self, data_dir):
+        super(SettingsLoader, self).__init__(data_dir)
+        
+    def get_server_config(self):
+        """docstring for get"""
+        data = self.load(self.SERVER_CONFIG)
+        if data:
+            return data
+        return None
 
