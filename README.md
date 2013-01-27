@@ -1,6 +1,6 @@
 # BasinBoa
 
-![basinboa](doc/image/boa.png)
+![basinboa](basinboa/doc/image/boa.png)
 
 ## About
 a mub base on miniboa. **WIP**
