@@ -101,3 +101,13 @@ def track(client, args):
     return __follow(client, room.get_mob_by_name, target_name, is_track=True) \
             if target_name else client.send('Huh?\n')
 
+
+@command
+def recall(client, args):
+    """docstring for recall"""
+    xy = status.SERVER_CONFIG.get('recall_xy')
+    map_name = status.SERVER_CONFIG.get('recall_map_name')
+    status.WORLD.move_to(status.CHARACTERS.get(client), xy, map_name)
+
+
+

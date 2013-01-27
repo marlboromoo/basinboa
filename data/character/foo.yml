@@ -1,8 +1,8 @@
-hp: 1
+hp: !!python/tuple [100, 100]
 job: null
 login: null
 map_name: chinese
-mp: 100
+mp: !!python/tuple [100, 100]
 name: foo
 nickname: bar
 password: 1qaz2wsx

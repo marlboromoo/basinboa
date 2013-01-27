@@ -24,7 +24,8 @@ def fight():
                 character_message_to_room(character, "%s hit %s cause damage %s!\n" % 
                                           (target.get_name(), character.get_name(), damage))
                 #. send prompt
-                character.send_prompt()
+                prompt = character.get_prompt()
+                character.client.send(prompt)
         else:
             character.client.send_cc('^RYou Dead!^~\n')
             character.increase_hp(1)

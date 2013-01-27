@@ -44,15 +44,23 @@ def goto(client, args):
     useage: goto <x> <y> <map_name>
     """
     if len(args) == 3:
-        x, y, map_ = args
+        x, y, map_name = args
     elif len(args) == 2:
         x, y = args
-        map_ = status.CHARACTERS[client].map_name
+        map_name = status.CHARACTERS[client].map_name
     else:
         return invalid_args(client)
     try:
         x, y = int(x), int(y)
     except Exception:
         return invalid_args(client)
-    return status.WORLD.move_to(status.CHARACTERS[client], (x, y), map_)
+    return status.WORLD.move_to(status.CHARACTERS[client], (x, y), map_name)
+
+@command
+def restore(client, args):
+    """docstring for retore"""
+    character = status.CHARACTERS.get(client)
+    character.increase_hp(to_max=True)
+    character.increase_hp(to_max=True)
+    client.send('You feels so good!\n')
 

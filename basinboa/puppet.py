@@ -25,8 +25,8 @@ class Puppet(object):
         self.prev_map_name = None
         #. combat status
         self.combat_targets = []
-        self.hp = 100
-        self.mp = 100
+        self.hp = (100, 100) #. current, max
+        self.mp = (100, 100) #. current, max
         self.status = None
         #. other status
         self.follow_target = None
@@ -147,19 +147,43 @@ class Puppet(object):
         """docstring for get_combat_target"""
         return self.combat_targets
 
-    def increase_hp(self, value):
-        """docstring for increase_hp"""
-        self.hp += value
+    def increase_point(self, attr, value, to_max):
+        """docstring for increase_point"""
+        current, max_ = attr
+        if to_max:
+            attr = (max_, max_)
+        else:
+            current += value
+            attr = (current, max_)
+        return attr
 
-    def decrease_hp(self, value):
+    def decrease_point(self, attr, value):
+        """docstring for decrease_point"""
+        current, max_ = attr
+        return (current - value, max_)
+
+    def increase_hp(self, value=1, to_max=False):
         """docstring for increase_hp"""
-        self.hp -= value
-        if self.hp <= 0:
+        self.hp = self.increase_point(self.hp, value, to_max)
+
+    def decrease_hp(self, value=1):
+        """docstring for increase_hp"""
+        self.hp = self.decrease_point(self.hp, value)
+        current, max_ = self.hp
+        if current <= 0:
             self.client.send_cc('^RYou Dead!^~\n')
-            self.hp = 1
+            self.hp = (1, max_)
             for target in self.get_combat_targets():
                 target.remove_combat_target(self)
             self.remove_all_combat_targets()
+
+    def increase_mp(self, value=1, to_max=False):
+        """docstring for increase_mp"""
+        self.mp= self.increase_point(self.mp, value, to_max)
+
+    def decrease_mp(self, value=1):
+        """docstring for decrease_mp"""
+        self.mp = self.decrease_point(self.mp, value)
 
     def hurt(self, _object):
         """docstring for hurt"""

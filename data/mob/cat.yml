@@ -1,7 +1,7 @@
 desc: a little cat.
-hp: 100
+hp: !!python/tuple [100, 100]
 map_name: null
-mp: 100
+mp: !!python/tuple [100, 100]
 name: blackcat
 nickname: black cat
 race: null
