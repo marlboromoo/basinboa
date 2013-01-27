@@ -2,7 +2,7 @@
 """
 debug utils.
 """
-from scratchmud import status
+from basinboa import status
 
 def dump_status():
     """docstring for dump_status"""

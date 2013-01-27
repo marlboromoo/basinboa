@@ -1,4 +1,4 @@
-mud_name: scratchmud
+mud_name: basinboa
 recall_map_name: void
 recall_xy: !!python/tuple [1, 1]
 

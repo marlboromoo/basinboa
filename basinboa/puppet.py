@@ -2,10 +2,10 @@
 """
 base actions of character/mob
 """
-from scratchmud import status
-from scratchmud.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
-from scratchmud.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
-from scratchmud.command.cmds.inspect import look
+from basinboa import status
+from basinboa.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
+from basinboa.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
+from basinboa.command.cmds.inspect import look
 
 class Puppet(object):
     """docstring for Puppet"""

@@ -4,10 +4,10 @@ system libs
 """
 
 import status
-from scratchmud.auth import login_queue, login
-from scratchmud.command import process_inputs
-from scratchmud.message import broadcast
-from scratchmud.loader import YamlLoader
+from basinboa.auth import login_queue, login
+from basinboa.command import process_inputs
+from basinboa.message import broadcast
+from basinboa.loader import YamlLoader
 
 def clean_status(client):
     """remove client from status"""

@@ -3,8 +3,8 @@
 combat system.
 """
 
-from scratchmud import status
-from scratchmud.message import mob_message_to_room, character_message_to_room
+from basinboa import status
+from basinboa.message import mob_message_to_room, character_message_to_room
 
 def fight():
     """docstring for fight"""

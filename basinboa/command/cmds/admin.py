@@ -2,9 +2,9 @@
 """
 admin commands.
 """
-from scratchmud import status
-from scratchmud.decorator import command
-from scratchmud.message import invalid_args
+from basinboa import status
+from basinboa.decorator import command
+from basinboa.message import invalid_args
 
 @command
 def rooms(client, args):

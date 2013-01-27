@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Start the server of scratchmud.
+Start the server of basinboa.
 reference: http://code.google.com/p/bogboa/source/browse/trunk/server_start.py
 """
 
@@ -8,15 +8,15 @@ import sys
 import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
-from scratchmud import status
-from scratchmud.system import on_connect, on_disconnect, login_clients, kick_idle, kick_quit, process_clients, SettingsLoader
-from scratchmud.world import WorldLoader
-from scratchmud.character import CharacterLoader
-from scratchmud.event import Cycle
-from scratchmud.ai import MobLoader, mob_actions
-from scratchmud.combat import fight
-from scratchmud.command.base import register_cmds
-#from scratchmud.debug import dump_status
+from basinboa import status
+from basinboa.system import on_connect, on_disconnect, login_clients, kick_idle, kick_quit, process_clients, SettingsLoader
+from basinboa.world import WorldLoader
+from basinboa.character import CharacterLoader
+from basinboa.event import Cycle
+from basinboa.ai import MobLoader, mob_actions
+from basinboa.combat import fight
+from basinboa.command.base import register_cmds
+#from basinboa.debug import dump_status
 
 if __name__ == '__main__':
     print(status.ASCII_ART)

@@ -3,8 +3,8 @@
 commands !
 """
 
-from scratchmud import status
-from scratchmud.command import cmds
+from basinboa import status
+from basinboa.command import cmds
 from inspect import isfunction
 
 CMDS_ALIAS = {

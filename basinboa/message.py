@@ -3,7 +3,7 @@
 message system
 """
 
-from scratchmud import status
+from basinboa import status
 
 
 def broadcast(msg):

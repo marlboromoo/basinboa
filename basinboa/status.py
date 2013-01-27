@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Global status of scratchmud.
+Global status of basinboa.
 reference: http://code.google.com/p/bogboa/source/browse/trunk/mudlib/gvar.py
 """
 
@@ -8,10 +8,12 @@ reference: http://code.google.com/p/bogboa/source/browse/trunk/mudlib/gvar.py
 #       ASCII
 #------------------------------------------------------------------------------
 ASCII_ART = '''
- ___ __ _ _ __ _| |_ __| |_  _ __ _  _ __| |
-(_-</ _| '_/ _` |  _/ _| ' \| '  \ || / _` |
-/__/\__|_| \__,_|\__\__|_||_|_|_|_\_,_\__,_|
-
+ ____            _       ____              
+| __ )  __ _ ___(_)_ __ | __ )  ___   __ _ 
+|  _ \ / _` / __| | '_ \|  _ \ / _ \ / _` |
+| |_) | (_| \__ \ | | | | |_) | (_) | (_| |
+|____/ \__,_|___/_|_| |_|____/ \___/ \__,_|
+                            Testing Server
 '''
 
 #------------------------------------------------------------------------------

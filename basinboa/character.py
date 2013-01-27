@@ -5,9 +5,9 @@ character character
 #import yaml
 #import os
 import status
-from scratchmud.loader import YamlLoader
-from scratchmud.puppet import Puppet
-#from scratchmud.encode import texts_encoder
+from basinboa.loader import YamlLoader
+from basinboa.puppet import Puppet
+#from basinboa.encode import texts_encoder
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'

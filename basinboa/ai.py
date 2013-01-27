@@ -5,11 +5,11 @@ robot !
 import copy
 import random
 import status
-from scratchmud.puppet import Puppet
-from scratchmud.world import NORTH, SOUTH, EAST, WEST, UP, DOWN 
-from scratchmud.message import mob_message_to_room
-from scratchmud.uid import Uid
-from scratchmud.loader import YamlLoader
+from basinboa.puppet import Puppet
+from basinboa.world import NORTH, SOUTH, EAST, WEST, UP, DOWN 
+from basinboa.message import mob_message_to_room
+from basinboa.uid import Uid
+from basinboa.loader import YamlLoader
 
 
 class Mob(Puppet, Uid):

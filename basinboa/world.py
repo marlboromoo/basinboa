@@ -4,9 +4,9 @@ world
 """
 import os
 import yaml
-from scratchmud import status
-from scratchmud.message import character_message_to_room, mob_message_to_room
-from scratchmud.command.cmds.inspect import look
+from basinboa import status
+from basinboa.message import character_message_to_room, mob_message_to_room
+from basinboa.command.cmds.inspect import look
 
 NORTH = 'n'
 SOUTH = 's'

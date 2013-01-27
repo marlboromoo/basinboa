@@ -3,9 +3,9 @@
 inspect commands.
 """
 
-from scratchmud import status
-from scratchmud.decorator import command
-from scratchmud.encode import texts_encoder
+from basinboa import status
+from basinboa.decorator import command
+from basinboa.encode import texts_encoder
 
 @command
 def look(client, args):

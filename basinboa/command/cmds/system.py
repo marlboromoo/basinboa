@@ -2,8 +2,8 @@
 """
 system commands.
 """
-from scratchmud import status
-from scratchmud.decorator import command
+from basinboa import status
+from basinboa.decorator import command
 
 @command
 def who(client, args):
