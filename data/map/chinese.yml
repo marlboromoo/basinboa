@@ -1,5 +1,6 @@
 ---
 name: chinese
+desc: chinese map
 rooms:
     - texts: 我可以吞下一塊玻璃, 而不傷身體
       mobs:

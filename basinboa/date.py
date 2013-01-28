@@ -37,9 +37,11 @@ def time_period(hour):
         return 'afternoon'
     elif hour >= 22 and hour <= 25:
         return 'evening'
-    elif hour >= 26 and hour <= 30:
+    elif hour >= 26 and hour <= 29:
         return 'night'
-    elif hour >= 0 and hour <= 6:
+    elif hour == 30 or hour == 0:
+        return 'midnight'
+    elif hour >= 1 and hour <= 6:
         return 'late night'
     else:
         pass

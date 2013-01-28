@@ -20,6 +20,7 @@ def on_connect(client):
     Sample on_connect function.
     Handles new connections.
     """
+    client.request_naws() #. get Window Size: client.columns, client.rows 
     print "++ Opened connection to %s" % client.addrport()
     broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
     status.CLIENTS.append(client)
@@ -78,10 +79,6 @@ def login_clients():
 def disconnect(client):
     """disconnect the client."""
     client.active = False
-
-def shutdown():
-    """Shutdown the server."""
-    status.SERVER_RUN = False
 
 class SettingsLoader(YamlLoader):
     """docstring for SettingsLoader"""

@@ -1,5 +1,6 @@
 ---
 name: void
+desc: void map
 rooms:
     - texts: nothing here ..
       mobs:

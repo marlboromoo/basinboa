@@ -176,10 +176,11 @@ class Room(object):
 
 class Map(object):
     """docstring for Map"""
-    def __init__(self, name, rooms, coordinates):
+    def __init__(self, name, desc, rooms, coordinates):
         super(Map, self).__init__()
         self.name = name
         self.coordinates = coordinates
+        self.desc = desc
         self.clients = {} #. key is Player.name, value is client object
         self.init_rooms(rooms) #. key is (x,y), value is Room object
         self.init_mobs()
@@ -278,6 +279,10 @@ class Map(object):
     def has_coordinates(self, xy):
         """docstring for check_coordinates"""
         return True if xy in self.coordinates else False
+
+    def get_desc(self):
+        """docstring for get_desc"""
+        return self.desc
 
 class World(object):
     """docstring for World"""
@@ -465,7 +470,9 @@ class WorldLoader(object):
                 self.inject_mobs_to_rooms(rooms, map_config)
                 self.inject_links_to_rooms(rooms, map_config)
                 #. create Map() object
-                self.world.add_map(Map(name=map_config['name'], rooms=rooms, coordinates=coordinates))
+                self.world.add_map(Map(
+                    name=map_config['name'], desc=map_config['desc'],
+                    rooms=rooms, coordinates=coordinates))
             else:
                 print "!! Map %s process error! " % (map_name)
 

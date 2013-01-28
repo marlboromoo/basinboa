@@ -4,6 +4,7 @@ system commands.
 """
 from basinboa import status
 from basinboa.decorator import command
+from basinboa.date import mud_string_datetime
 
 @command
 def who(client, args):
@@ -52,3 +53,8 @@ def man(client, args):
         client.send('%s\n' % (str(doc)))
     else:
         client.send('useage: man <COMMAND>\n')
+
+@command
+def datetime(client, args):
+    """docstring for datetime"""
+    client.send("%s\n" % mud_string_datetime())

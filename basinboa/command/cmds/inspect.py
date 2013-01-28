@@ -6,6 +6,8 @@ inspect commands.
 from basinboa import status
 from basinboa.decorator import command
 from basinboa.encode import texts_encoder
+from basinboa.date import mud_format_time
+from basinboa.layout import align_right
 
 @command
 def look(client, args):
@@ -15,13 +17,16 @@ def look(client, args):
     """
     target_name = args[0] if args else None
     character = status.CHARACTERS.get(client)
-    room = status.WORLD.locate_character_room(character)
+    room = status.WORLD.locate_client_room(client)
+    map_ = status.WORLD.locate_client_map(client)
     if not target_name:
+        client.send_cc("%s\n" % (align_right(
+            client, 
+            msg_right="^KExits: %s^~" % (room.get_exits()),
+            msg_left="^C%s, ^c%s.^~" % (map_.get_desc(), mud_format_time()), 
+        )))
         #. view
-        character.client.send('%s\n' % (texts_encoder(room.texts)))
-        #. prompt
-        prompt = character.get_prompt(room)
-        character.client.send(prompt)
+        character.client.send('%s%s\n' % (' '*4, texts_encoder(room.texts)))
         #. other characters
         for client_ in room.get_clients():
             if client_ != character.client:

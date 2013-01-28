@@ -98,14 +98,16 @@ class Character(Puppet):
 
     def get_prompt(self, room=None):
         """docstring for get_prompt"""
-        prompt = ''
-        room = status.WORLD.locate_character_room(self) if room == None else room
-        mobs = [mob.get_name() for mob in room.get_mobs()]
-        prompt += "hp:%s/mp:%s, exits: %s" % (str(self.get_hp()), str(self.get_mp()), room.get_exits())
+        prompt = '\n(^w'
+        hp, mhp = self.get_hp()
+        mp, mmp = self.get_mp()
+        prompt += "HP:%s/%s, MP:%s/%s, EXP:%s, COINS:%s" % (hp, mhp, mp, mmp, 0, 0)
         if self.is_admin():
-            prompt += "id: %s, xy: %s mobs: %s\n" % (room.id_, str(room.xy), str(mobs))
+            room = status.WORLD.locate_character_room(self) if room == None else room
+            mobs = [mob.get_name() for mob in room.get_mobs()]
+            prompt += "ID: %s, XY: %s MOBS: %s)\n> ^~" % (room.id_, str(room.xy), str(mobs))
         else:
-            prompt += "\n"
+            prompt += ")\n> ^~"
         return prompt
 
 class CharacterLoader(YamlLoader):

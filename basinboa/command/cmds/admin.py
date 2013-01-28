@@ -7,6 +7,11 @@ from basinboa.decorator import command
 from basinboa.message import invalid_args
 
 @command
+def shutdown(client, args):
+    """docstring for shutdown"""
+    status.SERVER_RUN = False
+
+@command
 def rooms(client, args):
     """
     admin only. list rooms in the map.
