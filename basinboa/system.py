@@ -54,8 +54,8 @@ def kick_idle():
 def kick_quit():
     """docstring for kick_quit"""
     for client in status.QUIT_CLIENTS:
-        clean_status(client)
         client.active = False
+        clean_status(client)
 
 def process_clients():
     """

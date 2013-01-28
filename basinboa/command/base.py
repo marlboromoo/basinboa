@@ -32,7 +32,6 @@ def fire_cmd(client, cmd, args):
     
 def process_command(client, inputs):
     """docstring for process_command"""
-    inputs = inputs.split()
     cmd = inputs[0].lower()
     inputs.remove(cmd)
     args = inputs
@@ -50,14 +49,16 @@ def process_inputs(client):
     Process the client input.
     """
     inputs = client.get_command()
-    inputs = inputs.lower()
     prompt = status.CHARACTERS.get(client).get_prompt()
     if len(inputs) == 0:
         #. send prompt
         client.send_cc(prompt)
     else:
+        inputs = inputs.split()
+        cmd = inputs[0].lower()
         process_command(client, inputs)
-        client.send_cc(prompt)
+        if not cmd == 'quit':
+            client.send_cc(prompt)
 
 def register_cmds():
     """register commands from cmds.* to global status"""
