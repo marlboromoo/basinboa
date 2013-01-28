@@ -3,7 +3,10 @@
 [![basinboa](https://raw.github.com/marlboromoo/basinboa/master/doc/image/boa.jpg)] (http://www.flickr.com/photos/feargal/3810334817/)
 
 ## About
-A mub base on [miniboa] [1], **Work in progress**! Boa image from [here] [2].
+### This Mud
+A mub base on [miniboa] [1], **Work in progress**!
+### The Logo
+Boa image from [here] [2].
 
 ## Requirments
  - Python
