@@ -65,7 +65,7 @@ Timothy.Lee a.k.a MarlboroMoo.
 ## License
 Released under the [MIT License] [3].
 
-  [1]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
-  [2]: http://code.google.com/p/miniboa/   "MiniBoa"
+  [1]: http://code.google.com/p/miniboa/   "MiniBoa"
+  [2]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
   [3]: http://opensource.org/licenses/MIT   "MIT License"
 
