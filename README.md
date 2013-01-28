@@ -3,8 +3,8 @@
 [![basinboa](https://raw.github.com/marlboromoo/basinboa/master/doc/image/boa.jpg)] (http://www.flickr.com/photos/feargal/3810334817/)
 
 ## About
-### This Mud
-A mub base on [miniboa] [1], **Work in progress**!
+### This MUD
+A MUD base on [MiniBoa] [1], **Work in progress**!
 ### The Logo
 Boa image from [here] [2].
 
