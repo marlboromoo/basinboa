@@ -3,7 +3,8 @@
 [![basinboa](https://raw.github.com/marlboromoo/basinboa/master/doc/image/boa.jpg)] (http://www.flickr.com/photos/feargal/3810334817/)
 
 ## About
-a mub base on miniboa. **WIP**
+A mub base on miniboa. **Work in progress!**
+Boa image from [here] [1].
 
 ## Requirments
  - Python
@@ -60,7 +61,8 @@ git submodule update --init
 Timothy.Lee a.k.a MarlboroMoo.
 
 ## License
-Released under the [MIT License] [1].
+Released under the [MIT License] [2].
 
   [1]: http://opensource.org/licenses/MIT   "MIT License"
+  [2]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
 
