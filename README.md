@@ -16,6 +16,7 @@ sudo aptitude install python-dev python-pip libyaml-dev -y
 sudo pip install pyyaml
 git clone https://github.com/marlboromoo/basinboa.git
 cd basinboa
+git submodule update --init
 ./start_server.sh
 ```
 
