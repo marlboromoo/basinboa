@@ -9,14 +9,14 @@ import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from basinboa import status
-from basinboa.system import on_connect, on_disconnect, login_clients, kick_idle, kick_quit, process_clients, SettingsLoader
+from basinboa.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients, SettingsLoader, process_lobby, process_players
 from basinboa.world import WorldLoader
 from basinboa.character import CharacterLoader
 from basinboa.event import Cycle
 from basinboa.ai import MobLoader, mob_actions
 from basinboa.combat import fight
 from basinboa.command.base import register_cmds
-#from basinboa.debug import dump_status, test_quit
+from basinboa.debug import dump_status, test_quit
 
 if __name__ == '__main__':
     print(status.ASCII_ART)
@@ -46,7 +46,8 @@ if __name__ == '__main__':
 #------------------------------------------------------------------------------
 #       Initial Cycle
 #------------------------------------------------------------------------------
-    login_cycle = Cycle(.3)
+    #login_cycle = Cycle(.1)
+    lobby_cycle = Cycle(.1)
     kick_cycle = Cycle(2)
     quit_cycle = Cycle(.2)
     process_cycle = Cycle(.1)
@@ -71,12 +72,13 @@ if __name__ == '__main__':
     while status.SERVER_RUN:
         telnet_server.poll()
         #test_quit()
-        login_cycle.fire(login_clients)
+        #login_cycle.fire(login_clients)
+        lobby_cycle.fire(process_lobby)
         kick_cycle.fire(kick_idle)
         quit_cycle.fire(kick_quit)
-        process_cycle.fire(process_clients)
+        process_cycle.fire(process_players)
         combat_cycle.fire(fight)
         walk_cycle.fire(mob_actions)
-        #debug_cycle.fire(dump_status)
+        debug_cycle.fire(dump_status)
 
     print(">> Server shutdown.")

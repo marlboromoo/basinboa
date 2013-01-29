@@ -26,11 +26,11 @@ def cmd_exist(cmd):
     """docstring for check_cmd"""
     return True if status.COMMANDS.has_key(cmd) else False
 
-def fire_cmd(client, cmd, args):
+def fire_cmd(player, cmd, args):
     """docstring for fire_cmd"""
-    status.COMMANDS.get(cmd)(client, args)
+    status.COMMANDS.get(cmd)(player, args)
     
-def process_command(client, inputs):
+def process_command(player, inputs):
     """docstring for process_command"""
     cmd = inputs[0].lower()
     inputs.remove(cmd)
@@ -38,27 +38,27 @@ def process_command(client, inputs):
     if not cmd_exist(cmd):
         cmd = alias_2_cmd(cmd)
         if cmd_exist(cmd):
-            fire_cmd(client, cmd, args)
+            fire_cmd(player, cmd, args)
         else:
-            client.send("Huh ?\n")
+            player.send("Huh ?\n")
     else:
-        fire_cmd(client, cmd, args)
+        fire_cmd(player, cmd, args)
 
-def process_inputs(client):
+def process_inputs(player):
     """
-    Process the client input.
+    Process the player input.
     """
-    inputs = client.get_command()
-    prompt = status.CHARACTERS.get(client).get_prompt()
+    inputs = player.get_command()
+    prompt = player.character.get_prompt()
     if len(inputs) == 0:
         #. send prompt
-        client.send_cc(prompt)
+        player.send_cc(prompt)
     else:
         inputs = inputs.split()
         cmd = inputs[0].lower()
-        process_command(client, inputs)
+        process_command(player, inputs)
         if not cmd == 'quit':
-            client.send_cc(prompt)
+            player.send_cc(prompt)
 
 def register_cmds():
     """register commands from cmds.* to global status"""
@@ -68,3 +68,5 @@ def register_cmds():
             #. check the functions is command
             if object_.is_command:
                 status.COMMANDS[attr] = object_
+
+

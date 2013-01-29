@@ -7,42 +7,42 @@ from basinboa.decorator import command
 from basinboa.date import mud_string_datetime
 
 @command
-def who(client, args):
+def who(player, args):
     """
     list online players.
     useage: who
     """
-    for character in status.CHARACTERS.values():
-        client.send("%s\n" % repr(character))
+    for player_ in status.PLAYERS.values():
+        player.send("%s\n" % repr(player_.character))
 
 @command
-def quit(client, args):
+def quit(player, args):
     """
     exit the game.
     useage: quit
     """
-    client.send('\nSee you next time ! \n')
-    status.QUIT_CLIENTS.append(client)
+    player.send('\nSee you next time ! \n')
+    status.QUIT_CLIENTS.append(player)
 
 @command
-def save(client, args):
+def save(player, args):
     """
     save your character data.
     useage: save
     """
-    msg = 'okay.' if  status.CHARACTER_LOADER.dump(status.CHARACTERS[client]) else 'fail!'
-    client.send('%s\n' % (msg))
+    msg = 'okay.' if  status.CHARACTER_LOADER.dump(player.character) else 'fail!'
+    player.send('%s\n' % (msg))
 
 @command
-def cmds(client, args):
+def cmds(player, args):
     """
     list available commands.
     useage: cmds
     """
-    client.send('%s\n' % (str(status.COMMANDS.keys())))
+    player.send('%s\n' % (str(status.COMMANDS.keys())))
 
 @command
-def man(client, args):
+def man(player, args):
     """
     show the documents of command.
     useage: man <COMMAND>
@@ -50,11 +50,11 @@ def man(client, args):
     cmd = args[0] if len(args) > 0 else None
     if cmd:
         doc = status.COMMANDS.get(cmd).func_doc if status.COMMANDS.has_key(cmd) else 'No such documents.'
-        client.send('%s\n' % (str(doc)))
+        player.send('%s\n' % (str(doc)))
     else:
-        client.send('useage: man <COMMAND>\n')
+        player.send('useage: man <COMMAND>\n')
 
 @command
-def datetime(client, args):
+def datetime(player, args):
     """docstring for datetime"""
-    client.send("%s\n" % mud_string_datetime())
+    player.send("%s\n" % mud_string_datetime())

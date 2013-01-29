@@ -5,8 +5,9 @@ world
 import os
 import yaml
 from basinboa import status
-from basinboa.message import character_message_to_room, mob_message_to_room
-from basinboa.command.cmds.inspect import look
+#from basinboa.message import character_message_to_room, mob_message_to_room
+from basinboa.message import player_message_to_room, mob_message_to_room
+from basinboa.command.cmds.inspect_cmds import look
 
 NORTH = 'n'
 SOUTH = 's'
@@ -62,42 +63,55 @@ class Room(object):
         self.paths = paths
         self.texts = None
         self.mobs = [] #. Mob objects
-        self.clients = {} #. key is Player.name, value is client object
+        #self.clients = {} #. key is Player.name, value is client object
+        self.players = []
         self.links = [] #. 
 
     def __repr__(self):
-        return "Room%s%s - %s, %s mobs/%s clients, links: %s" % (
+        return "Room%s%s - %s, %s mobs/%s players, links: %s" % (
             str(self.id_), str(self.xy), str('/'.join(self.exits)), 
-            str(len(self.mobs)), str(len(self.clients)), str(self.links))
+            str(len(self.mobs)), str(len(self.players)), str(self.links))
 
-    def add_client(self, client):
-        """docstring for add_client"""
-        self.clients[status.CHARACTERS[client].name] = client
+    #def add_client(self, client):
+    #    """docstring for add_client"""
+    #    self.clients[status.CHARACTERS[client].name] = client
 
-    def add_client_by_character(self, character):
-        """add client object by character object"""
-        for client, character_ in status.CHARACTERS.items():
-            if character_ == character:
-                self.clients[character.name] = client
-                break
+    #def add_client_by_character(self, character):
+    #    """add client object by character object"""
+    #    for client, character_ in status.CHARACTERS.items():
+    #        if character_ == character:
+    #            self.clients[character.name] = client
+    #            break
 
-    def remove_client(self, client):
-        """docstring for add_client"""
-        if self.clients.has_key(status.CHARACTERS[client].name):
-            self.clients.pop(status.CHARACTERS[client].name)
+    def add_player(self, player):
+        """docstring for add_player"""
+        self.players.append(player)
 
-    def remove_client_by_character(self, character):
-        """remove client object by character object"""
-        if self.clients.has_key(character.name):
-            self.clients.pop(character.name)
+    #def remove_client(self, client):
+    #    """docstring for add_client"""
+    #    if self.clients.has_key(status.CHARACTERS[client].name):
+    #        self.clients.pop(status.CHARACTERS[client].name)
 
-    def get_client(self, name):
-        """docstring for get_client"""
-        return self.clients[name] if self.clients.has_key(name) else None
+    #def remove_client_by_character(self, character):
+    #    """remove client object by character object"""
+    #    if self.clients.has_key(character.name):
+    #        self.clients.pop(character.name)
 
-    def get_clients(self):
-        """docstring for get_clients"""
-        return self.clients.values()
+    def remove_player(self, player):
+        """docstring for remove_player"""
+        self.players.remove(player) if player in self.players else None
+
+    #def get_client(self, name):
+    #    """docstring for get_client"""
+    #    return self.clients[name] if self.clients.has_key(name) else None
+
+    #def get_clients(self):
+    #    """docstring for get_clients"""
+    #    return self.clients.values()
+
+    def get_players(self):
+        """docstring for get_players"""
+        return self.players
 
     def add_mob(self, mob):
         """docstring for add_mob"""
@@ -123,11 +137,18 @@ class Room(object):
                 return mob
         return None
 
-    def get_character_by_name(self, name):
-        """retunr character object by name else None"""
-        for name_, client in self.clients.items():
-            if name == name_:
-                return status.CHARACTERS[client]
+    #def get_character_by_name(self, name):
+    #    """retunr character object by name else None"""
+    #    for name_, client in self.clients.items():
+    #        if name == name_:
+    #            return status.CHARACTERS[client]
+    #    return None
+
+    def get_player_by_name(self, name):
+        """docstring for get_player_by_name"""
+        for player in self.players:
+            if player.name == name:
+                return player
         return None
 
     def add_link(self, map_, xy, exit):
@@ -181,13 +202,14 @@ class Map(object):
         self.name = name
         self.coordinates = coordinates
         self.desc = desc
-        self.clients = {} #. key is Player.name, value is client object
+        #self.clients = {} #. key is Player.name, value is client object
+        self.players = []
         self.init_rooms(rooms) #. key is (x,y), value is Room object
         self.init_mobs()
 
     def __repr__(self):
-        return "Map(%s) - %s rooms/%s mobs/%s clients" % (
-            str(self.name), str(len(self.rooms)), str(len(self.mobs)), str(len(self.clients)))
+        return "Map(%s) - %s rooms/%s mobs/%s players" % (
+            str(self.name), str(len(self.rooms)), str(len(self.mobs)), str(len(self.players)))
 
     def init_rooms(self, rooms):
         """docstring for init_rooms"""
@@ -234,53 +256,71 @@ class Map(object):
         """docstring for get_name"""
         return self.name
 
-    def add_client(self, client):
-        """add client objcet to map"""
-        #. add to map
-        self.clients[status.CHARACTERS[client].name] = client
-        #. add to room
-        self.get_room(status.CHARACTERS[client].xy).add_client(client)
+    #def add_client(self, client):
+    #    """add client objcet to map"""
+    #    #. add to map
+    #    self.clients[status.CHARACTERS[client].name] = client
+    #    #. add to room
+    #    self.get_room(status.CHARACTERS[client].xy).add_client(client)
 
-    def add_client_by_character(self, character):
-        """add client objcet by character object"""
-        for character_, client in status.CHARACTERS.items():
-            if character_ == character:
-                #. add to map
-                self.clients[character.name] = client
-                #. add to room
-                self.get_room(character.xy).add_client(client)
-                break
+    #def add_client_by_character(self, character):
+    #    """add client objcet by character object"""
+    #    for character_, client in status.CHARACTERS.items():
+    #        if character_ == character:
+    #            #. add to map
+    #            self.clients[character.name] = client
+    #            #. add to room
+    #            self.get_room(character.xy).add_client(client)
+    #            break
 
-    def remove_client(self, client):
-        """remove client object from map"""
-        if self.clients.has_key(status.CHARACTERS[client].name):
+    def add_player(self, player):
+        """docstring for add_player"""
+        self.players.append(player)
+
+    #def remove_client(self, client):
+    #    """remove client object from map"""
+    #    if self.clients.has_key(status.CHARACTERS[client].name):
+    #        #. remove from room
+    #        room = self.get_room(status.CHARACTERS[client].xy)
+    #        if room:
+    #            room.remove_client(client)
+    #        #. remove from map
+    #        self.clients.pop(status.CHARACTERS[client].name)
+
+    #def remove_client_by_character(self, character):
+    #    """remove client object by character object"""
+    #    for character_, client in status.CHARACTERS.items():
+    #        if character_ == character:
+    #            if self.clients.has_key(character.name):
+    #                #. remove from room
+    #                room = self.get_room(character.xy)
+    #                if room:
+    #                    room.remove_client(client)
+    #                #. remove from map
+    #                self.clients.pop(character.name)
+    #                break
+
+    def remove_player(self, player):
+        """docstring for remove_player"""
+        if player in self.players:
             #. remove from room
-            room = self.get_room(status.CHARACTERS[client].xy)
+            room = self.get_room(player.character.xy)
             if room:
-                room.remove_client(client)
+                room.remove_player(player)
             #. remove from map
-            self.clients.pop(status.CHARACTERS[client].name)
+            self.players.remove(player)
 
-    def remove_client_by_character(self, character):
-        """remove client object by character object"""
-        for character_, client in status.CHARACTERS.items():
-            if character_ == character:
-                if self.clients.has_key(character.name):
-                    #. remove from room
-                    room = self.get_room(character.xy)
-                    if room:
-                        room.remove_client(client)
-                    #. remove from map
-                    self.clients.pop(character.name)
-                    break
+    #def get_client(self, name):
+    #    """docstring for get_client"""
+    #    return self.clients[name] if self.clients.has_key(name) else None
 
-    def get_client(self, name):
-        """docstring for get_client"""
-        return self.clients[name] if self.clients.has_key(name) else None
+    #def get_clients(self):
+    #    """docstring for get_clients"""
+    #    return self.clients.values()
 
-    def get_clients(self):
-        """docstring for get_clients"""
-        return self.clients.values()
+    def get_players(self):
+        """docstring for get_players"""
+        return self.players
 
     def has_coordinates(self, xy):
         """docstring for check_coordinates"""
@@ -312,21 +352,29 @@ class World(object):
         """docstring for has_map"""
         return True if self.maps.has_key(map_name) else False
 
-    def locate_client_room(self, client):
-        """find room by client object"""
-        return self.get_map(status.CHARACTERS[client].map_name).get_room(status.CHARACTERS[client].xy)
+    #def locate_client_room(self, client):
+    #    """find room by client object"""
+    #    return self.get_map(status.CHARACTERS[client].map_name).get_room(status.CHARACTERS[client].xy)
 
-    def locate_client_map(self, client):
-        """find map by client object"""
-        return self.get_map(status.CHARACTERS[client].map_name)
+    def locate_player_room(self, player):
+        """docstring for locate_player_room"""
+        return self.get_map(player.character.map_name).get_room(player.character.xy)
 
-    def locate_character_room(self, character):
-        """find room by character object"""
-        return self.get_map(character.map_name).get_room(character.xy)
+    #def locate_client_map(self, client):
+    #    """find map by client object"""
+    #    return self.get_map(status.CHARACTERS[client].map_name)
 
-    def locate_character_map(self, character):
-        """find map by character object"""
-        return self.get_map(character.map_name)
+    def locate_player_map(self, player):
+        """docstring for locate_player_map"""
+        return self.get_map(player.character.map_name)
+
+    #def locate_character_room(self, character):
+    #    """find room by character object"""
+    #    return self.get_map(character.map_name).get_room(character.xy)
+
+    #def locate_character_map(self, character):
+    #    """find map by character object"""
+    #    return self.get_map(character.map_name)
 
     def locate_mob_room(self, mob):
         """find room by mob object"""
@@ -354,8 +402,9 @@ class World(object):
 
     def move(self, object_, symbol, function, message):
         """move character(client)/mob object between rooms if rooms connected"""
-        if object_.is_player():
-            room = self.locate_client_room(object_.client)
+        if not object_.is_mob:
+            player = status.CHARACTERS[object_]
+            room = self.locate_player_room(player)
         else:
             room = self.locate_mob_room(object_)
         x, y = object_.xy
@@ -364,30 +413,31 @@ class World(object):
             dst_xy = function(x, y)
             if dst_xy in room.paths:
                 #. message to all the characters in room
-                msg_func = character_message_to_room if object_.is_player() else mob_message_to_room
-                msg_func(object_, '%s go to %s!\n' % (object_.get_name(), message))
+                msg_func = player_message_to_room if not object_.is_mob else mob_message_to_room
+                mobile = player if not object_.is_mob else object_
+                msg_func(mobile, '%s go to %s!\n' % (object_.get_name(), message))
                 #. move object_ to room
                 object_.set_prev_location(object_.xy, object_.map_name)
                 object_.xy = dst_xy
                 #. remove object_ from source room
-                if object_.is_player():
-                    room.remove_client(object_.client)
+                if not object_.is_mob:
+                    room.remove_player(player)
                 else:
                     room.remove_mob(object_)
                 #. add object_ to target room
-                if object_.is_player():
-                    self.locate_client_room(object_.client).add_client(object_.client)
+                if not object_.is_mob:
+                    self.locate_player_room(player).add_player(player)
                 else:
                     self.locate_mob_room(object_).add_mob(object_)
                 #. send message to all the characters in target room
-                msg_func(object_, '%s come to here!\n' % (object_.get_name()))
+                msg_func(mobile, '%s come to here!\n' % (object_.get_name()))
         #. check link
         elif room.has_link(symbol):
             link = room.get_link(symbol)
             self.move_to(object_, link['xy'], link['map'], exit_name(symbol), autolook=False)
         else:
-            if object_.is_player():
-                object_.client.send('Huh?\n')
+            if not object_.is_mob:
+                player.send('Huh?\n')
 
     def move_to(self, object_, xy, map_name, message=None, autolook=True):
         """move character(client)/mob object between rooms even if rooms not connected"""
@@ -397,39 +447,37 @@ class World(object):
         except Exception:
             map_, room = None, None
         if map_ and room:
-            if object_.is_player():
-                src_map = self.locate_client_map(object_.client)
-                src_room = self.locate_client_room(object_.client)
+            if not object_.is_mob:
+                player = status.CHARACTERS[object_]
+                src_map = self.locate_player_map(player)
             else:
                 src_map = self.locate_mob_map(object_)
-                src_room = self.locate_mob_room(object_)
             #. send message notice all characters in the room
-            msg_func = character_message_to_room if object_.is_player() else mob_message_to_room
+            msg_func = player_message_to_room if not object_.is_mob else mob_message_to_room
+            mobile = player if not object_.is_mob else object_
             if message:
-                msg_func(object_, "%s go to %s.\n" % (object_.get_name(), message))
+                msg_func(mobile, "%s go to %s.\n" % (object_.get_name(), message))
             else:
-                msg_func(object_, "%s leave here.\n" % (object_.get_name()))
+                msg_func(mobile, "%s leave here.\n" % (object_.get_name()))
             #. remove object_ in old place
-            if object_.is_player():
-                src_map.remove_client(object_.client)
-                src_room.remove_client(object_.client)
+            if not object_.is_mob:
+                src_map.remove_player(player)
             else:
                 src_map.remove_mob(object_)
-                src_room.remove_mob(object_)
             #. move object_ to destation
             object_.set_prev_location(object_.xy, object_.map_name)
             object_.set_location(xy, map_.get_name())
-            if object_.is_player():
-                map_.add_client(object_.client)
+            if not object_.is_mob:
+                map_.add_player(player)
             else:
                 map_.add_mob(object_)
             #. send message to all the characters in target room
-            msg_func(object_, '%s come to here!\n' % (object_.get_name()))
-            if autolook and object_.is_player():
-                return look(object_.client, None)
+            msg_func(mobile, '%s come to here!\n' % (object_.get_name()))
+            if autolook and not object_.is_mob:
+                return look(player, None)
         else:
-            if object_.is_player():
-                object_.client.send("You can't!\n")
+            if not object_.is_mob:
+                player.send("You can't!\n")
 
     def remove_client(self, client):
         """docstring for remove_client"""

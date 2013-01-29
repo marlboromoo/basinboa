@@ -16,6 +16,7 @@ class Mob(Puppet, Uid):
     """docstring for Mob"""
     def __init__(self, data):
         super(Mob, self).__init__()
+        self.is_mob = True
         #. mob type
         self.skeleton = None
         #. talk

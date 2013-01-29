@@ -23,6 +23,7 @@ SERVER_CONFIG = None
 SERVER_RUN = True
 IDLE_TIMEOUT = 300
 CLIENTS = []
+LOBBY = {} #.key = Client object, value= Guest object
 QUIT_CLIENTS = []
 UNLOGIN_CLIENTS = {}
 
@@ -32,7 +33,8 @@ UNLOGIN_CLIENTS = {}
 WORLD = None
 CHARACTER_LOADER = None
 MOB_LOADER = None
-CHARACTERS = {}
+PLAYERS = {} #. key = Client object, value = Player object
+CHARACTERS = {} #. key = Character object, value = Player object
 COMMANDS = {} #. key is functin(command) name value is function(command)
 
 

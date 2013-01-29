@@ -5,7 +5,7 @@ base actions of character/mob
 from basinboa import status
 from basinboa.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
 from basinboa.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
-from basinboa.command.cmds.inspect import look
+from basinboa.command.cmds.inspect_cmds import look
 
 class Puppet(object):
     """docstring for Puppet"""
@@ -38,7 +38,7 @@ class Puppet(object):
 
     def __look(self):
         """docstring for __look"""
-        return look(self.client, None) if self.is_player() else None
+        return look(status.CHARACTERS[self], None) if not self.is_mob else None
 
     def go_west(self):
         """docstring for west"""
@@ -81,7 +81,7 @@ class Puppet(object):
         for follower in self.followers:
             #. follower must be in the same room
             if follower.xy == self.prev_xy and follower.map_name == self.prev_map_name:
-                if follower.is_player():
+                if follower.is_mob:
                     follower.client.send("You follow the %s's steps!\n" % (self.get_name()))
                 if direction == UP:
                     follower.go_up()
@@ -171,7 +171,7 @@ class Puppet(object):
         self.hp = self.decrease_point(self.hp, value)
         current, max_ = self.hp
         if current <= 0:
-            self.client.send_cc('^RYou Dead!^~\n')
+            status.CHARACTERS[self].send_cc('^RYou Dead!^~\n')
             self.hp = (1, max_)
             for target in self.get_combat_targets():
                 target.remove_combat_target(self)
@@ -197,9 +197,9 @@ class Puppet(object):
         _object.decrease_hp(damage)
         return damage
 
-    def is_player(self):
-        """docstring for is_player"""
-        return True if hasattr(self, 'client') else False
+    #def is_mob(self):
+    #    """docstring for is_mob"""
+    #    return self.is_mob
 
     def get_hp(self):
         """docstring for get_hp"""

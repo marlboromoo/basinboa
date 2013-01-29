@@ -4,20 +4,21 @@ system libs
 """
 
 import status
-from basinboa.auth import login_queue, login
 from basinboa.command import process_inputs
 from basinboa.message import broadcast
 from basinboa.loader import YamlLoader
+from basinboa.user import Guest
 
 def clean_status(client):
     """remove client from status"""
-    #. remove client from world first
-    status.WORLD.remove_client(client)
+    #. TODO: remove client from world first
+    #status.WORLD.remove_client(client)
     #. TODO: use del() to purge reference
     status.CLIENTS.remove(client)  if client in status.CLIENTS else None
-    status.UNLOGIN_CLIENTS.pop(client) if status.UNLOGIN_CLIENTS.has_key(client) else None
-    status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
+    #status.UNLOGIN_CLIENTS.pop(client) if status.UNLOGIN_CLIENTS.has_key(client) else None
+    status.LOBBY.pop(client) if status.LOBBY.has_key(client) else None
     status.CHARACTERS.pop(client) if status.CHARACTERS.has_key(client) else None
+    status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
 
 def on_connect(client):
     """
@@ -30,7 +31,7 @@ def on_connect(client):
     status.CLIENTS.append(client)
     client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
     client.send("Welcome to the strachmud, please login.\n")
-    login_queue(client)
+    status.LOBBY[client] = Guest(client)
 
 def on_disconnect(client):
     """
@@ -58,6 +59,7 @@ def kick_quit():
     """docstring for kick_quit"""
     for client in status.QUIT_CLIENTS:
         disconnect(client)
+        status.QUIT_CLIENTS.remove(client)
 
 def process_clients():
     """
@@ -68,15 +70,27 @@ def process_clients():
         if client.active and client.cmd_ready:
             process_inputs(client)
 
-def login_clients():
-    """docstring for login_clients"""
-    for client in status.CLIENTS:
-        if client in status.UNLOGIN_CLIENTS:
-            if status.UNLOGIN_CLIENTS[client]['retry'] >= 3:
-                status.UNLOGIN_CLIENTS.pop(client) if status.UNLOGIN_CLIENTS.has_key(client) else None
-                disconnect(client)
-            else:
-                login(client)
+def process_players():
+    """docstring for process_players"""
+    for client, player in status.PLAYERS.items():
+        if client.active and client.cmd_ready:
+            process_inputs(player)
+
+def process_lobby():
+    """docstring for process_lobby"""
+    # TODO: write code...
+    for client, guest in status.LOBBY.items():
+        guest.login()
+
+#def login_clients():
+#    """docstring for login_clients"""
+#    for client in status.CLIENTS:
+#        if client in status.UNLOGIN_CLIENTS:
+#            if status.UNLOGIN_CLIENTS[client]['retry'] >= 3:
+#                status.UNLOGIN_CLIENTS.pop(client) if status.UNLOGIN_CLIENTS.has_key(client) else None
+#                disconnect(client)
+#            else:
+#                login(client)
 
 def disconnect(client):
     """disconnect the client."""
