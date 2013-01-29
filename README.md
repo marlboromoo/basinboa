@@ -4,9 +4,9 @@
 
 ## About
 ### This MUD
-A MUD base on [MiniBoa] [1], **Work in progress**!
+A MUD base on [MiniBoa] [1], inspire by [bogboa] [2],  **Work in progress**!
 ### The Logo
-Boa image from [here] [2].
+Boa image from [here] [3].
 
 ## Requirments
  - Python
@@ -63,9 +63,10 @@ git submodule update --init
 Timothy.Lee a.k.a MarlboroMoo.
 
 ## License
-Released under the [MIT License] [3].
+Released under the [MIT License] [4].
 
   [1]: http://code.google.com/p/miniboa/   "MiniBoa"
-  [2]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
-  [3]: http://opensource.org/licenses/MIT   "MIT License"
+  [1]: http://code.google.com/p/bogboa/   "BogBoa"
+  [3]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
+  [4]: http://opensource.org/licenses/MIT   "MIT License"
 
