@@ -4,7 +4,7 @@
 
 ## About
 ### This MUD
-A MUD base on [MiniBoa] [1], inspire by [bogboa] [2],  **Work in progress**!
+A MUD base on [MiniBoa] [1], inspire by [BogBoa] [2],  **Work in progress**!
 ### The Logo
 Boa image from [here] [3].
 
