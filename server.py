@@ -16,7 +16,7 @@ from basinboa.event import Cycle
 from basinboa.ai import MobLoader, mob_actions
 from basinboa.combat import fight
 from basinboa.command.base import register_cmds
-#from basinboa.debug import dump_status
+#from basinboa.debug import dump_status, test_quit
 
 if __name__ == '__main__':
     print(status.ASCII_ART)
@@ -70,6 +70,7 @@ if __name__ == '__main__':
     ## Server Loop
     while status.SERVER_RUN:
         telnet_server.poll()
+        #test_quit()
         login_cycle.fire(login_clients)
         kick_cycle.fire(kick_idle)
         quit_cycle.fire(kick_quit)

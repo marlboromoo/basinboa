@@ -44,12 +44,11 @@ def auth_client(client):
                 client.send('\nThis name was login, kick the user!\n')
                 origin_client, origin_character = find_origin_client_and_character(character)
                 character = copy.deepcopy(origin_character) #. copy the character object, because the origin character object wiil be drop
-                origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
-                status.QUIT_CLIENTS.append(origin_client) #. origin character object drop here
             character.client = client
             #. remove origin_character in characters list if exist
             if origin_client:
-                status.CHARACTERS.pop(origin_client) if status.CHARACTERS.has_key(origin_client) else None
+                origin_client.send("Somebody login from %s, see you again!\n" % (client.addrport()) )
+                status.QUIT_CLIENTS.append(origin_client) #. origin character object drop here
             status.CHARACTERS[client] = character
             #. remove client from login queue
             status.UNLOGIN_CLIENTS.pop(client)
@@ -104,6 +103,7 @@ def login(client):
         #. disconnect client if retry too many
         if login_status['retry'] >= 3: 
             client.send("\nRetry too many times, bye!\n")
+            status.QUIT_CLIENTS.append(client)
             return 
         #. final login
         if login_status['login']:

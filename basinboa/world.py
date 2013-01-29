@@ -215,10 +215,12 @@ class Map(object):
 
     def remove_mob(self, mob):
         """remove mob from map"""
+        #. remove from room
+        room = self.get_room(mob.xy)
+        if room:
+            room.remove_mob(mob)
         #. remove from map
         self.mobs.remove(mob)
-        #. remove from room
-        self.get_room(mob.xy).remove_mob(mob)
 
     def get_rooms(self):
         """docstring for get_rooms"""
@@ -251,22 +253,26 @@ class Map(object):
 
     def remove_client(self, client):
         """remove client object from map"""
-        #. remove from map
         if self.clients.has_key(status.CHARACTERS[client].name):
+            #. remove from room
+            room = self.get_room(status.CHARACTERS[client].xy)
+            if room:
+                room.remove_client(client)
+            #. remove from map
             self.clients.pop(status.CHARACTERS[client].name)
-        #. remove from room
-        self.get_room(status.CHARACTERS[client].xy).remove_client(client)
 
     def remove_client_by_character(self, character):
         """remove client object by character object"""
         for character_, client in status.CHARACTERS.items():
             if character_ == character:
-                #. remove from map
                 if self.clients.has_key(character.name):
+                    #. remove from room
+                    room = self.get_room(character.xy)
+                    if room:
+                        room.remove_client(client)
+                    #. remove from map
                     self.clients.pop(character.name)
-                #. remove from room
-                self.get_room(character.xy).remove_client(client)
-                break
+                    break
 
     def get_client(self, name):
         """docstring for get_client"""
@@ -424,6 +430,12 @@ class World(object):
         else:
             if object_.is_player():
                 object_.client.send("You can't!\n")
+
+    def remove_client(self, client):
+        """docstring for remove_client"""
+        for map_ in self.get_maps():
+            map_.remove_client(client)
+
 
 class WorldLoader(object):
     """docstring for WorldLoader"""

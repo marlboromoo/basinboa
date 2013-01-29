@@ -11,9 +11,13 @@ from basinboa.loader import YamlLoader
 
 def clean_status(client):
     """remove client from status"""
+    #. remove client from world first
+    status.WORLD.remove_client(client)
+    #. TODO: use del() to purge reference
     status.CLIENTS.remove(client)  if client in status.CLIENTS else None
     status.UNLOGIN_CLIENTS.pop(client) if status.UNLOGIN_CLIENTS.has_key(client) else None
     status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
+    status.CHARACTERS.pop(client) if status.CHARACTERS.has_key(client) else None
 
 def on_connect(client):
     """
@@ -38,7 +42,7 @@ def on_disconnect(client):
     if status.CHARACTERS.has_key(client):
         status.CHARACTER_LOADER.dump(status.CHARACTERS[client])
         broadcast('%s leaves the world.\n' % status.CHARACTERS[client].get_name())
-        clean_status(client)
+    clean_status(client)
 
 def kick_idle():
     """
@@ -48,14 +52,12 @@ def kick_idle():
     for client in status.CLIENTS:
         if client.idle() > status.IDLE_TIMEOUT:
             print('-- Kicking idle lobby client from %s' % client.addrport())
-            client.active = False
-            clean_status(client)
+            disconnect(client)
 
 def kick_quit():
     """docstring for kick_quit"""
     for client in status.QUIT_CLIENTS:
-        client.active = False
-        clean_status(client)
+        disconnect(client)
 
 def process_clients():
     """
@@ -78,7 +80,7 @@ def login_clients():
 
 def disconnect(client):
     """disconnect the client."""
-    client.active = False
+    client.deactivate()
 
 class SettingsLoader(YamlLoader):
     """docstring for SettingsLoader"""
