@@ -9,14 +9,14 @@ import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from basinboa import status
-from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players
 from basinboa.system.event import Cycle
 from basinboa.universe.world import WorldLoader
-from basinboa.character import CharacterLoader
-from basinboa.ai import MobLoader, mob_actions
+from basinboa.mobile.character import CharacterLoader
+from basinboa.mobile.mob import MobLoader, mob_actions
 from basinboa.combat import fight
 from basinboa.command.base import register_cmds
 from basinboa.system.debug import dump_status
+from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players
 
 if __name__ == '__main__':
     print(status.ASCII_ART)

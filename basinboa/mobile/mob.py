@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """
-robot !
+mob
 """
 import copy
 import random
-import status
-from basinboa.puppet import Puppet
+from basinboa import status
+from basinboa.mobile.puppet import Puppet
 from basinboa.universe.direction import NORTH, SOUTH, EAST, WEST, UP, DOWN 
 from basinboa.message import mob_message_to_room
 from basinboa.uid import Uid

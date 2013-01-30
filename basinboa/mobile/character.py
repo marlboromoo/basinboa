@@ -2,12 +2,9 @@
 """
 character character
 """
-#import yaml
-#import os
-import status
+from basinboa import status
 from basinboa.loader import YamlLoader
-from basinboa.puppet import Puppet
-#from basinboa.encode import texts_encoder
+from basinboa.mobile.puppet import Puppet
 
 ROLE_ADMIN = 'admin'
 ROLE_USER = 'user'
