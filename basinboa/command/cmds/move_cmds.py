@@ -78,23 +78,6 @@ def down(player, args):
     else:
         return look(player, None)
 
-def __follow(player, function, name, is_track=False):
-    """docstring for _follow"""
-    target = function(name)
-    if target:
-        if target in player.character.get_followers():
-            player.send("You can't ! %s already follow you.\n." % (target.name))
-            return
-        target.add_follower(player.character)
-        player.character.start_follow(target)
-        name = target.name if target != player else 'yourself'
-        action = 'track' if is_track else 'follow'
-        player.send("You start to %s %s!\n" % (action, name))
-        if target.is_player() and target != player:
-            target.send("%s start to follow you!\n" % (player.get_name()))
-    else:
-        player.send("No such target !\n")
-
 @command
 def follow(player, args):
     """
@@ -104,8 +87,24 @@ def follow(player, args):
     """
     target_name = args[0] if len(args) > 0 else None
     room = status.WORLD.locate_player_room(player)
-    return __follow(player, room.get_player_by_name, target_name) \
-            if target_name else player.send('Huh?\n')
+    if target_name:
+        player_ = room.get_player_by_name(target_name)
+        if player_:
+            if player_ in player.character.get_followers():
+                player.send("You can't ! %s already follow you.\n." % (player_.name))
+                return
+            player_.character.add_follower(player.character)
+            player.character.start_follow(player_.character)
+            if player_ != player:
+                player_.send("%s start to follow you!\n" % (player.character.get_name()))
+                name = player_.character.name
+            else:
+                name = 'yourself'
+            player.send("You start to follow %s!\n" % (name))
+        else:
+            player.send("No such target !\n")
+    else:
+        player.send('Huh?\n')
 
 @command
 def track(player, args):
@@ -116,9 +115,19 @@ def track(player, args):
     """
     target_name = args[0] if len(args) > 0 else None
     room = status.WORLD.locate_player_room(player)
-    return __follow(player, room.get_mob_by_name, target_name, is_track=True) \
-            if target_name else player.send('Huh?\n')
-
+    if target_name:
+        mob = room.get_mob_by_name(target_name)
+        if mob:
+            if mob in player.character.get_followers():
+                player.send("You can't ! %s already follow you.\n." % (mob.name))
+                return
+            mob.add_follower(player.character)
+            player.character.start_follow(mob)
+            player.send("You start to track %s!\n" % (mob.get_name()))
+        else:
+            player.send("No such target !\n")
+    else:
+        player.send('Huh?\n')
 
 @command
 def recall(player, args):

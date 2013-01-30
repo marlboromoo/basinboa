@@ -6,6 +6,7 @@ from basinboa import status
 from basinboa.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
 from basinboa.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
 from basinboa.message import message_to_room, player_message_to_room
+from basinboa.command.cmds.inspect_cmds import look
 
 class Puppet(object):
     """docstring for Puppet"""
@@ -106,8 +107,10 @@ class Puppet(object):
         for follower in self.followers:
             #. follower must be in the same room
             if follower.xy == self.prev_xy and follower.map_name == self.prev_map_name:
-                if follower.is_mob:
-                    follower.client.send("You follow the %s's steps!\n" % (self.get_name()))
+                if not follower.is_mob:
+                    player = status.PLAYERS[follower.get_name()]
+                    player.send("You follow the %s's steps!\n" % (self.get_name()))
+                    look(player, None)
                 if direction == UP:
                     follower.go_up()
                 if direction == DOWN:
