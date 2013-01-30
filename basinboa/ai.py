@@ -6,7 +6,7 @@ import copy
 import random
 import status
 from basinboa.puppet import Puppet
-from basinboa.world import NORTH, SOUTH, EAST, WEST, UP, DOWN 
+from basinboa.universe.direction import NORTH, SOUTH, EAST, WEST, UP, DOWN 
 from basinboa.message import mob_message_to_room
 from basinboa.uid import Uid
 from basinboa.loader import YamlLoader

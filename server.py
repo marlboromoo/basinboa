@@ -11,7 +11,7 @@ from miniboa import TelnetServer
 from basinboa import status
 from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players
 from basinboa.system.event import Cycle
-from basinboa.world import WorldLoader
+from basinboa.universe.world import WorldLoader
 from basinboa.character import CharacterLoader
 from basinboa.ai import MobLoader, mob_actions
 from basinboa.combat import fight
