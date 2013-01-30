@@ -4,6 +4,7 @@ unlogin user.
 """
 import copy
 from basinboa import status
+from basinboa.system.scheduler import SCHEDULER
 from basinboa.message.broadcast import broadcast
 from basinboa.user.account import Account
 from basinboa.user.player import Player
@@ -18,6 +19,7 @@ class Guest(Account):
         self.process_name = None
         self.process_password = None
         self.retry = 0
+        self.quit = False
         self.greet()
         self.login()
     
@@ -28,29 +30,30 @@ class Guest(Account):
     
     def login(self):
         """login the clietn."""
-        #. get name
         self.check_retry()
-        self.get_name()
-        self.get_password()
-        if self.name and self.password:
-            if self.auth():
-                self.is_login = True
-            else:
-                self.is_login = False
-                self.retry += 1
-                self.check_retry()
-            #. final login
-            if self.is_login:
-                self.client.send("\nWelcome !!! %s !!! \n"  % (self.name))
-            else:
-                self.password, self.process_password = None, None
+        if not self.retry >= RETRY_LIMIT:
+            self.get_name()
+            self.get_password()
+            if self.name and self.password:
+                if self.auth():
+                    self.is_login = True
+                else:
+                    self.client.send("Password error!\n")
+                    self.is_login = False
+                    self.retry += 1
+                #. final login
+                if self.is_login:
+                    self.client.send("\nWelcome !!! %s !!! \n"  % (self.name))
+                else:
+                    self.password, self.process_password = None, None
 
     def check_retry(self):
         """check if reach to RETRY_LIMIT"""
-        if self.retry >= RETRY_LIMIT:
+        if not self.quit and self.retry >= RETRY_LIMIT:
+            self.quit = True
             self.client.send("Retry too many times, bye!\n")
             print "!! Client reach to the login limit: %s, kicking! " % (RETRY_LIMIT)
-            status.QUIT_CLIENTS.append(self.client)
+            SCHEDULER.add(.2, self.client.deactivate)
 
 
     def get_name(self):
@@ -70,7 +73,7 @@ class Guest(Account):
                     self.client.send("Please enter your name!\n")
                     self.retry += 1
                     self.name, self.process_name = None, None
-                    self.check_retry()
+                    #self.check_retry()
                     return
     
     def get_password(self):
@@ -85,13 +88,12 @@ class Guest(Account):
                 self.password = self.client.get_command()
                 if len(self.password) >0:
                     self.client.password_mode_off()
-                    self.client.send('\n')
                     return
                 else:
                     self.client.send("\nPlease enter your password!\n")
                     self.retry += 1
                     self.password, self.process_password = None, None
-                    self.check_retry()
+                    #self.check_retry()
                     return
 
     def promote(self, character):
@@ -131,8 +133,8 @@ class Guest(Account):
                     #. send notice to origin player
                     if origin_player:
                         origin_player.send("Somebody login from %s, see you again!\n" % (self.client.addrport()) )
-                        #. TODO: quit client
-                        status.QUIT_CLIENTS.append(origin_player.client) #. origin character object drop here
+                        #. drop origin Player
+                        SCHEDULER.add(.2, origin_player.deactivate)
                     #. become player
                     self.promote(character)
                     broadcast('%s enter the world.\n' % self.name )

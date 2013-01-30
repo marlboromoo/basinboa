@@ -4,6 +4,7 @@ system commands.
 """
 from basinboa import status
 from basinboa.system.decorator import command
+from basinboa.system.scheduler import SCHEDULER
 from basinboa.universe.date import mud_string_datetime
 
 @command
@@ -22,7 +23,7 @@ def quit(player, args):
     useage: quit
     """
     player.send('\nSee you next time ! \n')
-    status.QUIT_CLIENTS.append(player.client)
+    SCHEDULER.add(.2, player.deactivate)
 
 @command
 def save(player, args):

@@ -42,3 +42,7 @@ class Player(Account):
     def addport(self):
         """shortcut of self.client.addport()"""
         return self.client.addport()
+
+    def deactivate(self):
+        """shortcut of self.client.deactivate"""
+        self.client.deactivate()

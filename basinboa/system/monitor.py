@@ -7,6 +7,7 @@ from basinboa import status
 from basinboa.command import process_inputs
 from basinboa.message.broadcast import broadcast
 from basinboa.system.loader import YamlLoader
+from basinboa.system.scheduler import SCHEDULER
 from basinboa.user import Guest
 
 def clean_status(client):
@@ -18,7 +19,7 @@ def clean_status(client):
     #. TODO: use del() to purge reference
     status.LOBBY.pop(client) if status.LOBBY.has_key(client) else None
     status._PLAYERS.pop(client) if status._PLAYERS.has_key(client) else None
-    status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
+    #status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
 
 def on_connect(client):
     """
@@ -51,13 +52,14 @@ def kick_idle():
     for player in status.PLAYERS.values():
         if player.idle() > status.IDLE_TIMEOUT:
             print('-- Kicking idle lobby client from %s' % player.addrport())
-            disconnect(player.client)
+            player.send('Idle timeout, see you next time!\n')
+            SCHEDULER.add(.2, player.deactivate)
 
-def kick_quit():
-    """docstring for kick_quit"""
-    for client in status.QUIT_CLIENTS:
-        disconnect(client)
-        status.QUIT_CLIENTS.remove(client)
+#def kick_quit():
+#    """docstring for kick_quit"""
+#    for client in status.QUIT_CLIENTS:
+#        disconnect(client)
+#        status.QUIT_CLIENTS.remove(client)
 
 def process_players():
     """docstring for process_players"""
@@ -71,9 +73,9 @@ def process_lobby():
     for client, guest in status.LOBBY.items():
         guest.login()
 
-def disconnect(client):
-    """disconnect the client."""
-    client.deactivate()
+#def disconnect(client):
+#    """disconnect the client."""
+#    client.deactivate()
 
 class SettingsLoader(YamlLoader):
     """docstring for SettingsLoader"""

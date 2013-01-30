@@ -9,20 +9,20 @@ import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from basinboa import status
-from basinboa.system.event import Cycle
+from basinboa.system.scheduler import SCHEDULER, Cycle
 from basinboa.universe.world import WorldLoader
 from basinboa.mobile.character import CharacterLoader
 from basinboa.mobile.mob import MobLoader, mob_actions
 from basinboa.combat.fight import fight
 from basinboa.command.base import register_cmds
 from basinboa.system.debug import dump_status
-from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players
+from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, SettingsLoader, process_lobby, process_players
 
 if __name__ == '__main__':
     print(status.ASCII_ART)
 
 #------------------------------------------------------------------------------
-#       Loading settings
+#       Load Settings
 #------------------------------------------------------------------------------
     sl = SettingsLoader('config/')
     status.SERVER_CONFIG = sl.get_server_config()
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     pp.pprint(status.SERVER_CONFIG)
 
 #------------------------------------------------------------------------------
-#       Loading data
+#       Load datas
 #------------------------------------------------------------------------------
     status.CHARACTER_LOADER = CharacterLoader('data/character')
     status.MOB_LOADER = MobLoader('data/mob')
@@ -44,19 +44,17 @@ if __name__ == '__main__':
     print ">> Register commands: %s" % (status.COMMANDS.keys())
 
 #------------------------------------------------------------------------------
-#       Initial Cycle
+#       Initial Cycles
 #------------------------------------------------------------------------------
-    #login_cycle = Cycle(.1)
-    lobby_cycle = Cycle(.1)
-    kick_cycle = Cycle(2)
-    quit_cycle = Cycle(.2)
-    process_cycle = Cycle(.1)
-    combat_cycle = Cycle(5)
-    walk_cycle = Cycle(10)
-    debug_cycle = Cycle(2)
+    Cycle(.1, process_lobby)
+    Cycle(.1, process_players)
+    Cycle(2, kick_idle)
+    Cycle(5, fight)
+    Cycle(10, mob_actions)
+    Cycle(2, dump_status)
 
 #------------------------------------------------------------------------------
-#       Main
+#       Initial Telnet Server
 #------------------------------------------------------------------------------
     telnet_server = TelnetServer(
         port=status.SERVER_CONFIG.get('port'),
@@ -68,15 +66,11 @@ if __name__ == '__main__':
     print(">> Listening for connections on port %d.  CTRL-C to break."
         % telnet_server.port)
 
-    ## Server Loop
+#------------------------------------------------------------------------------
+#       Main Server Loop
+#------------------------------------------------------------------------------
     while status.SERVER_RUN:
         telnet_server.poll()
-        lobby_cycle.fire(process_lobby)
-        kick_cycle.fire(kick_idle)
-        quit_cycle.fire(kick_quit)
-        process_cycle.fire(process_players)
-        combat_cycle.fire(fight)
-        walk_cycle.fire(mob_actions)
-        debug_cycle.fire(dump_status)
+        SCHEDULER.tick()
 
     print(">> Server shutdown.")
