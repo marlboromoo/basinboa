@@ -6,8 +6,8 @@ inspect commands.
 from basinboa import status
 from basinboa.system.decorator import command
 from basinboa.system.encode import texts_encoder
-from basinboa.date import mud_format_time
-from basinboa.layout import align_right
+from basinboa.universe.date import mud_format_time
+from basinboa.message.layout import align_right
 
 @command
 def look(player, args):

@@ -4,7 +4,7 @@ unlogin user.
 """
 import copy
 from basinboa import status
-from basinboa.message import broadcast
+from basinboa.message.broadcast import broadcast
 from basinboa.user.account import Account
 from basinboa.user.player import Player
 
@@ -145,7 +145,7 @@ class Guest(Account):
     
     def get_origin_player(self):
         """docstring for find_origin_client"""
-        for player in status.PLAYERS.values:
+        for player in status.PLAYERS.values():
             if player.get_name() == self.name:
                 return player
         return None

@@ -5,18 +5,19 @@ system libs
 
 from basinboa import status
 from basinboa.command import process_inputs
-from basinboa.message import broadcast
-from basinboa.loader import YamlLoader
+from basinboa.message.broadcast import broadcast
+from basinboa.system.loader import YamlLoader
 from basinboa.user import Guest
 
 def clean_status(client):
     """remove client from status"""
-    player = status._PLAYERS[client]
-    status.WORLD.remove_player(player)
+    player = status._PLAYERS[client] if status.PLAYERS.has_key(client) else None
+    if player:
+        status.WORLD.remove_player(player)
+        status.PLAYERS.pop(player.name) if status.PLAYERS.has_key(player.name) else None
     #. TODO: use del() to purge reference
     status.LOBBY.pop(client) if status.LOBBY.has_key(client) else None
     status._PLAYERS.pop(client) if status._PLAYERS.has_key(client) else None
-    status.PLAYERS.pop(player.name) if status.PLAYERS.has_key(player.name) else None
     status.QUIT_CLIENTS.remove(client) if client in status.QUIT_CLIENTS else None
 
 def on_connect(client):

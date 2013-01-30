@@ -13,7 +13,7 @@ def chat(player, args):
     useage: chat <MESSAGES..>
     """
     msg = ' '.join(args)
-    for player_ in status.PLAYERS:
+    for player_ in status.PLAYERS.values():
         if player_ != player:
             player_.send('%s says: %s\n' % (player.get_name(), msg))
         else:

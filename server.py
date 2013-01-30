@@ -13,7 +13,7 @@ from basinboa.system.event import Cycle
 from basinboa.universe.world import WorldLoader
 from basinboa.mobile.character import CharacterLoader
 from basinboa.mobile.mob import MobLoader, mob_actions
-from basinboa.combat import fight
+from basinboa.combat.fight import fight
 from basinboa.command.base import register_cmds
 from basinboa.system.debug import dump_status
 from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players

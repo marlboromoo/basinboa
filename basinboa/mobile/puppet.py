@@ -3,7 +3,7 @@
 base actions of character/mob
 """
 from basinboa import status
-from basinboa.message import message_to_room, player_message_to_room
+from basinboa.message.broadcast import message_to_room, player_message_to_room
 from basinboa.command.cmds.inspect_cmds import look
 from basinboa.universe.direction import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN, NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
 

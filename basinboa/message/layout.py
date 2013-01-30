@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-message layout.
+layout of message.
 """
 
 def align_right(player, msg_right, msg_left=None):

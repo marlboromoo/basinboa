@@ -4,7 +4,7 @@ system commands.
 """
 from basinboa import status
 from basinboa.system.decorator import command
-from basinboa.date import mud_string_datetime
+from basinboa.universe.date import mud_string_datetime
 
 @command
 def who(player, args):

@@ -22,3 +22,4 @@ class Uid(object):
         """docstring for regenerate_uuid"""
         self.uuid = uuid.uuid4()
         self.uuid_urn = self.uuid.urn
+

@@ -4,8 +4,8 @@ admin commands.
 """
 from basinboa import status
 from basinboa.system.decorator import command
-from basinboa.message import invalid_args, message_to_room, player_message_to_room
 from basinboa.command.cmds.inspect_cmds import look
+from basinboa.message.broadcast import invalid_args, message_to_room, player_message_to_room
 
 @command
 def shutdown(player, args):

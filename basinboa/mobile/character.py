@@ -3,7 +3,7 @@
 character character
 """
 from basinboa import status
-from basinboa.loader import YamlLoader
+from basinboa.system.loader import YamlLoader
 from basinboa.mobile.puppet import Puppet
 
 ROLE_ADMIN = 'admin'

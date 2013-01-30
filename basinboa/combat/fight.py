@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 """
-combat system.
+fight.
 """
 
 from basinboa import status
-#from basinboa.message import mob_message_to_room, character_message_to_room
-from basinboa.message import mob_message_to_room, player_message_to_room
+from basinboa.message.broadcast import player_message_to_room
 
 def fight():
     """docstring for fight"""
