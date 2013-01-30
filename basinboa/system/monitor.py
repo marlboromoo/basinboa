@@ -11,7 +11,7 @@ from basinboa.user import Guest
 
 def clean_status(client):
     """remove client from status"""
-    player = status._PLAYERS[client] if status.PLAYERS.has_key(client) else None
+    player = status._PLAYERS[client] if status._PLAYERS.has_key(client) else None
     if player:
         status.WORLD.remove_player(player)
         status.PLAYERS.pop(player.name) if status.PLAYERS.has_key(player.name) else None
