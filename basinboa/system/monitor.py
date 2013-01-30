@@ -28,8 +28,6 @@ def on_connect(client):
     client.request_naws() #. get Window Size: client.columns, client.rows 
     print "++ Opened connection to %s" % client.addrport()
     broadcast('Unkown try to enter the world from %s.\n' % client.addrport() )
-    client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
-    client.send("Welcome to the strachmud, please login.\n")
     status.LOBBY[client] = Guest(client)
 
 def on_disconnect(client):

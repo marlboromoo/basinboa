@@ -18,8 +18,14 @@ class Guest(Account):
         self.process_name = None
         self.process_password = None
         self.retry = 0
+        self.greet()
         self.login()
-
+    
+    def greet(self):
+        """docstring for greeting"""
+        self.client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
+        self.client.send("Welcome to the %s, please login.\n" % (status.SERVER_CONFIG['mud_name']))
+    
     def login(self):
         """login the clietn."""
         #. get name
