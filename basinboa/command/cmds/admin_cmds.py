@@ -4,7 +4,8 @@ admin commands.
 """
 from basinboa import status
 from basinboa.decorator import command
-from basinboa.message import invalid_args
+from basinboa.message import invalid_args, message_to_room, player_message_to_room
+from basinboa.command.cmds.inspect_cmds import look
 
 @command
 def shutdown(player, args):
@@ -48,6 +49,7 @@ def goto(player, args):
     admin only. goto any room.
     useage: goto <x> <y> <map_name>
     """
+    #. parse args
     if len(args) == 3:
         x, y, map_name = args
     elif len(args) == 2:
@@ -59,7 +61,14 @@ def goto(player, args):
         x, y = int(x), int(y)
     except Exception:
         return invalid_args(player)
-    return status.WORLD.move_to(player.character, (x, y), map_name)
+    #. move player
+    src_room, dst_room = status.WORLD.move_character_to(player.character, (x, y), map_name)
+    if src_room and dst_room:
+        message_to_room(src_room, "%s leave here.\n" % (player.character.name))
+        player_message_to_room(player, "%s come to here.\n" % (player.character.name))
+        return look(player, None)
+    else:
+        player.send("You can't!\n")
 
 @command
 def restore(player, args):

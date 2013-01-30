@@ -72,8 +72,8 @@ def process_clients():
 
 def process_players():
     """docstring for process_players"""
-    for client, player in status.PLAYERS.items():
-        if client.active and client.cmd_ready:
+    for player in status.PLAYERS.values():
+        if player.client.active and player.client.cmd_ready:
             process_inputs(player)
 
 def process_lobby():

@@ -5,7 +5,7 @@ base actions of character/mob
 from basinboa import status
 from basinboa.world import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN
 from basinboa.world import NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
-from basinboa.command.cmds.inspect_cmds import look
+from basinboa.message import message_to_room, player_message_to_room
 
 class Puppet(object):
     """docstring for Puppet"""
@@ -36,45 +36,70 @@ class Puppet(object):
         """docstring for get_name"""
         return self.name
 
-    def __look(self):
-        """docstring for __look"""
-        return look(status.CHARACTERS[self], None) if not self.is_mob else None
+    #def __look(self):
+    #    """docstring for __look"""
+    #    return look(status.CHARACTERS[self], None) if not self.is_mob else None
+
+    def _move(self, symbol, func=None):
+        """docstring for _move"""
+        mfunc = getattr(status.WORLD, 'move_mob') if self.is_mob \
+        else getattr(status.WORLD, 'move_character')
+        src_room, dst_room = mfunc(self, symbol, func)
+        return src_room, dst_room
 
     def go_west(self):
         """docstring for west"""
-        status.WORLD.move(self, WEST, west_xy, WEST_NAME)
-        self.notice_follwers(WEST)
-        return self.__look()
+        src_room, dst_room = self._move(WEST, west_xy)
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, WEST_NAME)
+            self.notice_follwers(WEST)
+            return True
+        return False
 
     def go_east(self):
         """docstring for east"""
-        status.WORLD.move(self, EAST, east_xy, EAST_NAME)
-        self.notice_follwers(EAST)
-        return self.__look()
+        src_room, dst_room = self._move(EAST, east_xy) 
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, EAST_NAME)
+            self.notice_follwers(EAST)
+            return True
+        return False
 
     def go_north(self):
         """docstring for north"""
-        status.WORLD.move(self, NORTH, north_xy, NORTH_NAME)
-        self.notice_follwers(NORTH)
-        return self.__look()
+        src_room, dst_room = self._move(NORTH, north_xy)
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, NORTH_NAME)
+            self.notice_follwers(NORTH)
+            return True
+        return False
 
     def go_south(self):
         """docstring for south"""
-        status.WORLD.move(self, SOUTH, south_xy, SOUTH_NAME)
-        self.notice_follwers(SOUTH)
-        return self.__look()
+        src_room, dst_room = self._move(SOUTH, south_xy)
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, SOUTH_NAME)
+            self.notice_follwers(SOUTH)
+            return True
+        return False
 
     def go_up(self):
         """docstring for go_up"""
-        status.WORLD.move(self, UP, None, UP_NAME)
-        self.notice_follwers(UP)
-        return self.__look()
+        src_room, dst_room = self._move(UP)
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, UP_NAME)
+            self.notice_follwers(UP)
+            return True
+        return False
 
     def go_down(self):
         """docstring for go_down"""
-        status.WORLD.move(self, DOWN, None, DOWN_NAME)
-        self.notice_follwers(DOWN)
-        return self.__look()
+        src_room, dst_room = self._move(DOWN)
+        if src_room and dst_room:
+            self.notice_players(src_room, dst_room, DOWN_NAME)
+            self.notice_follwers(DOWN)
+            return True
+        return False
 
     def notice_follwers(self, direction):
         """notice all followers to move in the same room"""
@@ -95,6 +120,18 @@ class Puppet(object):
                     follower.go_north()
                 if direction == SOUTH:
                     follower.go_south()
+
+    def notice_players(self, src_room, dst_room, direction_name):
+        """docstring for notice_players"""
+        msg_go = "%s go to %s.\n" % (self.name, direction_name)
+        msg_come = "%s come to here.\n" % (self.name)
+        if self.is_mob:
+            message_to_room(src_room, msg_go)
+            message_to_room(dst_room, msg_come)
+        else:
+            player = status.PLAYERS[self.name]
+            message_to_room(src_room, msg_go)
+            player_message_to_room(player, msg_come)
 
     def add_follower(self, object_):
         """add mob/character object to followers list"""
@@ -196,10 +233,6 @@ class Puppet(object):
         damage = 10
         _object.decrease_hp(damage)
         return damage
-
-    #def is_mob(self):
-    #    """docstring for is_mob"""
-    #    return self.is_mob
 
     def get_hp(self):
         """docstring for get_hp"""

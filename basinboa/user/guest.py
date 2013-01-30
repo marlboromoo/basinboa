@@ -91,8 +91,7 @@ class Guest(Account):
     def promote(self, character):
         """Guest become Player"""
         player = Player(self.client, character)
-        status.PLAYERS[self.client] = player
-        status.CHARACTERS[character] = player
+        status.PLAYERS[self.name] = player
         status.WORLD.locate_player_map(player).add_player(player)
         self.destroy()
 

@@ -4,6 +4,7 @@ move commands.
 """
 from basinboa import status
 from basinboa.decorator import command
+from basinboa.command.cmds.inspect_cmds import look
 
 @command
 def west(player, args):
@@ -12,7 +13,10 @@ def west(player, args):
     useage: west
     alias: w
     """
-    player.character.go_west()
+    if not player.character.go_west():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 @command
 def east(player, args):
@@ -21,7 +25,10 @@ def east(player, args):
     useage: east
     alias: e
     """
-    player.character.go_east()
+    if not player.character.go_east():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 @command
 def north(player, args):
@@ -30,7 +37,10 @@ def north(player, args):
     useage: north
     alias: n
     """
-    player.character.go_north()
+    if not player.character.go_north():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 @command
 def south(player, args):
@@ -39,7 +49,10 @@ def south(player, args):
     useage: sourth.
     alias: s
     """
-    player.character.go_south()
+    if not player.character.go_south():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 @command
 def up(player, args):
@@ -48,7 +61,10 @@ def up(player, args):
     useage: up
     alias: u
     """
-    player.character.go_up()
+    if not player.character.go_up():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 @command
 def down(player, args):
@@ -57,7 +73,10 @@ def down(player, args):
     useage: down
     alias: d
     """
-    player.character.go_down()
+    if not player.character.go_down():
+        player.send("You can't !\n")
+    else:
+        return look(player, None)
 
 def __follow(player, function, name, is_track=False):
     """docstring for _follow"""
@@ -106,7 +125,7 @@ def recall(player, args):
     """docstring for recall"""
     xy = status.SERVER_CONFIG.get('recall_xy')
     map_name = status.SERVER_CONFIG.get('recall_map_name')
-    status.WORLD.move_to(player.character, xy, map_name)
+    status.WORLD.move_character_to(player.character, xy, map_name)
 
 
 

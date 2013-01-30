@@ -104,7 +104,7 @@ class Character(Puppet):
         mp, mmp = self.get_mp()
         prompt += "HP:%s/%s, MP:%s/%s, EXP:%s, COINS:%s" % (hp, mhp, mp, mmp, 0, 0)
         if self.is_admin():
-            room = status.WORLD.locate_player_room(status.CHARACTERS[self]) if room == None else room
+            room = status.WORLD.locate_player_room(status.PLAYERS[self.name]) if room == None else room
             mobs = [mob.get_name() for mob in room.get_mobs()]
             prompt += "ID: %s, XY: %s MOBS: %s)\n> ^~" % (room.id_, str(room.xy), str(mobs))
         else:

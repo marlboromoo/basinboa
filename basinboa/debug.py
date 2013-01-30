@@ -12,6 +12,7 @@ def dump_status():
     print "DEBUG - UNLOGIN_CLIENTS:%s" % (status.UNLOGIN_CLIENTS)
     print "DEBUG - QUIT_CLIENTS:%s" % (status.QUIT_CLIENTS)
     print "DEBUG - CHARACTERS:%s" % (status.CHARACTERS)
+    print "DEBUG - PLAYERS:%s" % (status.PLAYERS)
     for map_ in status.WORLD.get_maps():
         print "DEBUG - %s" % (repr(map_))
     print ""
