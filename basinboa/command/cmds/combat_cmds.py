@@ -4,7 +4,7 @@ combat commands
 """
 
 from basinboa import status
-from basinboa.decorator import command
+from basinboa.system.decorator import command
 
 @command
 def kill(player, args):

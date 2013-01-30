@@ -3,7 +3,7 @@
 system commands.
 """
 from basinboa import status
-from basinboa.decorator import command
+from basinboa.system.decorator import command
 from basinboa.date import mud_string_datetime
 
 @command
@@ -22,7 +22,7 @@ def quit(player, args):
     useage: quit
     """
     player.send('\nSee you next time ! \n')
-    status.QUIT_CLIENTS.append(player)
+    status.QUIT_CLIENTS.append(player.client)
 
 @command
 def save(player, args):

@@ -22,10 +22,7 @@ ASCII_ART = '''
 SERVER_CONFIG = None
 SERVER_RUN = True
 IDLE_TIMEOUT = 300
-CLIENTS = []
-LOBBY = {} #.key = Client object, value= Guest object
 QUIT_CLIENTS = []
-UNLOGIN_CLIENTS = {}
 
 #------------------------------------------------------------------------------
 #       World
@@ -33,9 +30,10 @@ UNLOGIN_CLIENTS = {}
 WORLD = None
 CHARACTER_LOADER = None
 MOB_LOADER = None
-PLAYERS = {} #. key = Client object, value = Player object
-CHARACTERS = {} #. key = Character object, value = Player object
-COMMANDS = {} #. key is functin(command) name value is function(command)
+LOBBY = {} #.key is Client object, value is Guest object
+_PLAYERS = {} #. key is Client object, valuse is Player object
+PLAYERS = {} #. key is plaer name, value is Player object
+COMMANDS = {} #. key is command name value is command function
 
 
 

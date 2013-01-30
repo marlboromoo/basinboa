@@ -300,7 +300,6 @@ class World(object):
 
     def move_character(self, character, symbol, function):
         """move character object between rooms if rooms connected"""
-        print 'move_character!'
         player = status.PLAYERS[character.name]
         src_room = self.locate_player_room(player)
         x, y = character.xy
@@ -326,7 +325,6 @@ class World(object):
 
     def move_mob(self, mob, symbol, function):
         """move mob object between rooms if rooms connected"""
-        print 'move_mob!'
         src_room = self.locate_mob_room(mob)
         x, y = mob.xy
         #. check n,s,w,e
@@ -395,10 +393,10 @@ class World(object):
             #return ((None, None), (None, None))
             return (None, None)
 
-    def remove_client(self, client):
+    def remove_player(self, player):
         """docstring for remove_client"""
         for map_ in self.get_maps():
-            map_.remove_client(client)
+            map_.remove_player(player)
 
 
 class WorldLoader(object):

@@ -3,7 +3,7 @@
 move commands.
 """
 from basinboa import status
-from basinboa.decorator import command
+from basinboa.system.decorator import command
 from basinboa.command.cmds.inspect_cmds import look
 
 @command

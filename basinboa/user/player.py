@@ -9,17 +9,22 @@ class Player(Account):
     def __init__(self, client, character):
         super(Player, self).__init__(client)
         self.character = character
+        self.name = character.name
+
+    def get_name(self):
+        """docstring for get_name"""
+        return self.name
 
     def get_command(self):
-        """docstring for get_command"""
+        """shortcut of self.client.get_command()"""
         return self.client.get_command()
 
     def send(self, message):
-        """docstring for send"""
+        """shortcut of self.client.send()"""
         return self.client.send(message)
 
     def send_cc(self, message):
-        """docstring for send_cc"""
+        """shortcut of self.client.send_cc()"""
         return self.client.send_cc(message)
 
     def is_player(self):
@@ -27,5 +32,13 @@ class Player(Account):
         return True
 
     def get_columns(self):
-        """docstring for get_ codel"""
+        """shortcut of self.client.columns"""
         return self.client.columns
+
+    def idle(self):
+        """shortcut of self.client.idle()"""
+        return self.client.idle()
+
+    def addport(self):
+        """shortcut of self.client.addport()"""
+        return self.client.addport()

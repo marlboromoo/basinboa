@@ -3,7 +3,7 @@
 admin commands.
 """
 from basinboa import status
-from basinboa.decorator import command
+from basinboa.system.decorator import command
 from basinboa.message import invalid_args, message_to_room, player_message_to_room
 from basinboa.command.cmds.inspect_cmds import look
 

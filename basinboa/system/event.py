@@ -28,12 +28,3 @@ class Cycle(object):
         if self.can_fire():
             function(*args, **kwargs)
 
-def echo(msg):
-    """docstring for echo"""
-    print msg
-
-if __name__ == '__main__':
-    second = 1
-    e = Cycle(second)
-    e.fire(echo, 'hello tick %s' % str(second))
-        

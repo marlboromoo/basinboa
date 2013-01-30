@@ -9,14 +9,14 @@ import pprint
 sys.path.append('./miniboa')
 from miniboa import TelnetServer
 from basinboa import status
-from basinboa.system import on_connect, on_disconnect, kick_idle, kick_quit, process_clients, SettingsLoader, process_lobby, process_players
+from basinboa.system.monitor import on_connect, on_disconnect, kick_idle, kick_quit, SettingsLoader, process_lobby, process_players
+from basinboa.system.event import Cycle
 from basinboa.world import WorldLoader
 from basinboa.character import CharacterLoader
-from basinboa.event import Cycle
 from basinboa.ai import MobLoader, mob_actions
 from basinboa.combat import fight
 from basinboa.command.base import register_cmds
-from basinboa.debug import dump_status, test_quit
+from basinboa.system.debug import dump_status
 
 if __name__ == '__main__':
     print(status.ASCII_ART)
@@ -71,8 +71,6 @@ if __name__ == '__main__':
     ## Server Loop
     while status.SERVER_RUN:
         telnet_server.poll()
-        #test_quit()
-        #login_cycle.fire(login_clients)
         lobby_cycle.fire(process_lobby)
         kick_cycle.fire(kick_idle)
         quit_cycle.fire(kick_quit)

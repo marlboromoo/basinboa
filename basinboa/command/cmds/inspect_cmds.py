@@ -4,8 +4,8 @@ inspect commands.
 """
 
 from basinboa import status
-from basinboa.decorator import command
-from basinboa.encode import texts_encoder
+from basinboa.system.decorator import command
+from basinboa.system.encode import texts_encoder
 from basinboa.date import mud_format_time
 from basinboa.layout import align_right
 

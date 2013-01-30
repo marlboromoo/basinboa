@@ -12,4 +12,4 @@ role: admin
 skills: null
 spells: null
 status: null
-xy: !!python/tuple [1, 3]
+xy: !!python/tuple [2, 2]
