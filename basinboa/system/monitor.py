@@ -55,12 +55,6 @@ def kick_idle():
             player.send('Idle timeout, see you next time!\n')
             SCHEDULER.add(.2, player.deactivate)
 
-#def kick_quit():
-#    """docstring for kick_quit"""
-#    for client in status.QUIT_CLIENTS:
-#        disconnect(client)
-#        status.QUIT_CLIENTS.remove(client)
-
 def process_players():
     """docstring for process_players"""
     for player in status.PLAYERS.values():
@@ -72,10 +66,6 @@ def process_lobby():
     # TODO: write code...
     for client, guest in status.LOBBY.items():
         guest.login()
-
-#def disconnect(client):
-#    """disconnect the client."""
-#    client.deactivate()
 
 class SettingsLoader(YamlLoader):
     """docstring for SettingsLoader"""

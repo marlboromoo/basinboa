@@ -13,6 +13,7 @@ class Character(Puppet):
     """docstring for Character"""
     def __init__(self, name=None):
         super(Character, self).__init__()
+        self.name = name
         self.is_mob = False
         self.client = None
         self.login = None
@@ -32,7 +33,7 @@ class Character(Puppet):
 
     def set_password(self, password):
         """docstring for set_password"""
-        set.password = password
+        self.password = password
 
     def get_password(self):
         """docstring for get_password"""

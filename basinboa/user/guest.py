@@ -8,16 +8,21 @@ from basinboa.system.scheduler import SCHEDULER
 from basinboa.message.broadcast import broadcast
 from basinboa.user.account import Account
 from basinboa.user.player import Player
+from basinboa.mobile.character import Character
 
 RETRY_LIMIT = 3
+NEW_USER = 'new'
 
 class Guest(Account):
-    """docstring for G"""
+    """Unlogin user"""
     def __init__(self, client):
         super(Guest, self).__init__(client)
         self.is_login = False
+        self.is_new = False
         self.process_name = None
         self.process_password = None
+        self.process_password_again = None
+        self.password_again = None
         self.retry = 0
         self.quit = False
         self.greet()
@@ -26,26 +31,78 @@ class Guest(Account):
     def greet(self):
         """docstring for greeting"""
         self.client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
-        self.client.send("Welcome to the %s, please login.\n" % (status.SERVER_CONFIG['mud_name']))
+        self.client.send("Welcome to the %s, please login. type <new> to register.\n" % (
+            status.SERVER_CONFIG['mud_name']))
     
     def login(self):
-        """login the clietn."""
+        """login the client."""
         self.check_retry()
-        if not self.retry >= RETRY_LIMIT:
+        #. register new user
+        if self.is_new:
             self.get_name()
+            if self.character_exist(self.name):
+                self.client.send("User exist, try another one!\n")
+                self.reset_name()
             self.get_password()
-            if self.name and self.password:
-                if self.auth():
+            self.get_password_again()
+            if self.password and self.password_again:
+                if self.password == self.password_again:
+                    self.register()
                     self.is_login = True
                 else:
-                    self.client.send("Password error!\n")
-                    self.is_login = False
-                    self.retry += 1
-                #. final login
-                if self.is_login:
-                    self.client.send("\nWelcome !!! %s !!! \n"  % (self.name))
-                else:
-                    self.password, self.process_password = None, None
+                    self.client.send('Password mismatch!\n')
+                    self.reset_password()
+                    self.reset_password_again()
+        #. log user in
+        else:
+            if not self.retry >= RETRY_LIMIT:
+                self.get_name()
+                #. mark user is new
+                if self.name == NEW_USER:
+                    self.prepare_register()
+                #. continue login
+                self.get_password()
+                if self.name and self.password:
+                    if self.auth():
+                        self.is_login = True
+                    else:
+                        self.client.send("Password error!\n")
+                        self.is_login = False
+                        self.retry += 1
+                        self.password, self.process_password = None, None
+        #. final login
+        if self.is_login:
+            self.client.send("\nWelcome !!! %s !!! \n"  % (self.name))
+
+    def reset_name(self):
+        """docstring for reset_name"""
+        self.name, self.process_name = None, None
+
+    def reset_password(self):
+        """docstring for reset_password"""
+        self.password, self.process_password = None, None
+
+    def reset_password_again(self):
+        """docstring for reset_password_again"""
+        self.password_again, self.process_password_again = None, None
+
+    def prepare_register(self):
+        """docstring for prepare_register"""
+        self.is_new = True
+        self.reset_name()
+        self.client.send('Please enter your informantion -\n')
+
+    def register(self):
+        """docstring for register"""
+        character = Character(self.name)
+        character.set_password(self.password)
+        character.set_location(status.SERVER_CONFIG['recall_xy'], status.SERVER_CONFIG['recall_map_name'])
+        #. become player
+        self.promote(character)
+        #. save data
+        status.CHARACTER_LOADER.dump(character)
+        broadcast('A new hero enter the chaos, welcome %s!\n' % self.name )
+        print ('** Client %s register success with name: %s.' % (self.client.addrport(), self.name))
 
     def check_retry(self):
         """check if reach to RETRY_LIMIT"""
@@ -66,14 +123,14 @@ class Guest(Account):
             if self.process_name and self.client.cmd_ready:
                 self.name = self.client.get_command()
                 if len(self.name) > 0:
-                    print ('** Client %s try to login with name: %s.' % (self.client.addrport(), self.name) )
-                    self.retry = 0
-                    return
+                    if not self.name == NEW_USER and not self.is_new:
+                        print ('** Client %s try to login with name: %s.' % (self.client.addrport(), self.name) )
+                        self.retry = 0
+                        return
                 else:
                     self.client.send("Please enter your name!\n")
                     self.retry += 1
-                    self.name, self.process_name = None, None
-                    #self.check_retry()
+                    self.reset_name()
                     return
     
     def get_password(self):
@@ -92,9 +149,21 @@ class Guest(Account):
                 else:
                     self.client.send("\nPlease enter your password!\n")
                     self.retry += 1
-                    self.password, self.process_password = None, None
-                    #self.check_retry()
+                    self.reset_password()
                     return
+
+    def get_password_again(self):
+        """get password to confirm"""
+        if not self.password_again:
+            if self.password and not self.process_password_again:
+                self.client.password_mode_on()
+                self.client.send("Retype password: ")
+                self.process_password_again = True
+                return
+            if self.password and self.process_password_again and self.client.cmd_ready:
+                self.password_again = self.client.get_command()
+                self.client.password_mode_off()
+                return
 
     def promote(self, character):
         """Guest become Player"""
@@ -108,7 +177,7 @@ class Guest(Account):
         self.destroy()
 
     def destroy(self):
-        """destroy self from lobby"""
+        """destroy self from LOBBY"""
         status.LOBBY.pop(self.client)
 
     def password_match(self):
@@ -117,11 +186,18 @@ class Guest(Account):
         character = status.CHARACTER_LOADER.get(self.name)
         return True if character.get_password() == self.password else False
 
+    def character_exist(self, name):
+        """docstring for character_exist"""
+        return True if self.load_character(name) else False
+
+    def load_character(self, name):
+        """docstring for load_character"""
+        return status.CHARACTER_LOADER.get(self.name)
+
     def auth(self):
         """auth the client."""
         if self.client in status.LOBBY:
-            status.CHARACTER_LOADER.load(self.name)
-            character = status.CHARACTER_LOADER.get(self.name)
+            character = self.load_character(self.name)
             if character:
                 if character.get_password() == self.password:
                     origin_player = None
