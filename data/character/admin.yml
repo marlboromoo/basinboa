@@ -1,7 +1,7 @@
 desc: "^Y\u6211\u662F^G\u842C^B\u80FD^w\u7684^Mgod^~"
 hp: !!python/tuple [90, 100]
 job: null
-map_name: void
+map_name: chinese
 mp: !!python/tuple [100, 100]
 name: admin
 nickname: T.R.O.N
@@ -12,4 +12,4 @@ role: admin
 skills: null
 spells: null
 status: null
-xy: !!python/tuple [1, 3]
+xy: !!python/tuple [0, 0]

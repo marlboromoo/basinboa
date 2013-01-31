@@ -528,6 +528,7 @@ class WorldLoader(object):
                     mob_ = status.MOB_LOADER.get(mob.get('skeleton'))
                     mob_.name = mob.get('name') if mob.has_key('name') else mob_.name
                     mob_.nickname = mob.get('nickname') if mob.has_key('nickname') else mob_.nickname
+                    mob_.desc = mob.get('desc') if mob.has_key('desc') else mob_.desc
                     mob_.gossip = mob.get('gossip') if mob.has_key('gossip') else mob_.gossip
                     mob_.xy = room.xy
                     mob_.map_name = map_config['name']

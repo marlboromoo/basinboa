@@ -204,7 +204,7 @@ class Puppet(object):
 
     def get_desc(self):
         """docstring for get_desc"""
-        return str(self.desc)
+        return self.desc
 
     def add_combat_target(self, object_):
         """docstring for set_combat_target"""

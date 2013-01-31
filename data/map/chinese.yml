@@ -8,6 +8,7 @@ rooms:
         - skeleton: dog
           name : graydog
           nickname: 灰色的狗
+          desc: 一隻^K灰色^~的狗
         - skeleton: cat
           gossip: 
                 - 'meow ~ meow ~ meow ~'
