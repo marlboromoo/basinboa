@@ -1,0 +1,15 @@
+desc: null
+hp: !!python/tuple [100, 100]
+job: null
+map_name: void
+mp: !!python/tuple [100, 100]
+name: bar
+nickname: null
+password: bar
+prompt: null
+race: null
+role: user
+skills: null
+spells: null
+status: null
+xy: !!python/tuple [1, 1]

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 system commands.
 """
 from basinboa import status
 from basinboa.system.decorator import command
 from basinboa.system.scheduler import SCHEDULER
+from basinboa.system.encode import texts_encoder
 from basinboa.universe.date import mud_string_datetime
 
 @command
@@ -59,3 +61,9 @@ def man(player, args):
 def datetime(player, args):
     """docstring for datetime"""
     player.send("%s\n" % mud_string_datetime())
+
+
+@command
+def test(player, args):
+    """docstring for encode_test"""
+    player.send_cc_encode("%s" % player.character.desc)

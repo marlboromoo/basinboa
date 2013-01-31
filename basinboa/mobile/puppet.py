@@ -32,13 +32,49 @@ class Puppet(object):
         self.follow_target = None
         self.followers = []
 
+    def set_name(self, name):
+        """docstring for set_name"""
+        self.name = name
+
     def get_name(self):
         """docstring for get_name"""
         return self.name
 
-    #def __look(self):
-    #    """docstring for __look"""
-    #    return look(status.CHARACTERS[self], None) if not self.is_mob else None
+    def _dump(self):
+        """docstring for dump"""
+        return {
+            'name' : self.name,
+            'nickname' : self.nickname,
+            'desc' : self.desc,
+            'skills' : self.skills,
+            'spells' : self.spells,
+            'race' : self.race,
+            'job' : self.job,
+            #. geo
+            'xy' : self.xy,
+            'map_name' : self.map_name,
+            #. combat status
+            'hp' : self.hp,
+            'mp' : self.mp,
+            'status' : self.status,
+        }
+
+    def _load(self, data):
+        """docstring for load"""
+        self.name = data['name'] if data.has_key('name') else None
+        self.nickname = data['nickname'] if data.has_key('nickname') else None
+        self.desc = data['desc'] if data.has_key('desc') else None
+        self.skills = data['skills'] if data.has_key('skills') else None
+        self.spells = data['spells'] if data.has_key('spells') else None
+        self.race = data['race'] if data.has_key('race') else None
+        self.job = data['job'] if data.has_key('job') else None
+        #. geo
+        self.xy = data['xy'] if data.has_key('xy') else None
+        self.map_name = data['map_name'] if data.has_key('map_name') else None
+        #. combat status
+        self.hp = data['hp'] if data.has_key('hp') else None
+        self.mp = data['mp'] if data.has_key('mp') else None
+        self.status = data['status'] if data.has_key('status') else None
 
     def _move(self, symbol, func=None):
         """docstring for _move"""

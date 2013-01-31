@@ -35,44 +35,16 @@ class Mob(Puppet, Uid):
 
     def dump(self):
         """docstring for dump"""
-        return {
-            'skeleton' : self.skeleton,
-            #. status
-            'name' : self.name,
-            'nickname' : self.nickname,
-            'xy' : self.xy,
-            'map_name' : self.map_name,
-            'skills' : self.skills,
-            'spells' : self.spells,
-            'race' : self.race,
-            'desc' : self.desc,
-            #. combat status
-            'hp' : self.hp,
-            'mp' : self.mp,
-            'status' : self.status,
-            #.talk
-            'gossip' : self.gossip,
-        }
+        data = self._dump()
+        data['skeleton'] = self.skeleton
+        data['gossip'] = self.gossip
+        return data
 
     def load(self, data):
         """docstring for load"""
-        self.skeleton = data['skeleton']
-        #. status
-        self.name = data['name']
-        self.nickname = data['nickname']
-        self.xy = data['xy']
-        self.map_name = data['map_name']
-        self.skills = data['skills']
-        self.spells = data['spells']
-        self.race = data['race']
-        self.desc = data['desc']
-        #. combat status
-        self.hp = data['hp']
-        self.mp = data['mp']
-        self.status = data['status']
-        #. talk
-        self.gossip = data['gossip']
-        #. other
+        self._load(data)
+        self.skeleton = data['skeleton'] if data.has_key('skeleton') else None
+        self.gossip = data['gossip'] if data.has_key('gossip') else None
         self.init_prev_location()
 
     def random_walk(self):

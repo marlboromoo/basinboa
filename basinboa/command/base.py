@@ -49,7 +49,7 @@ def process_inputs(player):
     Process the player input.
     """
     inputs = player.get_command()
-    prompt = player.character.get_prompt()
+    prompt = player.get_prompt()
     if len(inputs) == 0:
         #. send prompt
         player.send_cc(prompt)

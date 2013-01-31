@@ -8,6 +8,7 @@ from basinboa.system.scheduler import SCHEDULER
 from basinboa.message.broadcast import broadcast
 from basinboa.user.account import Account
 from basinboa.user.player import Player
+from basinboa.user.role import ROLE_USER
 from basinboa.mobile.character import Character
 
 RETRY_LIMIT = 3
@@ -98,7 +99,8 @@ class Guest(Account):
         character.set_password(self.password)
         character.set_location(status.SERVER_CONFIG['recall_xy'], status.SERVER_CONFIG['recall_map_name'])
         #. become player
-        self.promote(character)
+        player = self.promote(character)
+        player.set_role(ROLE_USER)
         #. save data
         status.CHARACTER_LOADER.dump(character)
         broadcast('A new hero enter the chaos, welcome %s!\n' % self.name )
@@ -175,6 +177,7 @@ class Guest(Account):
         status.WORLD.locate_player_map(player).add_player(player)
         #. delete Guest object from LOBBY
         self.destroy()
+        return player
 
     def destroy(self):
         """destroy self from LOBBY"""

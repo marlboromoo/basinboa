@@ -1,6 +1,6 @@
+desc: "^Y\u6211\u662F^G\u842C^B\u80FD^w\u7684^Mgod^~"
 hp: !!python/tuple [90, 100]
 job: null
-login: null
 map_name: void
 mp: !!python/tuple [100, 100]
 name: admin

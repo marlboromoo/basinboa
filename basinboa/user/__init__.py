@@ -1,1 +1,1 @@
-from basinboa.user.guest import *
+from basinboa.user.guest import Guest
