@@ -22,6 +22,7 @@ ASCII_ART = '''
 SERVER_CONFIG = None
 SERVER_RUN = True
 IDLE_TIMEOUT = 300
+LANG = None
 
 #------------------------------------------------------------------------------
 #       World

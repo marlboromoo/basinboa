@@ -1,6 +1,8 @@
 mud_name: basinboa
 recall_map_name: void
 recall_xy: !!python/tuple [1, 1]
+encode: ascii #big5
+language: en #big5
 
 #. telnet server
 address: ''

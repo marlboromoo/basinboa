@@ -48,8 +48,8 @@ class Character(Puppet):
     def check_location(self):
         """docstring for check_location"""
         if not self.xy or not self.map_name:
-            self.xy = status.SERVER_CONFIG['recall_xy']
-            self.map_name = status.SERVER_CONFIG['recall_map_name']
+            self.xy = status.SERVER_CONFIG.recall_xy
+            self.map_name = status.SERVER_CONFIG.recall_map_name
 
 class CharacterLoader(YamlLoader):
     """docstring for CharacterLoader"""

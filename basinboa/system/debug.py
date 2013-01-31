@@ -14,16 +14,6 @@ def dump_status():
     print "DEBUG - SCHEDULER:%s" % (SCHEDULER.get_events())
     for map_ in status.WORLD.get_maps():
         print "DEBUG - %s" % (repr(map_))
+    print "DEBUD - %s" % (status.LANG)
     print ""
-
-#def test_quit():
-#    for client in status.CLIENTS:
-#        if client.active and client.cmd_ready:
-#            if client.get_command() == 'quit':
-#                disconnect(client) 
-#                status.CLIENTS.remove(client)
-#                status.UNLOGIN_CLIENTS.pop(client)
-#            else:
-#                client.send('Huh?\n')
-#
 

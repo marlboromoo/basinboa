@@ -10,6 +10,7 @@ from basinboa.user.account import Account
 from basinboa.user.player import Player
 from basinboa.user.role import ROLE_USER
 from basinboa.mobile.character import Character
+from basinboa.system.encode import texts_encoder
 
 RETRY_LIMIT = 3
 NEW_USER = 'new'
@@ -32,8 +33,7 @@ class Guest(Account):
     def greet(self):
         """docstring for greeting"""
         self.client.send_cc("^R^!%s^~\n" % (status.ASCII_ART))
-        self.client.send("Welcome to the %s, please login. type <new> to register.\n" % (
-            status.SERVER_CONFIG['mud_name']))
+        self.client.send_cc(texts_encoder(status.LANG.MSG_GREETING % (status.SERVER_CONFIG.mud_name)))
     
     def login(self):
         """login the client."""
@@ -97,7 +97,7 @@ class Guest(Account):
         """docstring for register"""
         character = Character(self.name)
         character.set_password(self.password)
-        character.set_location(status.SERVER_CONFIG['recall_xy'], status.SERVER_CONFIG['recall_map_name'])
+        character.set_location(status.SERVER_CONFIG.recall_xy, status.SERVER_CONFIG.recall_map_name)
         #. become player
         player = self.promote(character)
         player.set_role(ROLE_USER)

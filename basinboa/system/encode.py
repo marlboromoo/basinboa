@@ -2,12 +2,12 @@
 """
 text encoder
 """
-ENCODE = 'big5'
+from basinboa import status
 
 def texts_encoder(texts):
     """docstring for texts_encoder"""
     try:
-        texts_ = texts.encode(ENCODE)
+        texts_ = texts.encode(status.LANG.get_encode())
     except Exception:
         texts_ = text_filtering_encoder(texts)
     return texts_
@@ -17,9 +17,9 @@ def text_filtering_encoder(texts):
     texts_ = ''
     for text in texts:
         try:
-            text_ = text.encode(ENCODE)
+            text_ = text.encode(status.LANG.get_encode())
         except Exception:
-            text_ = '--'
+            text_ = '-'
         texts_ += text_
     return texts_
 

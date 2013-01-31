@@ -66,4 +66,6 @@ def datetime(player, args):
 @command
 def test(player, args):
     """docstring for encode_test"""
+    #msg = u"^G中^B文"
+    #player.send_cc_encode(msg)
     player.send_cc_encode("%s" % player.character.desc)

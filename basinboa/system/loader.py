@@ -51,3 +51,10 @@ class YamlLoader(object):
         """dump object to yaml file"""
         return self.dump_from_object(object_)
 
+    def register_attr(self, object_, data):
+        """docstring for register_attr"""
+        for k,v in data.items():
+            setattr(object_, k, v)
+            object_.items += 1
+        return object_
+

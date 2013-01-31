@@ -6,7 +6,6 @@ system libs
 from basinboa import status
 from basinboa.command import process_inputs
 from basinboa.message.broadcast import broadcast
-from basinboa.system.loader import YamlLoader
 from basinboa.system.scheduler import SCHEDULER
 from basinboa.user import Guest
 
@@ -66,18 +65,4 @@ def process_lobby():
     # TODO: write code...
     for client, guest in status.LOBBY.items():
         guest.login()
-
-class SettingsLoader(YamlLoader):
-    """docstring for SettingsLoader"""
-    SERVER_CONFIG = 'server'
-
-    def __init__(self, data_dir):
-        super(SettingsLoader, self).__init__(data_dir)
-        
-    def get_server_config(self):
-        """docstring for get"""
-        data = self.load(self.SERVER_CONFIG)
-        if data:
-            return data
-        return None
 
