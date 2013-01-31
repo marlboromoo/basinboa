@@ -8,6 +8,8 @@ class Uid(object):
     """docstring for Uid"""
     def __init__(self):
         super(Uid, self).__init__()
+        self.uuid = None
+        self.uuid_urn = None #. dump to file
         self.generate_uuid()
         
     def dump_uuid(self):
@@ -22,4 +24,9 @@ class Uid(object):
         """docstring for regenerate_uuid"""
         self.uuid = uuid.uuid4()
         self.uuid_urn = self.uuid.urn
+
+    def renew_uuid(self):
+        """docstring for renew_uuid"""
+        return self.generate_uuid()
+        
 

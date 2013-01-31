@@ -1,0 +1,12 @@
+desc: a sharp sword but tiny.
+name: sword
+nickname: tiny sword
+skills: null
+spells: null
+status: null
+style: weapon
+slot: hand
+duration: 50
+weight: 2
+value: 1
+damage: 10

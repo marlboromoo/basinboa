@@ -1,5 +1,5 @@
 desc: "^Y\u6211\u662F^G\u842C^B\u80FD^w\u7684^Mgod^~"
-hp: !!python/tuple [90, 100]
+hp: !!python/tuple [100, 100]
 job: null
 map_name: chinese
 mp: !!python/tuple [100, 100]
@@ -7,7 +7,6 @@ name: admin
 nickname: T.R.O.N
 password: 1qaz2wsx
 prompt: null
-race: null
 role: admin
 skills: null
 spells: null
