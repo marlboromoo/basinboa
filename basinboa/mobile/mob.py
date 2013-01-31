@@ -36,15 +36,17 @@ class Mob(Puppet, Uid):
     def dump(self):
         """docstring for dump"""
         data = self._dump()
-        data['skeleton'] = self.skeleton
-        data['gossip'] = self.gossip
+        attrs = ['skeleton', 'gossip']
+        for attr in attrs:
+            data = self.get_attr(data, attr)
         return data
 
     def load(self, data):
         """docstring for load"""
         self._load(data)
-        self.skeleton = data['skeleton'] if data.has_key('skeleton') else None
-        self.gossip = data['gossip'] if data.has_key('gossip') else None
+        attrs = ['skeleton', 'gossip']
+        for attr in attrs:
+            self.set_attr(data, attr)
         self.init_prev_location()
 
     def random_walk(self):
@@ -99,6 +101,6 @@ class MobLoader(YamlLoader):
         """docstring for get"""
         if self.skeletons.has_key(skeleton):
             mob = copy.deepcopy(self.skeletons.get(skeleton))
-            mob.generate_uuid()
+            mob.renew_uuid()
             return mob
 

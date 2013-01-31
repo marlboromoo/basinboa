@@ -32,17 +32,17 @@ class Character(Puppet):
     def dump(self):
         """docstring for dump"""
         data = self._dump()
-        data['password'] = self.password
-        data['role'] = self.role
-        data['prompt'] = self.prompt
+        attrs = ['password', 'role', 'prompt']
+        for attr in attrs:
+            data = self.get_attr(data, attr)
         return data
 
     def load(self, data):
         """docstring for load"""
         self._load(data)
-        self.password = data['password'] if data.has_key('password') else None
-        self.role = data['role'] if data.has_key('role') else None
-        self.prompt = data['prompt'] if data.has_key('prompt') else None
+        attrs = ['password', 'role', 'prompt']
+        for attr in attrs:
+            self.set_attr(data, attr)
         self.init_prev_location()
 
     def check_location(self):
