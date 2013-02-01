@@ -14,55 +14,13 @@ class Room(object):
         self.texts = None
         self.mobs = [] #. Mob objects
         self.players = []
-        self.links = [] #. 
+        self.links = [] 
+        self.items = []
 
     def __repr__(self):
         return "Room%s%s - %s, %s mobs/%s players, links: %s" % (
             str(self.id_), str(self.xy), str('/'.join(self.exits)), 
             str(len(self.mobs)), str(len(self.players)), str(self.links))
-
-    def add_player(self, player):
-        """docstring for add_player"""
-        self.players.append(player)
-
-    def remove_player(self, player):
-        """docstring for remove_player"""
-        self.players.remove(player) if player in self.players else None
-
-    def get_players(self):
-        """docstring for get_players"""
-        return self.players
-
-    def add_mob(self, mob):
-        """docstring for add_mob"""
-        self.mobs.append(mob)
-
-    def get_mobs(self):
-        """docstring for get_mobs"""
-        return self.mobs
-
-    def remove_mob(self, mob):
-        """docstring for add_client"""
-        if mob in self.mobs:
-            self.mobs.remove(mob)
-
-    def remove_mobs(self):
-        """docstring for remove_mobs"""
-        self.mobs = []
-
-    def get_mob_by_name(self, name):
-        """return mob object by name else None"""
-        for mob in self.mobs:
-            if name == mob.name:
-                return mob
-        return None
-
-    def get_player_by_name(self, name):
-        """docstring for get_player_by_name"""
-        for player in self.players:
-            if player.character.name == name:
-                return player
-        return None
 
     def add_link(self, map_, xy, exit):
         """docstring for add_link"""
@@ -108,3 +66,70 @@ class Room(object):
         else:
             return self.exits
 
+#------------------------------------------------------------------------------
+#       Player
+#------------------------------------------------------------------------------
+
+    def add_player(self, player):
+        """docstring for add_player"""
+        self.players.append(player)
+
+    def remove_player(self, player):
+        """docstring for remove_player"""
+        self.players.remove(player) if player in self.players else None
+
+    def get_players(self):
+        """docstring for get_players"""
+        return self.players
+
+    def get_player_by_name(self, name):
+        """docstring for get_player_by_name"""
+        for player in self.players:
+            if player.character.name == name:
+                return player
+        return None
+
+#------------------------------------------------------------------------------
+#       Mob
+#------------------------------------------------------------------------------
+
+    def add_mob(self, mob):
+        """docstring for add_mob"""
+        self.mobs.append(mob)
+
+    def get_mobs(self):
+        """docstring for get_mobs"""
+        return self.mobs
+
+    def remove_mob(self, mob):
+        """docstring for add_client"""
+        if mob in self.mobs:
+            self.mobs.remove(mob)
+
+    def remove_mobs(self):
+        """docstring for remove_mobs"""
+        self.mobs = []
+
+    def get_mob_by_name(self, name):
+        """return mob object by name else None"""
+        for mob in self.mobs:
+            if name == mob.name:
+                return mob
+        return None
+
+#------------------------------------------------------------------------------
+#       Item
+#------------------------------------------------------------------------------
+
+    def add_item(self, item):
+        """add Item object."""
+        self.items.append(item)
+
+    def remove_item(self, item):
+        """remove Item object"""
+        if item in self.items:
+            self.items.remove(item)
+
+    def get_items(self):
+        """docstring for get_item"""
+        return self.items
