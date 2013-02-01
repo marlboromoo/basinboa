@@ -2,9 +2,6 @@
 """
 items.
 """
-import sys
-sys.path.append('../../')
-
 import copy
 from basinboa.system.uid import Uid
 from basinboa.system.loader import YamlLoader
@@ -37,6 +34,12 @@ class Item(Uid):
         self.status = None
         #. init
         self.load(data)
+
+    def __repr__(self):
+        """docstring for __repr__"""
+        return "Item: %s(%s), style:%s, slot:%s" % (
+            self.nickname, self.name, self.style, self.slot
+        )
 
     def get_attr(self, data, attr):
         """docstring for get_attr"""
@@ -139,8 +142,7 @@ class ItemLoader(YamlLoader):
             item.renew_uuid()
             return item
 
-if __name__ == '__main__':
-    il = ItemLoader('../../data/item/')
-    sword = il.get('sword')
-    print sword.name, sword.style
-    print sword.dump()
+    def get_itmes(self):
+        """docstring for get_itmes"""
+        return self.items.values()
+
