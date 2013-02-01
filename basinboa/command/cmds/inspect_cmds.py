@@ -34,6 +34,9 @@ def look(player, args):
         #. mobs
         for mob in room.get_mobs():
             player.send_cc_encode("%s(%s) in here.\n" % (mob.nickname, mob.name))
+        #. items
+        for item in room.get_items():
+            player.send_cc_encode("%s(%s) on the floor." % (item.get_nickname(), item.get_name()))
     else:
         player_ = room.get_player_by_name(target_name)
         if player_:
@@ -45,5 +48,9 @@ def look(player, args):
         if mob:
             player.send_cc_encode("%s\n" % (mob.get_desc()))
             return
-        if not player_ and not mob:
+        item = room.get_item(target_name)
+        if item:
+            player.send_cc_encode("%s\n" % (item.get_desc()))
+            return
+        if not all([player_, mob, item]): 
             player.send_cc_encode('No such target!\n')

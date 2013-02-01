@@ -10,3 +10,8 @@ duration: 50
 weight: 2
 value: 1
 damage: 10
+xy: null
+map_name: null
+dropable: null
+getable: null
+

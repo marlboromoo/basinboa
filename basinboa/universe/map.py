@@ -11,13 +11,20 @@ class Map(object):
         self.coordinates = coordinates
         self.desc = desc
         self.players = []
-        self.items = []
         self.init_rooms(rooms) #. key is (x,y), value is Room object
         self.init_mobs()
 
     def __repr__(self):
-        return "Map(%s) - %s rooms/%s mobs/%s players" % (
-            str(self.name), str(len(self.rooms)), str(len(self.mobs)), str(len(self.players)))
+        item_count = 0
+        for room in self.get_rooms():
+            item_count += len(room.list_items())
+        return "Map(%s) - %s rooms/%s mobs/%s players/%s items" % (
+            str(self.name), 
+            str(len(self.rooms)), 
+            str(len(self.mobs)), 
+            str(len(self.players)), 
+            str(item_count),
+        )
 
     def get_desc(self):
         """docstring for get_desc"""
@@ -99,28 +106,11 @@ class Map(object):
 
     def remove_mob(self, mob):
         """remove mob from map"""
-        #. remove from room
-        room = self.get_room(mob.xy)
-        if room:
-            room.remove_mob(mob)
-        #. remove from map
-        self.mobs.remove(mob)
-
-#------------------------------------------------------------------------------
-#       Item
-#------------------------------------------------------------------------------
-
-    def add_item(self, item):
-        """add Item object."""
-        self.items.append(item)
-
-    def remove_item(self, item):
-        """remove Item object"""
-        if item in self.items:
-            self.items.remove(item)
-
-    def get_items(self):
-        """docstring for get_item"""
-        return self.items
-
+        if mob in self.mobs:
+            #. remove from room
+            room = self.get_room(mob.xy)
+            if room:
+                room.remove_mob(mob)
+            #. remove from map
+            self.mobs.remove(mob)
 

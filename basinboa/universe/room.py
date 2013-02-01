@@ -15,12 +15,12 @@ class Room(object):
         self.mobs = [] #. Mob objects
         self.players = []
         self.links = [] 
-        self.items = []
+        self.items = {} #. key is item_name, value is Item Object
 
     def __repr__(self):
-        return "Room%s%s - %s, %s mobs/%s players, links: %s" % (
+        return "Room%s%s - %s, %s mobs/%s players/%s items, links: %s" % (
             str(self.id_), str(self.xy), str('/'.join(self.exits)), 
-            str(len(self.mobs)), str(len(self.players)), str(self.links))
+            str(len(self.mobs)), str(len(self.players)), str(len(self.items)), str(self.links))
 
     def add_link(self, map_, xy, exit):
         """docstring for add_link"""
@@ -123,13 +123,38 @@ class Room(object):
 
     def add_item(self, item):
         """add Item object."""
-        self.items.append(item)
+        self.items[item.get_name()] = item
 
     def remove_item(self, item):
         """remove Item object"""
-        if item in self.items:
-            self.items.remove(item)
+        if self.items.has_key(item.get_name()):
+            self.items.pop(item)
+
+    def remove_items(self):
+        """docstring for remove_items"""
+        self.items = {}
+
+    def get_item(self, item_name):
+        """docstring for get_item_by_name"""
+        if self.items.has_key(item_name):
+            return self.items[item_name]
+        return None
 
     def get_items(self):
-        """docstring for get_item"""
-        return self.items
+        """docstring for get_items"""
+        return self.items.values()
+
+    def pop_item(self, item_name):
+        """docstring for checkout"""
+        if self.items.has_key(item_name):
+            return self.items.pop(item_name)
+        return None
+
+    def list_items(self):
+        """docstring for list_items"""
+        return self.items.values()
+
+    def has_item(self, item_name):
+        """docstring for has_item"""
+        return True if self.item.has_key(item_name) else False
+

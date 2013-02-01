@@ -16,6 +16,7 @@ CMDS_ALIAS = {
     'u' : 'up',
     'd' : 'down',
     '/' : 'recall',
+    'i' : 'inventory',
 }
 
 def alias_2_cmd(cmd):

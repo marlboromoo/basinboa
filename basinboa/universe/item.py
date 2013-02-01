@@ -23,6 +23,8 @@ class Item(Uid):
         self.desc = None
         self.style = None
         self.slot = None
+        self.dropable = None
+        self.getable = None
         #. values
         self.weight = 0
         self.value = 0 #. coin/gold ?
@@ -32,6 +34,9 @@ class Item(Uid):
         self.skills = None
         self.spells = None
         self.status = None
+        #. geography
+        self.xy = None
+        self.map_name = None
         #. init
         self.load(data)
 
@@ -40,6 +45,18 @@ class Item(Uid):
         return "Item: %s(%s), style:%s, slot:%s" % (
             self.nickname, self.name, self.style, self.slot
         )
+
+    def get_name(self):
+        """docstring for get_name"""
+        return self.name
+
+    def get_nickname(self):
+        """docstring for get_nickname"""
+        return self.nickname
+
+    def get_desc(self):
+        """docstring for get_desc"""
+        return self.desc
 
     def get_attr(self, data, attr):
         """docstring for get_attr"""
@@ -55,11 +72,13 @@ class Item(Uid):
     def dump(self):
         """docstring for dump"""
         attrs = [
-            'name', 'nickname', 'desc', 'style', 'slot', 
+            'name', 'nickname', 'desc', 'style', 'slot', 'dropable', 'getable',
             #. values
             'weight', 'value', 'duration', 'damage',
             #. extra status
             'skills', 'spells', 'status',
+            #. geography
+            'xy', 'map_name',
         ]
         data = {}
         for attr in attrs:
@@ -69,14 +88,20 @@ class Item(Uid):
     def load(self, data):
         """docstring for load"""
         attrs = [
-            'name', 'nickname', 'desc', 'style', 'slot', 
+            'name', 'nickname', 'desc', 'style', 'slot', 'dropable', 'getable',
             #. values
             'weight', 'value', 'duration', 'damage',
             #. extra status
             'skills', 'spells', 'status',
+            #. geography
+            'xy', 'map_name',
         ]
         for attr in attrs:
             self.set_attr(data, attr)
+
+#------------------------------------------------------------------------------
+#       ability
+#------------------------------------------------------------------------------
 
     def can_wear(self):
         """docstring for can_wear"""
@@ -122,6 +147,14 @@ class Item(Uid):
         """docstring for can_checkout"""
         pass
 
+#------------------------------------------------------------------------------
+#       Event
+#------------------------------------------------------------------------------
+        
+        def on_wear(self):
+            """docstring for on_wear"""
+            pass
+
 class ItemLoader(YamlLoader):
     """docstring for ItemLoader"""
     def __init__(self, data_dir):
@@ -142,7 +175,7 @@ class ItemLoader(YamlLoader):
             item.renew_uuid()
             return item
 
-    def get_itmes(self):
-        """docstring for get_itmes"""
+    def get_all(self):
+        """docstring for get_items"""
         return self.items.values()
 
