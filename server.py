@@ -10,6 +10,7 @@ from miniboa import TelnetServer
 from basinboa import status
 from basinboa.system.scheduler import SCHEDULER, Cycle
 from basinboa.universe.world import WorldLoader
+from basinboa.universe.item import ItemLoader
 from basinboa.mobile.character import CharacterLoader
 from basinboa.system.config import ConfigLoader
 from basinboa.system.language import LanguageLoader
@@ -36,7 +37,9 @@ if __name__ == '__main__':
     wl.load_all()
     status.WORLD = wl.get()
     status.WORLD.check_links()
-    print ">> Maps: " % (status.WORLD.get_maps())
+    print ">> Maps: %s" % (status.WORLD.get_maps())
+    status.ITEM = ItemLoader('data/item/')
+    print ">> Items: %s" % (status.ITEM.get_itmes())
     register_cmds()
     print ">> Register commands: %s" % (status.COMMANDS.keys())
     status.LANG = LanguageLoader('data/language/').get()
@@ -49,7 +52,7 @@ if __name__ == '__main__':
     Cycle(2, kick_idle)
     Cycle(5, fight)
     Cycle(10, mob_actions)
-    Cycle(2, dump_status)
+    #Cycle(2, dump_status)
 
 #------------------------------------------------------------------------------
 #       Initial Telnet Server
