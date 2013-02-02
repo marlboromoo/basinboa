@@ -83,7 +83,8 @@ def create(player, args):
     item_name = args[0]
     item = status.ITEM.get(item_name)
     if item:
-        player.character.checkin(item)
+        player.character.bag.checkin(item)
         player.send_cc_encode("You create the %s(%s).\n" % (item.get_nickname(), item.get_name()))
     else:
         player.send_cc_encode("No such item in the world.\n")
+

@@ -6,9 +6,10 @@ from basinboa import status
 from basinboa.message.broadcast import message_to_room, player_message_to_room
 from basinboa.command.cmds.inspect_cmds import look
 from basinboa.mobile.bag import Bag
+from basinboa.mobile.equipment import Equipment
 from basinboa.universe.direction import north_xy, south_xy, west_xy, east_xy, NORTH, SOUTH, EAST, WEST, UP, DOWN, NORTH_NAME, SOUTH_NAME, EAST_NAME, WEST_NAME, UP_NAME, DOWN_NAME
 
-class Puppet(Bag):
+class Puppet(object):
     """docstring for Puppet"""
     def __init__(self):
         super(Puppet, self).__init__()
@@ -19,6 +20,8 @@ class Puppet(Bag):
         self.spells = None
         self.race = None
         self.job = None
+        self.bag = Bag()
+        self.equipment = Equipment()
         #. geo
         self.xy = None
         self.prev_xy = None
