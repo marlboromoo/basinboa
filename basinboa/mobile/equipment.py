@@ -3,6 +3,7 @@
 Equipment system.
 """
 
+from collections import OrderedDict
 from basinboa.universe.item import STYLE_ARMOR, STYLE_WEAPON
 
 SLOT_HEAD = 'head'
@@ -144,7 +145,7 @@ class Equipment(object):
             'body', 'arm', 'lefthand', 'righthand',
             'leg', 'foot',
         ]
-        data = {}
+        data = OrderedDict()
         for attr in attrs:
             data = self._get_attr(data, attr)
         return data
@@ -159,5 +160,3 @@ class Equipment(object):
         for attr in attrs:
             self._set_attr(data, attr)
 
-
-        
