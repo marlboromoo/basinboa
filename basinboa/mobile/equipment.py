@@ -34,7 +34,7 @@ class Equipment(object):
     def has_equipment(self, item_name):
         """docstring for has_equipment"""
         eqs = self.dump().values()
-        if item.name in [eq.name for eq in eqs]:
+        if item_name in [eq.name for eq in eqs if eq]:
                 return True
         return False
 
