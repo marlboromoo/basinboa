@@ -40,11 +40,11 @@ class Equipment(object):
 
     def pop_equipment(self, item_name):
         """docstring for pop_equipment"""
-        items = self.dump().values()
-        for item in [item for item in items if item]:
-            if item.name == item_name:
-                setattr(self, item.slot, None)
-                return item
+        for slot,item in self.dump().items():
+            if item:
+                if item.name == item_name:
+                    setattr(self, slot, None)
+                    return item
         return None
 
     def pop_equipment_by_slot(self, slot):
