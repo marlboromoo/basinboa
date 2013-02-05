@@ -3,6 +3,8 @@
 functions to set/get, load/dump attribute
 """
 
+from collections import OrderedDict
+
 def set_attr(object_, attr, value):
     """docstring for set_attr"""
     if hasattr(object_, attr):
@@ -24,7 +26,7 @@ def load(object_, data):
 
 def dump(object_):
     """docstring for dump"""
-    data = {}
+    data = OrderedDict()
     for attr in object_.attrs:
         data[attr] = get_attr(object_, attr)
     return data

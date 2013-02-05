@@ -23,16 +23,16 @@ class Dice(object):
         """docstring for _side"""
         return range(1, side+1)
 
-    def roll(self, offset=0):
+    def roll(self, offset=0, debug=False):
         """docstring for roll"""
         i = 1
         point = 0
         while i <= self.number:
             point_ = random.choice(self._side(self.side))
             point += point_
-            print 'roll - %s !' % (point_)
+            if debug: print 'roll - %s !' % (point_)
             i += 1
-        print 'offset: %s' % (offset)
+        if debug: print 'offset: %s' % (offset)
         return point + offset
         
 if __name__ == '__main__':
