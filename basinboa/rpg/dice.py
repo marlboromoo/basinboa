@@ -14,19 +14,21 @@ DICE20 = 20
 
 class Dice(object):
     """docstring for Dice"""
-    def __init__(self):
+    def __init__(self, number, side):
         super(Dice, self).__init__()
+        self.number = number
+        self.side = side
 
     def _side(self, side):
         """docstring for _side"""
         return range(1, side+1)
 
-    def roll(self, number=1, side=20, offset=0):
+    def roll(self, offset=0):
         """docstring for roll"""
         i = 1
         point = 0
-        while i <= number:
-            point_ = random.choice(self._side(side))
+        while i <= self.number:
+            point_ = random.choice(self._side(self.side))
             point += point_
             print 'roll - %s !' % (point_)
             i += 1
@@ -34,6 +36,6 @@ class Dice(object):
         return point + offset
         
 if __name__ == '__main__':
-    dice = Dice()
-    print dice.roll(3, 8, -2)
+    _3d8 = Dice(3,8)
+    print _3d8.roll(0)
         
