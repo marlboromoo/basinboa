@@ -14,9 +14,9 @@ MODIFIER_BASE = (10, 11)
 
 class Ability(object):
     """docstring for Ability"""
-    def __init__(self):
+    def __init__(self, level):
         super(Ability, self).__init__()
-        self.level = 1
+        self.level = level
         self.strength = None
         self.dexterity = None
         self.wisdom = None
@@ -59,7 +59,7 @@ class Ability(object):
 
     def level_bonus(self):
         """docstring for level_bonus"""
-        return self.level/2
+        return self.level.get()/2
 
     def bonus(self, ability):
         """docstring for bonus"""

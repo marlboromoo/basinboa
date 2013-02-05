@@ -5,16 +5,17 @@ Statistics system.
 
 class Statistics(object):
     """docstring for Statistics"""
-    def __init__(self, ability, class_):
+    def __init__(self, ability, level, class_):
         super(Statistics, self).__init__()
         self.ability = ability
+        self.level = level
         self.class_ = class_
 
     def max_health_points(self):
         """docstring for max_health_points"""
         con_mod = self.ability.modifier(self.ability.constitution)
         hp = self.ability.constitution + self.class_.health_points + \
-                ((con_mod+self.class_.health_points) * (self.ability.level-1))
+                ((con_mod+self.class_.health_points) * (self.level.get()-1))
         return hp
 
     def max_anima_points(self):
@@ -59,15 +60,17 @@ class Statistics(object):
 
 
 if __name__ == '__main__':
+    from level import Level
     from ability import Ability
     from class_ import Class
     from race import Race
+    level = Level()
     race = Race()
-    ability = Ability()
+    ability = Ability(level)
     ability.generate()
     ability.wisdom = 22
     class_ = Class()
-    statistics = Statistics(ability, class_)
+    statistics = Statistics(ability, level, class_)
     def yell():
         """docstring for debug"""
         print "hp:%s ap:%s mb:%s rb:%s mab:%s ad:%s ed:%s md:%s rd:%s spd:%s at level: %s" % (
@@ -81,13 +84,15 @@ if __name__ == '__main__':
             statistics.magic_defense(),
             statistics.resilience_defense(),
             statistics.movemnet_speed(),
-            ability.level)
+            level.get())
     print ability.dump()
     print race.dump()
     ability.apply_race_bonus(race)
     print ability.dump()
 
-    while ability.level <= 15:
+    i = 1 
+    while level.get() < 20:
+        level.set(i)
         yell()
-        ability.level += 1
+        i += 1
 
