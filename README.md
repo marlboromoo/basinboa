@@ -4,9 +4,13 @@
 
 ## About
 ### This MUD
-A MUD base on [MiniBoa] [1], inspire by [BogBoa] [2],  **Work in progress**!
+A MUD base on [MiniBoa] [1], inspire by [BogBoa] [2].
+### The RPG system
+Reference from [Heroes Against Darkness] [3].
 ### The Logo
-Boa image from [here] [3].
+Boa image from [here] [4].
+### Current status
+**Work in progress**!
 
 ## Requirments
  - Python
@@ -63,10 +67,11 @@ git submodule update --init
 Timothy.Lee a.k.a MarlboroMoo.
 
 ## License
-Released under the [MIT License] [4].
+Released under the [MIT License] [5].
 
   [1]: http://code.google.com/p/miniboa/   "MiniBoa"
   [2]: http://code.google.com/p/bogboa/   "BogBoa"
-  [3]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
-  [4]: http://opensource.org/licenses/MIT   "MIT License"
+  [3]: http://heroesagainstdarkness.blogspot.com   "Heroes Against Darkness"
+  [4]: http://www.flickr.com/photos/feargal/3810334817/   "BOA CONSTRICTOR"
+  [5]: http://opensource.org/licenses/MIT   "MIT License"
 
